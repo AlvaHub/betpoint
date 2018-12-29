@@ -213,7 +213,7 @@ class Bet extends Component {
           </table>
         </div>
         <div id="new" className="form">
-          <div className="label">Descrição</div>
+          <div className="label">Descrição...</div>
           <input type="text" placeholder="Descrição..." className="form-control" name="description" value={this.state.data.description || ""} onChange={this.handleChange}  ></input>
         </div>
         <div id="detail" className="form">
