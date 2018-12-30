@@ -1,18 +1,16 @@
 
 html{height:100%}
 body {
-  margin: 0;  padding: 0;  height:100%; color:rgb(214, 214, 214);font-size:10pt;overflow-x: hidden;background-color: var(--day-body-bg);
+  margin: 0;  padding: 0;  height:100%; color:rgb(214, 214, 214);font-size:10pt;overflow-x: hidden;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
     "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-
-
- 
-
-
 }
+@media(max-width:576px){
+  body {font-size:9pt;}
+  }
 body:before {
   content: "";
   display: block;
@@ -51,8 +49,12 @@ input[type='text'],input[type='number'],select,textarea {  font-size: 16px;}
 .pointer{cursor:pointer}
 .v-align{position: absolute;top:50%;left:50%;transform: translate(-50%, -50%)}
 .fade-in{animation: fade_in 0.6s 1s forwards;opacity: 0}
+@media(min-width:577px){
+.show-xs{display:none}
+}
 @media(max-width:576px){
 .date-combo select{height:35px}
+.hidden-xs{display:none}
 }
 
 .link:hover{color: orange;cursor: pointer;}
@@ -82,11 +84,11 @@ input[type='text'],input[type='number'],select,textarea {  font-size: 16px;}
 .logo-icons .fa-baseball-ball{color:yellow}
 .logo-text{font-size: 40px;font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif}
 @media(max-width:576px){.logo-text{font-size: 40px}}
-/* FLIGHT */
-.flight-id{font-size: 12pt;white-space: nowrap;font-weight: bold;padding:0;
-  background:linear-gradient(to bottom, rgb(16, 58, 92), rgb(25, 84, 133));background-color:rgb(25, 84, 133);color:white;min-height: 60px;} 
-.flight-id span{position: absolute;top:50%;left:50%;transform: translate(-50%, -50%);display: inline-block;width:100%} 
-@media(max-width:576px){.flight-id{font-size: 10pt;}}
+/* CONSOLIDADO */
+.table-consolidado-xs div[class^='col']{border-right:1px solid rgb(53, 53, 53);border-bottom:1px solid rgb(53, 53, 53);padding-right: 1px !important;}
+.table-consolidado-xs tr:nth-child(odd) td div[class^='col']{border-right:1px solid rgb(65, 65, 65);border-bottom:1px solid rgb(65, 65, 65)}
+.table-consolidado-xs{text-align: center}
+.table-consolidado-xs td, .table-consolidado-xs th{padding: 0}
 /* .flight-id-JR{} */
 .flight-id-MT{background:linear-gradient(to bottom, rgb(163, 163, 163), rgb(163, 163, 163));background-color:rgb(212, 65, 65) }
 .flight-id-MVD{background:linear-gradient(to bottom, rgb(255, 140, 0), orange);background-color:orange}

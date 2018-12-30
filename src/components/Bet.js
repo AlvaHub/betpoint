@@ -175,7 +175,7 @@ class Bet extends Component {
         </div>
         <div className="div-table" ></div>
         <div id="list">
-          <table className="table table-dark table-hover table-bordered table-striped table-sm" >
+          <table className="table table-dark table-hover table-bordered table-striped table-sm hidden-xs" >
             <thead id="table-consolidado-header" >
               <tr>
                 <th onClick={common.tableSort.bind(this, 'conta')} >Conta</th>
@@ -208,6 +208,49 @@ class Bet extends Component {
                 <td className={x.total == 0 ? "yellow" : x.total < 0 ? 'red' : 'green'} >{this.formatDecimal(x.total)}</td>
                 <td>{x.profit_percent}</td>
                 <td className={x.resultado == 0 ? "" : x.resultado < 0 ? 'red' : 'green'} >{this.formatDecimal(x.resultado)}</td>
+              </tr>)}
+            </tbody>
+          </table>
+          <table className="table table-dark table-hover table-bordered table-striped table-sm show-xs table-consolidado-xs" >
+            <thead id="table-consolidado-header" >
+              <tr>
+                <th>
+                  <div className="row no-gutters" >
+                    <div className="col-3" onClick={common.tableSort.bind(this, 'volume')} >Vol</div>
+                    <div className="col-3" onClick={common.tableSort.bind(this, 'vale')} >Vale</div>
+                    <div className="col-3" onClick={common.tableSort.bind(this, 'atual')} >Atual</div>
+                    <div className="col-3" onClick={common.tableSort.bind(this, 'pendente')} >Pend</div>
+                    <div className="w-100" ></div>
+                    <div className="col-3" onClick={common.tableSort.bind(this, 'parcial')} >Parc</div>
+                    <div className="col-3" onClick={common.tableSort.bind(this, 'comissão')} >Com</div>
+                    <div className="col-3" onClick={common.tableSort.bind(this, 'total')} >Tot</div>
+                    <div className="col-3" onClick={common.tableSort.bind(this, 'resultado')} >Res</div>
+                  </div>
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {this.state.items.map(x => <tr key={x.conta} id={x.conta} onClick={this.viewDetail.bind(this, x)} >
+                <td className="td-consolidado-xs">
+                  <div className="row no-gutters" >
+                    <div className="col-12 text-left pl-1" ><b>{x.conta} - {x.cliente} - {x.um} - {x.profit_percent}% - {x.qtd}</b></div>
+                    {/* <div className="col-6" >
+                      <b className="ml-1 text-success">Qtd</b> {x.qtd}
+                      <b className="ml-1 text-warning">UM</b> {x.um}
+                      <b className="ml-1 text-info">%</b> {x.profit_percent}
+                     </div> */}
+                    <div className="w-100" ></div>
+                    <div className={x.volume == 0 ? "col-3 yellow" : x.volume < 0 ? 'col-3 red' : 'col-3 green'} >{this.formatDecimal(x.volume)}</div>
+                    <div className="col-3" >{x.vale}</div>
+                    <div className="col-3">{x.atual}</div>
+                    <div className="col-3">{x.pendente}</div>
+                    <div className="w-100" ></div>
+                    <div className="col-3">{this.formatDecimal(x.parcial)}</div>
+                    <div className="col-3">{x.comissão}</div>
+                    <div className={x.total == 0 ? "col-3 yellow" : x.total < 0 ? 'col-3 red' : 'col-3 green'} >{this.formatDecimal(x.total)}</div>
+                    <div className={x.resultado == 0 ? "col-3" : x.resultado < 0 ? 'col-3 red' : 'col-3 green'} >{this.formatDecimal(x.resultado)}</div>
+                  </div>
+                </td>
               </tr>)}
             </tbody>
           </table>
