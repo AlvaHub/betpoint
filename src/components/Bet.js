@@ -19,7 +19,7 @@ class Bet extends Component {
   }
   back() {
     this.barList();
-    document.getElementById('detail').className = 'form go';
+    document.getElementById('detail').className = 'form  pb-0 go';
     document.getElementById('list').className = '';
     document.getElementById('filter').className = 'filter';
     common.scrollLast();
@@ -28,7 +28,7 @@ class Bet extends Component {
   newData() {
     common.scrollTop();
     this.setState({ data: this.getNewData() });
-    document.getElementById('new').className = 'form come';
+    document.getElementById('new').className = 'form  pb-0 come';
     document.getElementById('list').className = 'hidden';
     document.getElementById('filter').className = 'hidden';
     this.barForm();
@@ -39,11 +39,12 @@ class Bet extends Component {
     this.props.show();
 
     //Copy Header of selected item to show on detail screen
-    document.getElementById("table-detail-header").innerHTML =
-      document.getElementById("table-consolidado-header").outerHTML;
+    document.getElementById("table-detail-head").innerHTML = document.getElementById("table-consolidado-head").outerHTML;
+    document.getElementById("table-detail-head-xs").innerHTML = document.getElementById("table-consolidado-head-xs").outerHTML;
+
     //Copy Row of selected item on detail screen
-    document.getElementById("table-detail-body").innerHTML =
-      document.getElementById(item.conta).outerHTML;
+    document.getElementById("table-detail-body").innerHTML = document.getElementById(item.conta).outerHTML;
+    document.getElementById("table-detail-body-xs").innerHTML = document.getElementById(item.conta + '-xs').outerHTML;
 
     common.getData('detail-by-login/' + item.conta).then((data) => {
       this.props.hide();
@@ -51,7 +52,7 @@ class Bet extends Component {
       this.setState({ details: data })
       document.getElementById('list').className = 'hidden';
       document.getElementById('filter').className = 'hidden';
-      document.getElementById('detail').className = 'form come';
+      document.getElementById('detail').className = 'form  pb-0 come';
       this.barForm(item.conta);
     });
   }
@@ -175,8 +176,8 @@ class Bet extends Component {
         </div>
         <div className="div-table" ></div>
         <div id="list">
-          <table className="table table-dark table-hover table-bordered table-striped table-sm hidden-xs" >
-            <thead id="table-consolidado-header" >
+          <table className="table table-dark table-hover table-bordered table-striped table-sm hidden-xs page-margin-bottom" >
+            <thead id="table-consolidado-head" >
               <tr>
                 <th onClick={common.tableSort.bind(this, 'conta')} >Conta</th>
                 <th onClick={common.tableSort.bind(this, 'cliente')} >Cliente</th>
@@ -211,8 +212,8 @@ class Bet extends Component {
               </tr>)}
             </tbody>
           </table>
-          <table className="table table-dark table-hover table-bordered table-striped table-sm show-xs table-consolidado-xs" >
-            <thead id="table-consolidado-header" >
+          <table className="table table-dark table-hover table-bordered table-striped table-sm show-xs table-consolidado-xs table-scroll" >
+            <thead id="table-consolidado-head-xs">
               <tr>
                 <th>
                   <div className="row no-gutters" >
@@ -230,8 +231,8 @@ class Bet extends Component {
               </tr>
             </thead>
             <tbody>
-              {this.state.items.map(x => <tr key={x.conta} id={x.conta} onClick={this.viewDetail.bind(this, x)} >
-                <td className="td-consolidado-xs">
+              {this.state.items.map(x => <tr key={x.conta} id={x.conta + '-xs'} onClick={this.viewDetail.bind(this, x)} >
+                <td>
                   <div className="row no-gutters" >
                     <div className="col-12 text-left pl-1" ><b>{x.conta} - {x.cliente} - {x.um} - {x.profit_percent}% - {x.qtd}</b></div>
                     {/* <div className="col-6" >
@@ -255,18 +256,20 @@ class Bet extends Component {
             </tbody>
           </table>
         </div>
-        <div id="new" className="form">
-          <div className="label">Descrição...</div>
-          <input type="text" placeholder="Descrição..." className="form-control" name="description" value={this.state.data.description || ""} onChange={this.handleChange}  ></input>
-        </div>
-        <div id="detail" className="form">
-          <table className="table table-dark table-hover table-bordered table-striped table-sm mt-1" >
-            <thead id="table-detail-header" >
+        <div id="detail" className="form pb-0">
+          <table className="table table-dark table-hover table-bordered table-striped table-sm mt-1 hidden-xs" >
+            <thead id="table-detail-head" >
             </thead>
             <tbody id="table-detail-body" >
             </tbody>
           </table>
-          <table className="table table-dark table-bordered table-striped table-sm mt-1 table-bet-login" >
+          <table className="table table-dark table-hover table-bordered table-striped table-sm mt-1 table-consolidado-xs show-xs" >
+            <thead id="table-detail-head-xs" >
+            </thead>
+            <tbody id="table-detail-body-xs" >
+            </tbody>
+          </table>
+          <table className="table table-dark table-bordered table-striped table-sm mt-1 table-consolidado-login table-scroll hidden-xs" >
             <thead>
               <tr>
                 <th >Eventos</th>
@@ -298,6 +301,40 @@ class Bet extends Component {
                 <td className="text-center">{x.data_betstatus}</td>
 
               </tr>)}
+            </tbody>
+          </table>
+          <table className="table table-dark table-bordered table-striped table-consolidado-login-xs table-sm mt-1 table-scroll show-xs" >
+            <thead>
+              <tr className="row-consolidado-login-xs">
+                <th onClick={common.tableSort.bind(this, 'total_stake')} >Stake</th>
+                <th onClick={common.tableSort.bind(this, 'total_return')} >Return</th>
+                <th onClick={common.tableSort.bind(this, 'total')} >Total</th>
+                <th onClick={common.tableSort.bind(this, 'odds')} >Odds</th>
+                <th onClick={common.tableSort.bind(this, 'comissao')} >Com</th>
+              </tr>
+            </thead>
+            <tbody>
+              {this.state.details.map(x => <React.Fragment key={x.id}  >
+                <tr className="row-consolidado-login-xs">
+                  <td>{x.total_stake}</td>
+                  <td>{x.total_return}</td>
+                  <td className={x.total < 0 ? 'green' : 'red'}>{x.total}</td>
+                  <td>{x.odds}</td>
+                  <td>{x.comissao}</td>
+                </tr>
+                <tr>
+                  <td colSpan="5" >
+                    <div>
+                      <b className="text-white">{x.bet_confirmation.split('<br>')[x.bet_confirmation.split('<br>').length - 1]}</b> -
+                      <b className="ml-1">Data:</b> {x.placement_date}
+                      <b className="ml-1">Status:</b> {x.data_betstatus}
+                    </div>
+                    <table className="table-detail w-100" >
+                      <tbody dangerouslySetInnerHTML={{ __html: x.detail }}></tbody>
+                    </table>
+                  </td>
+                </tr>
+              </React.Fragment>)}
             </tbody>
           </table>
         </div>
