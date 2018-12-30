@@ -4,12 +4,19 @@ import DateCombo from './DateCombo'
 import CurrencyFormat from 'react-currency-format';
 import * as common from './Common';
 import ReactTooltip from 'react-tooltip';
+import DayPickerInput from 'react-day-picker/DayPickerInput';
+import DayPicker from 'react-day-picker/DayPicker';
+import 'react-day-picker/lib/style.css';
+import MomentLocaleUtils, { formatDate, parseDate } from 'react-day-picker/moment';
+import 'moment/locale/pt-br';
+
 class Bet extends Component {
   constructor(props) {
     super(props);
 
     this.handleChange = this.handleChange.bind(this);
     this.barList();
+
   }
   barList() {
     this.props.changeTitle({ left: <div><i className="fas fa-futbol"></i> HULK BET</div>, center: 'Consolidado', right: <button type="button" onClick={() => this.newData()} className="btn-right">Novo</button> });
@@ -57,9 +64,9 @@ class Bet extends Component {
     });
   }
   bindList() {
-    this.props.show();
+    //this.props.show();
     var that = this;
-    common.getData('bet').then((data) => { that.props.hide(); this.setState({ items: data, itemsAll: data }) });
+    //common.getData('bet').then((data) => { that.props.hide(); this.setState({ items: data, itemsAll: data }) });
   }
   componentDidMount() {
 
@@ -69,25 +76,14 @@ class Bet extends Component {
     // common.getData('combo/passenger').then((data) => { this.setState({ passengers: data }) });
     // common.getData('combo/crew').then((data) => { this.setState({ crew: data }) });
 
-    //Years
-    let year = new Date().getFullYear();
-    let years = [];
-    for (let index = 2010; index <= year; index++) {
-      years.push(index);
-
-    }
-    this.setState({ years });
+    
   }
   state = {
     itemsAll: [],
     items: [],
     details: [],
-    flightTypes: [],
-    sortField: '',
-    years: [],
-    passengers: [],
-    crew: [],
-    data: this.getNewData()
+    date_to : new Date(),
+    date_from : new Date().setDate(new Date().getDate() - 7),
   }
   getNewData() {
 
@@ -106,9 +102,10 @@ class Bet extends Component {
     }
   }
   handleChange = e => {
-    let data = this.state.data;
-    data[e.target.name] = e.target.value;
-    this.setState({ data })
+    console.log(e);
+    // let data = this.state.data;
+    // data[e.target.name] = e.target.value;
+    // this.setState({ data })
 
   }
   save() {
@@ -168,13 +165,37 @@ class Bet extends Component {
     parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ".");
     return parts.join(",");
   }
+  handleDayChange(selectedDay, modifiers, dayPickerInput) {
+    this.setState({[dayPickerInput.props.name] : selectedDay})
+
+    setTimeout(() => {
+      console.log(formatDate(this.state.date_from, "YYYY/MM/DD"));
+    }, 1);
+   
+  }
+
   render() {
     return (
       <React.Fragment>
         <div className="filter" id="filter" >
-          <input type="text" className="form-control form-control-sm col-md-8 offset-md-2" placeholder="Buscar..." onChange={this.filter.bind(this)} />
+          <div className="row no-gutters" >
+            <div className=" col-sm-6 p-1">
+              <input type="text" className="form-control form-control-sm" placeholder="Buscar..." onChange={this.filter.bind(this)} />
+            </div>
+            <div className="col-6 col-sm-3 p-1">
+            <DayPickerInput name="date_from"
+                placeholder={formatDate(this.state.date_from, 'DD/MM/YYYY')} onDayChange={this.handleDayChange.bind(this)} parseDate={parseDate} formatDate={formatDate}
+                dayPickerProps={{ locale: 'pt-br', localeUtils: MomentLocaleUtils }} inputProps={{readOnly: true}} />
+            </div>
+            <div className="col-6 col-sm-3 p-1 date-to">
+              <DayPickerInput name="date_to"
+                placeholder={formatDate(this.state.date_to, 'DD/MM/YYYY')} onDayChange={this.handleDayChange.bind(this)} parseDate={parseDate} formatDate={formatDate}
+                dayPickerProps={{ locale: 'pt-br', localeUtils: MomentLocaleUtils }} inputProps={{readOnly: true}} />
+            </div>
+          </div>
         </div>
         <div className="div-table" ></div>
+
         <div id="list">
           <table className="table table-dark table-hover table-bordered table-striped table-sm hidden-xs page-margin-bottom" >
             <thead id="table-consolidado-head" >

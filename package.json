@@ -4,9 +4,11 @@
   "private": true,
   "dependencies": {
     "bootstrap": "^4.1.3",
+    "moment": "^2.23.0",
     "react": "^16.6.3",
     "react-currency-format": "^1.0.0",
     "react-date-picker": "^7.1.1",
+    "react-day-picker": "^7.2.4",
     "react-dom": "^16.6.3",
     "react-input-mask": "^2.0.4",
     "react-router-dom": "^4.3.1",
@@ -28,5 +30,5 @@
     "not ie <= 11",
     "not op_mini all"
   ],
-  "homepage": "https://betpoint.websiteseguro.com/site"
+  "homepage": "https://betpoint.websiteseguro.com/"
 }

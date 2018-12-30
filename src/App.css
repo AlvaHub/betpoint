@@ -42,6 +42,19 @@ body:before {
 
 
 }
+/* DATE PICKER */
+.DayPicker{color: black}
+.DayPickerInput {width:100%;}
+.DayPickerInput input{color:rgb(80, 80, 80);font-size: 11pt !important;width:100%;height: calc(1.8125rem + 2px);}
+.date-to .DayPickerInput-Overlay {
+  position: absolute;
+  left: auto !important;
+  right:0 !important;
+  z-index: 1;
+  background-color: white !important;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
+}
+/* GENERAL */
 input[type=checkbox]{zoom: 1.5 !important;}
 input[type='text'],input[type='number'],select,textarea {  font-size: 16px;}
 .loading{display:none;cursor:pointer;position: fixed;left:0;top:0;font-size:12pt;color:rgb(170, 170, 170);background-color:rgba(0, 0, 0, 0.5);height:100%;width:100%;z-index:20;}

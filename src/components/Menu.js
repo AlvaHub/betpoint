@@ -9,7 +9,7 @@ class Menu extends Component {
   }
   redirect = (path) => {
 
-    if (document.location.pathname !== '/site' + path)
+    if (document.location.pathname !== path)
       this.props.history.push(path);
     else {
       this.props.history.push('/default');

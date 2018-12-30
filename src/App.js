@@ -54,10 +54,10 @@ class App extends Component {
           </div>
         </div>
 
-        <BrowserRouter basename="/site">
+        <BrowserRouter>
           <div className="page p-1">
 
-            {window.location.pathname === '/site/login' || <Menu show={this.loadingShow} hide={this.loadingHide} />}
+            {window.location.pathname === '/login' || <Menu show={this.loadingShow} hide={this.loadingHide} />}
             <Route path="/login" render={() => <Login changeTitle={this.changeTitleHandler} show={this.loadingShow} hide={this.loadingHide} />} />
             <Route path="/" exact render={() => <Bet changeTitle={this.changeTitleHandler} show={this.loadingShow} hide={this.loadingHide} />} />
             <Route path="/default" />
