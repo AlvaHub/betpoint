@@ -82,6 +82,11 @@ input[type='text'],input[type='number'],select,textarea {  font-size: 16px;}
 /* FILTER */
 .filter{position: fixed;width:100%;left:0;top:40px;background-color: #d4d4d4;padding:0.4rem;z-index:200}
 .div-table{margin-top:45px}
+.margin-top-filter{margin-top:50px}
+@media(max-width:576px){
+  .div-table-xs{margin-top:75px}
+  .margin-top-filter-xs{margin-top:90px}
+  }
 /* LOGIN */
 .login .form-control, .login .btn{position: relative;}
 .login .user{left:-100%;transform: translateX(-200%);}
@@ -103,14 +108,14 @@ input[type='text'],input[type='number'],select,textarea {  font-size: 16px;}
 .table-consolidado-xs tr:nth-child(odd) td div[class^='col']{border-right:1px solid rgb(65, 65, 65);border-bottom:1px solid rgb(65, 65, 65)}
 .table-consolidado-xs{text-align: center}
 .table-consolidado-xs td, .table-consolidado-xs th{padding: 0}
-.table-consolidado-xs.table-scroll>tbody{max-height: calc(100vh - 180px);}
+.table-consolidado-xs.table-scroll>tbody{max-height: calc(100vh - 225px);}
 /* CONSOLIDADO LOGIN */
 .head-fixed{position: fixed;width:100%;z-index:100;background: inherit}
 .table-consolidado-login td{vertical-align: middle}
 .table-detail td:nth-child(1){width: 25%}
 .table-detail td:nth-child(2){width: 15%}
 .table-detail td:nth-child(6){width: 15%;text-align: center;vertical-align: middle}
-.table-consolidado-login.table-scroll>tbody{max-height: calc(100vh - 185px);}
+
 .table-consolidado-login>thead th:nth-child(1), .table-consolidado-login>tbody td:nth-child(1){width:50%} 
 .table-consolidado-login>thead th:nth-child(2), .table-consolidado-login>tbody td:nth-child(2){width:10%}
 .table-consolidado-login>thead th:nth-child(3), .table-consolidado-login>tbody td:nth-child(3){width:7%}
@@ -119,6 +124,7 @@ input[type='text'],input[type='number'],select,textarea {  font-size: 16px;}
 .table-consolidado-login>thead th:nth-child(6), .table-consolidado-login>tbody td:nth-child(6){width:8%}
 .table-consolidado-login>thead th:nth-child(7), .table-consolidado-login>tbody td:nth-child(7){width:5%}
 .table-consolidado-login>thead th:nth-child(8), .table-consolidado-login>tbody td:nth-child(8){width:5%; }
+.table-consolidado-login.table-scroll>tbody{max-height: calc(100vh - 185px);}
 .table-consolidado-login-xs.table-scroll>tbody{max-height: calc(100vh - 225px);}
 .row-consolidado-login-xs td, .row-consolidado-login-xs th{width:20%;text-align: center} 
 /* .flight-id-JR{} */
@@ -172,9 +178,9 @@ table{margin-bottom: 0 !important;color: rgb(63, 63, 63)}
 }
 .table-scroll {width: 100%;}
 .table-scroll>thead tr{display: table;width: 100%;}
-.table-scroll>tbody{display: block;overflow-y:scroll;max-height: calc(100vh - 200px);}
+.table-scroll>tbody{display: block;overflow-y:scroll;max-height: calc(100vh - 200px)}
 .table-scroll>tbody::-webkit-scrollbar{display: none}
-.table-scroll>tbody tr{height:auto !important;}
+.table-scroll>tbody tr{display: table;width: 100%;}
 
 .table-detail td{color:white;font-size: 9pt;background-color: rgb(85, 85, 85);vertical-align: middle}
 /* BGs */

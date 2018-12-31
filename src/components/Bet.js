@@ -196,7 +196,7 @@ class Bet extends Component {
             </div>
           </div>
         </div>
-        <div className="div-table" ></div>
+        <div className="margin-top-filter margin-top-filter-xs" ></div>
 
         <div id="list">
           <table className="table table-dark table-hover table-bordered table-striped table-sm hidden-xs page-margin-bottom" >
