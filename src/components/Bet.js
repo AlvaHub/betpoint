@@ -64,9 +64,11 @@ class Bet extends Component {
     });
   }
   bindList() {
-    //this.props.show();
+    this.props.show();
     var that = this;
-    //common.getData('bet').then((data) => { that.props.hide(); this.setState({ items: data, itemsAll: data }) });
+    let date_from = formatDate(this.state.date_from, "YYYY-MM-DD");
+    let date_to = formatDate(this.state.date_to, "YYYY-MM-DD");
+    common.getData(`get-by-date/${date_from}/${date_to}`).then((data) => { that.props.hide(); this.setState({ items: data, itemsAll: data }) });
   }
   componentDidMount() {
 
@@ -169,7 +171,7 @@ class Bet extends Component {
     this.setState({[dayPickerInput.props.name] : selectedDay})
 
     setTimeout(() => {
-      console.log(formatDate(this.state.date_from, "YYYY/MM/DD"));
+     this.bindList();
     }, 1);
    
   }
