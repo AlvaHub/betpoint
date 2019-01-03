@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import * as common from '../Common';
 
 
-class Passenger extends Component {
+class Matrix extends Component {
   constructor(props) {
     super(props);
 
@@ -21,7 +21,7 @@ class Passenger extends Component {
 
   }
   barList() {
-    this.props.changeTitle({ left: <div><i className="fas fa-plane"></i> BetPoint</div>, center: 'Passageiros', right: <button type="button" onClick={this.newData.bind(this)} className="btn-right">Novo</button> });
+    this.props.changeTitle({ left: <div><i className="fas fa-futbol"></i> HULK BET</div>, center: 'Matrizes', right: <button type="button" onClick={this.newData.bind(this)} className="btn-right">Novo</button> });
   }
   barForm = () => {
     this.props.changeTitle({ left: <div className="btn-back" onClick={this.back.bind(this)}><i className="fas fa-arrow-alt-circle-left"></i> Voltar</div> });
@@ -29,7 +29,7 @@ class Passenger extends Component {
   bindList() {
     this.props.show();
     var that = this;
-    common.getData('passenger').then((data) => { that.props.hide(); this.setState({ items: data, itemsAll: data }) })
+    common.getData('matrix').then((data) => { that.props.hide(); this.setState({ items: data, itemsAll: data }) })
   }
   newData() {
     common.scrollTop();
@@ -49,7 +49,7 @@ class Passenger extends Component {
   }
   editData(item) {
     this.props.show();
-    common.getData('passenger/' + item.id).then((data) => {
+    common.getData('matrix/' + item.id).then((data) => {
       this.props.hide();
       common.scrollTop();
       data.active = data.active === '1';
@@ -63,7 +63,7 @@ class Passenger extends Component {
   save() {
     this.props.show();
     var that = this;
-    common.postData('passenger', this.state.data).then(function (data) {
+    common.postData('matrix', this.state.data).then(function (data) {
       that.props.hide();
       that.bindList();
       that.back();
@@ -108,12 +108,14 @@ class Passenger extends Component {
             <thead>
               <tr>
                 <th onClick={common.tableSort.bind(this, 'name')} >Nome</th>
+                <th onClick={common.tableSort.bind(this, 'bookmakers')} >Clientes</th>
                 <th onClick={common.tableSort.bind(this, 'active')} className="td-min" >Ativo</th>
               </tr>
             </thead>
             <tbody>
               {this.state.items.map(x => <tr key={x.id} onClick={this.editData.bind(this, x)} >
                 <td>{x.name}</td>
+                <td>{x.bookmakers}</td>
                 <td className="td-min">{x.active === '1' ? 'Sim' : 'Não'}</td>
               </tr>)}
             </tbody>
@@ -132,9 +134,10 @@ class Passenger extends Component {
             <button className="btn btn-main" onClick={this.save.bind(this)} >Salvar</button>
           </div>
         </div>
+        <div className="page-margin-bottom" ></div>
       </React.Fragment>
     );
   }
 }
 
-export default Passenger;
+export default Matrix;

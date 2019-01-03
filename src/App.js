@@ -6,9 +6,9 @@ import Bet from './components/Bet';
 import Login from './components/Login';
 import loadingImage from './images/loading-spinner.svg';
 import User from './components/admin/User';
-import Passenger from './components/admin/Passenger';
-import Crew from './components/admin/Crew';
-import Expense from './components/admin/Expense';
+import Matrix from './components/admin/Matrix';
+import Betlogin from './components/admin/Betlogin';
+import Bookmaker from './components/admin/Bookmaker';
 import Airplane from './components/admin/Airplane';
 import Parameter from './components/admin/Parameter';
 
@@ -20,8 +20,8 @@ class App extends Component {
   constructor(props) {
     super(props);
    
-    if (window.location.pathname !== '/site/login' && common.getUser() === null)
-      return window.location.href = "/site/login";
+    if (window.location.pathname !== '/login' && common.getUser() === null)
+      return window.location.href = "/login";
   }
   state = {
     title: { left: '', center: "I bet you bet!", right: '' },
@@ -62,9 +62,9 @@ class App extends Component {
             <Route path="/" exact render={() => <Bet changeTitle={this.changeTitleHandler} show={this.loadingShow} hide={this.loadingHide} />} />
             <Route path="/default" />
             <Route path="/admin/user" render={() => <User changeTitle={this.changeTitleHandler} show={this.loadingShow} hide={this.loadingHide} />} />
-            <Route path="/admin/passenger" render={() => <Passenger changeTitle={this.changeTitleHandler} show={this.loadingShow} hide={this.loadingHide} />} />
-            <Route path="/admin/crew" render={() => <Crew changeTitle={this.changeTitleHandler} show={this.loadingShow} hide={this.loadingHide} />} />
-            <Route path="/admin/expense" render={() => <Expense changeTitle={this.changeTitleHandler} show={this.loadingShow} hide={this.loadingHide} />} />
+            <Route path="/admin/matrix" render={() => <Matrix changeTitle={this.changeTitleHandler} show={this.loadingShow} hide={this.loadingHide} />} />
+            <Route path="/admin/betlogin" render={() => <Betlogin changeTitle={this.changeTitleHandler} show={this.loadingShow} hide={this.loadingHide} />} />
+            <Route path="/admin/bookmaker" render={() => <Bookmaker changeTitle={this.changeTitleHandler} show={this.loadingShow} hide={this.loadingHide} />} />
             <Route path="/admin/airplane" render={() => <Airplane changeTitle={this.changeTitleHandler} show={this.loadingShow} hide={this.loadingHide} />} />
             <Route path="/admin/parameter" render={() => <Parameter changeTitle={this.changeTitleHandler} show={this.loadingShow} hide={this.loadingHide} />} />
 

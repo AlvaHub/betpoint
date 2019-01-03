@@ -32,6 +32,14 @@ export function tableSort(key) {
     });
     this.setState({ items: data, sortField: (key === this.state.sortField ? '' : key) });
 }
+export function tableSortNumber(key) {
+
+    let data = this.state.sortField === key ? 
+    this.state.items.sort((a, b) =>  b[key] - a[key]) :
+    this.state.items.sort((a, b) =>  a[key] - b[key]) ;
+
+    this.setState({ items: data, sortField: (key === this.state.sortField ? '' : key) });
+}
 export function hideMore() {
     document.getElementById('menu-more').className = 'menu-more';
     document.body.removeEventListener('click', hideMore);

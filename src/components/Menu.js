@@ -3,9 +3,9 @@ import { withRouter } from 'react-router-dom';
 import * as common from './Common';
 
 class Menu extends Component {
- 
-  componentWillReceiveProps(){
-   
+
+  componentWillReceiveProps() {
+
   }
   redirect = (path) => {
 
@@ -41,23 +41,20 @@ class Menu extends Component {
       <React.Fragment>
         <div className="menu-more" id="menu-more" >
           <div className="col-md-8 offset-md-2">
-          <div>
-              <div>I bet you bet!<b>{common.getUser() ? common.getUser().name : ""}!</b></div>
+            <div>
+              <div>Bem-Vindo <b>{common.getUser() ? common.getUser().first_name : ""}!</b></div>
             </div>
             <div>
-              <div onClick={this.redirect.bind(this, '/admin/airplane')}  ><i className="fas fa-plane"></i> Aeronave</div>
+              <div onClick={this.redirect.bind(this, '/admin/betlogin')}  ><i className="fas fa-key"></i> Contas BET 365</div>
+            </div>
+            <div>
+              <div onClick={this.redirect.bind(this, '/admin/bookmaker')}  ><i className="fas fa-users"></i> Clientes</div>
+            </div>
+            <div>
+              <div onClick={this.redirect.bind(this, '/admin/matrix')}  ><i className="fas fa-users"></i> Matrizes</div>
             </div>
             <div>
               <div onClick={this.redirect.bind(this, '/admin/user')}  ><i className="fas fa-user-circle"></i> Usuários</div>
-            </div>
-            <div>
-              <div onClick={this.redirect.bind(this, '/admin/passenger')}  ><i className="fas fa-users"></i> Passageiros</div>
-            </div>
-            <div>
-              <div onClick={this.redirect.bind(this, '/admin/crew')}  ><i className="fas fa-plane-departure"></i> Tripulacao</div>
-            </div>
-            <div>
-              <div onClick={this.redirect.bind(this, '/admin/expense')}  ><i className="fas fa-coins"></i> Tipos de Despesas</div>
             </div>
             <div>
               <div onClick={this.redirect.bind(this, '/admin/parameter')}  ><i className="fas fa-cogs"></i> Parâmetros</div>
@@ -73,10 +70,10 @@ class Menu extends Component {
               <div onClick={this.redirect.bind(this, '/')}  ><i className="fas fa-futbol"></i><div>Consolidado</div></div>
             </div>
             <div className="col" >
-              <div onClick={this.redirectLastLeg.bind(this)} ><i className="fas fa-money-check-alt"></i><div>Despesa</div></div>
+              <div ><i className="fas fa-chart-bar"></i><div>Risco</div></div>
             </div>
             <div className="col" >
-              <div ><i className="fas fa-chart-bar"></i><div>Dashboard</div></div>
+              <div ><i className="fas fa-chart-bar"></i><div>Geral</div></div>
             </div>
             <div className="col" >
               <div onClick={this.showMore.bind(this)}  ><i className="fas fa-bars"></i><div>Mais</div></div>

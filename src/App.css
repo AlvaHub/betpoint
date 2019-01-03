@@ -30,6 +30,7 @@ body:before {
 .page { padding-top: 45px !important;}
 .page-margin-bottom{margin-bottom: 45px !important;}
 .extra-margin-top{margin-top: 35px}
+.extra-margin-bottom{padding-bottom: 135px}
 :root{
   --bg-main: rgb(20, 40, 59);
   --day2:linear-gradient(to bottom, rgb(4, 88, 49), rgb(2, 53, 29));
@@ -164,6 +165,12 @@ table{margin-bottom: 0 !important;color: rgb(63, 63, 63)}
 .table-hover tbody tr:hover {
   background-color: rgb(253, 198, 97);cursor: pointer
 }
+.table-light.table-hover tbody tr:hover {
+  background-color: rgb(141, 160, 175) !important;cursor: pointer
+}
+.table-light.table-hover tbody tr:hover td {
+   border:1px solid rgb(141, 160, 175)!important;
+}
 .td-min{width:20%;text-align: center}
 .Perd{font-weight:bold;background-color:#00C851 !important}
 .Ganh{font-weight:bold;background-color:#ff4444 !important}
@@ -172,16 +179,20 @@ table{margin-bottom: 0 !important;color: rgb(63, 63, 63)}
 .red{font-weight:bold;color:#ff4444 !important}
 .yellow{font-weight:bold;color:#e2a52a !important}
 .div-table{border-radius: 0px;overflow: hidden;}
-.table2 td{background-color:red}
-.table-striped tbody tr:nth-of-type(odd) {
-  background-color: rgb(207, 207, 207);
+.table-light{background-color: transparent;}
+.table-light td{border:1px solid rgb(68, 68, 68);font-weight: normal}
+.table-light thead th{background-color:rgb(57, 60, 63);color:rgb(255, 255, 255);border:1px solid rgb(78, 78, 78)}
+.table-light tbody tr:nth-of-type(odd) {
+  background-color: rgb(37, 58, 85);color:white
+}
+.table-light tbody tr:nth-of-type(even) {
+  background-color: rgb(31, 49, 77);color:rgb(228, 228, 228)
 }
 .table-scroll {width: 100%;}
 .table-scroll>thead tr{display: table;width: 100%;}
 .table-scroll>tbody{display: block;overflow-y:scroll;max-height: calc(100vh - 200px)}
 .table-scroll>tbody::-webkit-scrollbar{display: none}
 .table-scroll>tbody tr{display: table;width: 100%;}
-
 .table-detail td{color:white;font-size: 9pt;background-color: rgb(85, 85, 85);vertical-align: middle}
 /* BGs */
 .btn-main{background-color: rgb(185, 55, 55);color:white;}
