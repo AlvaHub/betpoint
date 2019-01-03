@@ -14,12 +14,6 @@ class Betlogin extends Component {
     common.getData('combo/commission-formula').then((data) => { this.setState({ commissions: data }) })
     common.getData('combo/bookmaker').then((data) => { this.setState({ bookmakers: data }) })
 
-    let nums = [9,80,7,6, 10, 11];
-    nums.sort(function(a,b) {
-      console.log('A:' + a + ' B:' + b);
-      return a - b;
-    });
-    console.log(nums);
   }
   state = {
     items: [],

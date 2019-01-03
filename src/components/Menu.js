@@ -40,7 +40,16 @@ class Menu extends Component {
     return (
       <React.Fragment>
         <div className="menu-more" id="menu-more" >
-          <div className="col-md-8 offset-md-2">
+          <div className="text-center mb-3">
+            <div className="logo-text"> <b>HULK BET</b> </div>
+            <div className="logo-icons">
+              <i className="fas fa-futbol"></i>
+              <i className="fas fa-volleyball-ball"></i>
+              <i className="fas fa-football-ball"></i>
+              <i className="fas fa-baseball-ball"></i>
+            </div>
+          </div>
+          <div className="col-md-8 offset-md-2 menu-item">
             <div>
               <div>Bem-Vindo <b>{common.getUser() ? common.getUser().first_name : ""}!</b></div>
             </div>
@@ -70,7 +79,7 @@ class Menu extends Component {
               <div onClick={this.redirect.bind(this, '/')}  ><i className="fas fa-futbol"></i><div>Consolidado</div></div>
             </div>
             <div className="col" >
-              <div ><i className="fas fa-chart-bar"></i><div>Risco</div></div>
+              <div onClick={this.redirect.bind(this, '/risk-profit')}  ><i className="fas fa-chart-bar"></i><div>Risco</div></div>
             </div>
             <div className="col" >
               <div ><i className="fas fa-chart-bar"></i><div>Geral</div></div>

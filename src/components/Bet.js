@@ -1,11 +1,11 @@
 import React, { Component } from 'react';
 import { withRouter } from 'react-router-dom';
+// HCY=Y
 import DateCombo from './DateCombo'
 import CurrencyFormat from 'react-currency-format';
 import * as common from './Common';
 import ReactTooltip from 'react-tooltip';
 import DayPickerInput from 'react-day-picker/DayPickerInput';
-import DayPicker from 'react-day-picker/DayPicker';
 import 'react-day-picker/lib/style.css';
 import MomentLocaleUtils, { formatDate, parseDate } from 'react-day-picker/moment';
 import 'moment/locale/pt-br';
@@ -16,10 +16,9 @@ class Bet extends Component {
 
     this.handleChange = this.handleChange.bind(this);
     this.barList();
-
   }
   barList() {
-    this.props.changeTitle({ left: <div><i className="fas fa-futbol"></i> HULK BET</div>, center: 'Consolidado', right: <button type="button" onClick={() => this.newData()} className="btn-right">Novo</button> });
+    this.props.changeTitle({ left: <div><i className="fas fa-futbol"></i> HULK BET</div>, center: 'Consolidado' });
   }
   barForm = (title) => {
     this.props.changeTitle({ left: <div className="btn-back" onClick={() => this.back()}><i className="fas fa-arrow-alt-circle-left"></i> Voltar</div>, center: title });
@@ -74,40 +73,35 @@ class Bet extends Component {
 
     //Get list
     this.bindList();
-    // common.getData('flight-types').then((data) => { this.setState({ flightTypes: data }) });
-    // common.getData('combo/passenger').then((data) => { this.setState({ passengers: data }) });
-    // common.getData('combo/crew').then((data) => { this.setState({ crew: data }) });
-
-    
   }
   state = {
     itemsAll: [],
     items: [],
     details: [],
-    date_to : new Date(),
-    date_from : new Date().setDate(new Date().getDate() - 7),
+    date_from: this.getLastMonday(),
+    date_to: new Date(this.getLastMonday()).addDays(6)
+  }
+  getLastMonday(){
+    var index = 0;
+    var date_from = null;
+    while (true || index < 7) {
+      date_from = new Date().addDays(index)
+      if (formatDate(date_from, "dddd") === "Monday")
+        break;
+      index--;
+    }
+    return date_from;
   }
   getNewData() {
 
     return {
-      id: 0,
-      passenger: 0,
-      passengers: [],
-      crew_index: 0,
-      crew: this.state ? this.state.crew : [],
-      date_start: new Date(),
-      type_id: 'JR',
-      description: '',
-      year: new Date().getFullYear(),
-      month: new Date().getMonth() + 1,
-      day: new Date().getDate(),
+   
     }
   }
   handleChange = e => {
-    console.log(e);
-    // let data = this.state.data;
-    // data[e.target.name] = e.target.value;
-    // this.setState({ data })
+    let data = this.state.data;
+    data[e.target.name] = e.target.value;
+    this.setState({ data })
 
   }
   save() {
@@ -160,20 +154,14 @@ class Bet extends Component {
 
     this.setState({ items });
   }
-  formatDecimal = (x) => {
-    var parts = x.toString().split(".");
-    if (parts.length == 1)
-      parts.push("00");
-    parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ".");
-    return parts.join(",");
-  }
+
   handleDayChange(selectedDay, modifiers, dayPickerInput) {
-    this.setState({[dayPickerInput.props.name] : selectedDay})
+    this.setState({ [dayPickerInput.props.name]: selectedDay })
 
     setTimeout(() => {
-     this.bindList();
+      this.bindList();
     }, 1);
-   
+
   }
 
   render() {
@@ -185,14 +173,14 @@ class Bet extends Component {
               <input type="text" className="form-control form-control-sm" placeholder="Buscar..." onChange={this.filter.bind(this)} />
             </div>
             <div className="col-6 col-sm-3 p-1">
-            <DayPickerInput name="date_from"
+              <DayPickerInput name="date_from"
                 placeholder={formatDate(this.state.date_from, 'DD/MM/YYYY')} onDayChange={this.handleDayChange.bind(this)} parseDate={parseDate} formatDate={formatDate}
-                dayPickerProps={{ locale: 'pt-br', localeUtils: MomentLocaleUtils }} inputProps={{readOnly: true}} />
+                dayPickerProps={{ locale: 'pt-br', localeUtils: MomentLocaleUtils }} inputProps={{ readOnly: true }} />
             </div>
             <div className="col-6 col-sm-3 p-1 date-to">
               <DayPickerInput name="date_to"
                 placeholder={formatDate(this.state.date_to, 'DD/MM/YYYY')} onDayChange={this.handleDayChange.bind(this)} parseDate={parseDate} formatDate={formatDate}
-                dayPickerProps={{ locale: 'pt-br', localeUtils: MomentLocaleUtils }} inputProps={{readOnly: true}} />
+                dayPickerProps={{ locale: 'pt-br', localeUtils: MomentLocaleUtils }} inputProps={{ readOnly: true }} />
             </div>
           </div>
         </div>
@@ -222,16 +210,16 @@ class Bet extends Component {
                 <td>{x.conta}</td>
                 <td>{x.cliente}</td>
                 <td>{x.qtd}</td>
-                <td className={x.volume == 0 ? "yellow" : x.volume < 0 ? 'red' : 'green'} >{this.formatDecimal(x.volume)}</td>
+                <td className={x.volume == 0 ? "yellow" : x.volume < 0 ? 'red' : 'green'} >{common.formatNumber(x.volume)}</td>
                 <td>{x.vale}</td>
                 <td>{x.atual}</td>
                 <td>{x.pendente}</td>
                 <td>{x.um}</td>
-                <td>{this.formatDecimal(x.parcial)}</td>
+                <td>{common.formatNumber(x.parcial)}</td>
                 <td>{x.comissão}</td>
-                <td className={x.total == 0 ? "yellow" : x.total < 0 ? 'red' : 'green'} >{this.formatDecimal(x.total)}</td>
+                <td className={x.total == 0 ? "yellow" : x.total < 0 ? 'red' : 'green'} >{common.formatNumber(x.total)}</td>
                 <td>{x.profit_percent}</td>
-                <td className={x.resultado == 0 ? "" : x.resultado < 0 ? 'red' : 'green'} >{this.formatDecimal(x.resultado)}</td>
+                <td className={x.resultado == 0 ? "" : x.resultado < 0 ? 'red' : 'green'} >{common.formatNumber(x.resultado)}</td>
               </tr>)}
             </tbody>
           </table>
@@ -264,15 +252,15 @@ class Bet extends Component {
                       <b className="ml-1 text-info">%</b> {x.profit_percent}
                      </div> */}
                     <div className="w-100" ></div>
-                    <div className={x.volume == 0 ? "col-3 yellow" : x.volume < 0 ? 'col-3 red' : 'col-3 green'} >{this.formatDecimal(x.volume)}</div>
+                    <div className={x.volume == 0 ? "col-3 yellow" : x.volume < 0 ? 'col-3 red' : 'col-3 green'} >{common.formatNumber(x.volume)}</div>
                     <div className="col-3" >{x.vale}</div>
                     <div className="col-3">{x.atual}</div>
                     <div className="col-3">{x.pendente}</div>
                     <div className="w-100" ></div>
-                    <div className="col-3">{this.formatDecimal(x.parcial)}</div>
+                    <div className="col-3">{common.formatNumber(x.parcial)}</div>
                     <div className="col-3">{x.comissão}</div>
-                    <div className={x.total == 0 ? "col-3 yellow" : x.total < 0 ? 'col-3 red' : 'col-3 green'} >{this.formatDecimal(x.total)}</div>
-                    <div className={x.resultado == 0 ? "col-3" : x.resultado < 0 ? 'col-3 red' : 'col-3 green'} >{this.formatDecimal(x.resultado)}</div>
+                    <div className={x.total == 0 ? "col-3 yellow" : x.total < 0 ? 'col-3 red' : 'col-3 green'} >{common.formatNumber(x.total)}</div>
+                    <div className={x.resultado == 0 ? "col-3" : x.resultado < 0 ? 'col-3 red' : 'col-3 green'} >{common.formatNumber(x.resultado)}</div>
                   </div>
                 </td>
               </tr>)}

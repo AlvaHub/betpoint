@@ -51,4 +51,17 @@ export function getUser() {
     var user = localStorage.getItem("user");
     return user ? JSON.parse(user) : null;
 }
+Date.prototype.addDays = function(days) {
+    var date = new Date(this.valueOf());
+    date.setDate(date.getDate() + days);
+    return date;
+}
+export function formatNumber(x) {
+    if(x == null)return "";
+    var parts = x.toString().split(".");
+    if (parts.length == 1)
+      parts.push("00");
+    parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+    return parts.join(",");
+  }
 export { scrollTop, scrollLast, getData, postData } 

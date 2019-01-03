@@ -128,6 +128,15 @@ input[type='text'],input[type='number'],select,textarea {  font-size: 16px;}
 .table-consolidado-login.table-scroll>tbody{max-height: calc(100vh - 185px);}
 .table-consolidado-login-xs.table-scroll>tbody{max-height: calc(100vh - 225px);}
 .row-consolidado-login-xs td, .row-consolidado-login-xs th{width:20%;text-align: center} 
+
+/* RISK PROFIT */
+.table-risk-profit-detail>thead th:nth-child(1), .table-risk-profit-detail>tbody td:nth-child(1){width:5%} 
+.table-risk-profit-detail>thead th:nth-child(2), .table-risk-profit-detail>tbody td:nth-child(2){width:30%}
+.table-risk-profit-detail>thead th:nth-child(3), .table-risk-profit-detail>tbody td:nth-child(3){width:25%}
+.table-risk-profit-detail>thead th:nth-child(4), .table-risk-profit-detail>tbody td:nth-child(4){width:10%}
+.table-risk-profit-detail>thead th:nth-child(5), .table-risk-profit-detail>tbody td:nth-child(5){width:10%}
+.table-risk-profit-detail>thead th:nth-child(6), .table-risk-profit-detail>tbody td:nth-child(6){width:20%}
+
 /* .flight-id-JR{} */
 .flight-id-MT{background:linear-gradient(to bottom, rgb(163, 163, 163), rgb(163, 163, 163));background-color:rgb(212, 65, 65) }
 .flight-id-MVD{background:linear-gradient(to bottom, rgb(255, 140, 0), orange);background-color:orange}
@@ -223,9 +232,9 @@ table{margin-bottom: 0 !important;color: rgb(63, 63, 63)}
 .menu div div:hover{color:orange;cursor: pointer;}
 .navigation-bar{font-size:12pt;height: 40px;padding: 3px;position:fixed;top:0;z-index: 1000;background-color: rgb(231, 231, 231);width:100%;color:rgb(52, 60, 82);font-weight: bold}
 .menu-more{transform: translateY(100%);position: fixed;top:0;left:0;background-image:var(--day);background-repeat: no-repeat;
-  z-index:100;height:100%;min-height:100vh;padding:1rem;width:100%;padding-top: 100px;}
-.menu-more div div{cursor:pointer;background-color: #ececf6;color:var(--bg-main); padding: 0.3rem;border-radius: 10px;margin-bottom: 0.2rem}
-.menu-more div div:hover{background-color: #fdfdfe;color:orange }
+  z-index:1000;height:100%;min-height:100vh;padding:1rem;width:100%;padding-top: 20px;}
+.menu-more .menu-item div{cursor:pointer;background-color: #ececf6;color:var(--bg-main); padding: 0.3rem;border-radius: 10px;margin-bottom: 0.2rem}
+.menu-more .menu-item div:hover{background-color: #fdfdfe;color:orange }
 .menu-come{animation: a_menu_come 0.6s forwards}
 @keyframes a_menu_come{
   from{transform:translateY(100%)}
