@@ -137,9 +137,7 @@ input[type='text'],input[type='number'],select,textarea {  font-size: 16px;}
 .table-risk-profit-detail>thead th:nth-child(5), .table-risk-profit-detail>tbody td:nth-child(5){width:10%}
 .table-risk-profit-detail>thead th:nth-child(6), .table-risk-profit-detail>tbody td:nth-child(6){width:20%}
 
-/* .flight-id-JR{} */
-.flight-id-MT{background:linear-gradient(to bottom, rgb(163, 163, 163), rgb(163, 163, 163));background-color:rgb(212, 65, 65) }
-.flight-id-MVD{background:linear-gradient(to bottom, rgb(255, 140, 0), orange);background-color:orange}
+
 .panel{cursor:pointer;position: absolute;left:0;top:0;font-size:12pt;color:rgb(170, 170, 170);background-color:rgba(0, 0, 0, 0.8);height:100%;width:100%;z-index:10;display:none;transform: translateY(-100%)}
 .panel i{font-size: 16pt}
 .panel .col:hover{color:orange}
@@ -155,12 +153,6 @@ input[type='text'],input[type='number'],select,textarea {  font-size: 16px;}
   from{transform:translateY(0)}
   to{transform:translateY(-100%)}
 }
-/* FLIGHT LEG */
-.col-date {  -ms-flex: 0 0 50%;      flex: 0 0 50%;  max-width: 50%;}
-@media(max-width:576px){.col-date {  -ms-flex: 0 0 100%;      flex: 0 0 100%;  max-width: 100%;}}
-/* EXPENSE   */
-.expense-mini{width:50px;height:50px;border:0px solid rgb(180, 180, 180);box-shadow: 2px 2px 4px rgb(41, 41, 41);cursor: pointer}
-.expense-medium{box-shadow: 2px 2px 4px rgb(20, 20, 20);}
 /* FONTS */
 .font-lg{font-size: 11pt}
 .font-md{font-size: 10pt}
@@ -189,13 +181,13 @@ table{margin-bottom: 0 !important;color: rgb(63, 63, 63)}
 .yellow{font-weight:bold;color:#e2a52a !important}
 .div-table{border-radius: 0px;overflow: hidden;}
 .table-light{background-color: transparent;}
-.table-light td{border:1px solid rgb(68, 68, 68);font-weight: normal}
-.table-light thead th{background-color:rgb(57, 60, 63);color:rgb(255, 255, 255);border:1px solid rgb(78, 78, 78)}
+.table-light td{border:1px solid rgb(33, 59, 94);font-weight: normal}
+.table-light thead th{background-color: transparent;color:rgb(255, 255, 255);border:1px solid transparent;border-bottom:1px solid rgb(33, 59, 94)}
 .table-light tbody tr:nth-of-type(odd) {
-  background-color: rgb(37, 58, 85);color:white
+  background-color: transparent;color:white
 }
 .table-light tbody tr:nth-of-type(even) {
-  background-color: rgb(31, 49, 77);color:rgb(228, 228, 228)
+  background-color: rgba(31, 49, 77, 0.5);color:rgb(228, 228, 228)
 }
 .table-scroll {width: 100%;}
 .table-scroll>thead tr{display: table;width: 100%;}

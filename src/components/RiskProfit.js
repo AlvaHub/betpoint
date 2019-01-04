@@ -158,12 +158,12 @@ class RiskProfit extends Component {
             <thead id="table-risk-profit-head" >
               <tr>
                 <th>NR</th>
-                <th>Evento</th>
-                <th className="hidden-xs">Data</th>
-                <th>Qtd</th>
-                <th className="hidden-xs">Casa</th>
-                <th className="hidden-xs">Empate</th>
-                <th className="hidden-xs">Visitante</th>
+                <th onClick={common.tableSort.bind(this, 'event')} >Evento</th>
+                <th onClick={common.tableSort.bind(this, 'date')} className="hidden-xs">Data</th>
+                <th onClick={common.tableSortNumber.bind(this, 'bet_count')} >Qtd</th>
+                <th onClick={common.tableSortNumber.bind(this, 'home_value')} className="hidden-xs">Casa</th>
+                <th onClick={common.tableSortNumber.bind(this, 'draw_value')} className="hidden-xs">Empate</th>
+                <th onClick={common.tableSortNumber.bind(this, 'visitor_value')} className="hidden-xs">Visitante</th>
                 <th className="show-xs">Valores</th>
               </tr>
             </thead>
@@ -201,7 +201,7 @@ class RiskProfit extends Component {
                   <th onClick={common.tableSort.bind(this, 'selection')} className="hidden-xs" >Seleção</th>
                   <th onClick={common.tableSort.bind(this, 'stake')} >Aposta</th>
                   <th onClick={common.tableSort.bind(this, 'odds')} >Cotação</th>
-                  <th onClick={common.tableSort.bind(this, 'result')} className="text-center" >Resultado</th>
+                  <th onClick={common.tableSort.bind(this, 'result')} className="text-center" >Res</th>
                 </tr>
               </thead>
               <tbody>

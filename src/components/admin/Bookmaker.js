@@ -115,7 +115,7 @@ class Bookmaker extends Component {
                 <th onClick={common.tableSort.bind(this, 'name')} >Nome</th>
                 <th onClick={common.tableSort.bind(this, 'partner')} >Parceiro</th>
                 <th onClick={common.tableSort.bind(this, 'matrix_name')} >Matriz</th>
-                <th onClick={common.tableSort.bind(this, 'logins')} >logins</th>
+                <th onClick={common.tableSort.bind(this, 'logins')} >Contas</th>
                 <th onClick={common.tableSort.bind(this, 'active')} className="td-min" >Ativo</th>
               </tr>
             </thead>
