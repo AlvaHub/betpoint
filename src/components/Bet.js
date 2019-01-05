@@ -162,6 +162,7 @@ class Bet extends Component {
   }
 
   render() {
+
     return (
       <React.Fragment>
         <div className="filter" id="filter" >
@@ -170,7 +171,7 @@ class Bet extends Component {
               <input type="text" className="form-control form-control-sm" placeholder="Buscar..." onChange={this.filter.bind(this)} />
             </div>
             <div className="col-6 col-sm-3 p-1">
-              <DayPickerInput name="date_from"
+              <DayPickerInput name="date_from"     dayPickerProps={{ selectedDay: this.state.date_from }}
                 placeholder={formatDate(this.state.date_from, 'DD/MM/YYYY')} onDayChange={this.handleDayChange.bind(this)} parseDate={parseDate} formatDate={formatDate}
                 dayPickerProps={{ locale: 'pt-br', localeUtils: MomentLocaleUtils }} inputProps={{ readOnly: true }} />
             </div>
