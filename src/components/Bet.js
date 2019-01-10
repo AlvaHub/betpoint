@@ -7,6 +7,7 @@ import 'react-day-picker/lib/style.css';
 import MomentLocaleUtils, { formatDate, parseDate } from 'react-day-picker/moment';
 import 'moment/locale/pt-br';
 
+
 class Bet extends Component {
   constructor(props) {
     super(props);
@@ -15,7 +16,7 @@ class Bet extends Component {
     this.barList();
   }
   barList() {
-    this.props.changeTitle({ left: <div><i className="fas fa-futbol"></i> HULK BET</div>, center: 'Consolidado' });
+    this.props.changeTitle({ left: null, center: 'Consolidado', right: <div className="" onClick={this.showFilter.bind(this)}><i className="fas fa-filter show-xs"></i></div> });
   }
   barForm = (title) => {
     this.props.changeTitle({ left: <div className="btn-back" onClick={() => this.back()}><i className="fas fa-arrow-alt-circle-left"></i> Voltar</div>, center: title });
@@ -23,19 +24,9 @@ class Bet extends Component {
   back() {
     this.barList();
     document.getElementById('detail').className = 'form  pb-0 go';
-    document.getElementById('list').className = '';
-    document.getElementById('filter').className = 'filter';
+    document.getElementById('list').className = 'div-table-consolidado';
+    document.getElementById('filter').className = 'filter hidden-xs';
     common.scrollLast();
-
-  }
-  newData() {
-    common.scrollTop();
-    this.setState({ data: this.getNewData() });
-    document.getElementById('new').className = 'form  pb-0 come';
-    document.getElementById('list').className = 'hidden';
-    document.getElementById('filter').className = 'hidden';
-    this.barForm();
-
 
   }
   viewDetail(item) {
@@ -49,7 +40,10 @@ class Bet extends Component {
     document.getElementById("table-detail-body").innerHTML = document.getElementById(item.conta).outerHTML;
     document.getElementById("table-detail-body-xs").innerHTML = document.getElementById(item.conta + '-xs').outerHTML;
 
-    common.getData('detail-by-login/' + item.conta).then((data) => {
+    let date_from = formatDate(this.state.date_from, "YYYY-MM-DD");
+    let date_to = formatDate(this.state.date_to, "YYYY-MM-DD");
+
+    common.getData('detail-by-login/' + item.conta + '/' + date_from + '/' + date_to).then((data) => {
       this.props.hide();
       common.scrollTop();
       this.setState({ details: data })
@@ -78,7 +72,7 @@ class Bet extends Component {
     date_from: this.getLastMonday(),
     date_to: new Date(this.getLastMonday()).addDays(6)
   }
-  getLastMonday(){
+  getLastMonday() {
     var index = 0;
     var date_from = null;
     while (true || index < 7) {
@@ -92,7 +86,7 @@ class Bet extends Component {
   getNewData() {
 
     return {
-   
+
     }
   }
   handleChange = e => {
@@ -139,6 +133,11 @@ class Bet extends Component {
         document.getElementById(id).className = 'panel panel-go';
     }, 3000);
   }
+  showFilter() {
+    var css = document.getElementById('filter').className;
+    css = css.indexOf('hidden-xs') > 0 ? 'filter' : 'filter hidden-xs';
+    document.getElementById('filter').className = css;
+  }
   filter(e) {
     let items = [];
     if (e.target.value == '')
@@ -165,13 +164,13 @@ class Bet extends Component {
 
     return (
       <React.Fragment>
-        <div className="filter" id="filter" >
+        <div className="filter hidden-xs" id="filter" >
           <div className="row no-gutters" >
             <div className=" col-sm-6 p-1">
               <input type="text" className="form-control form-control-sm" placeholder="Buscar..." onChange={this.filter.bind(this)} />
             </div>
             <div className="col-6 col-sm-3 p-1">
-              <DayPickerInput name="date_from"     dayPickerProps={{ selectedDay: this.state.date_from }}
+              <DayPickerInput name="date_from" dayPickerProps={{ selectedDay: this.state.date_from }}
                 placeholder={formatDate(this.state.date_from, 'DD/MM/YYYY')} onDayChange={this.handleDayChange.bind(this)} parseDate={parseDate} formatDate={formatDate}
                 dayPickerProps={{ locale: 'pt-br', localeUtils: MomentLocaleUtils }} inputProps={{ readOnly: true }} />
             </div>
@@ -184,8 +183,8 @@ class Bet extends Component {
         </div>
         <div className="margin-top-filter margin-top-filter-xs" ></div>
 
-        <div id="list">
-          <table className="table table-dark table-hover table-bordered table-striped table-sm hidden-xs page-margin-bottom" >
+        <div id="list" className="div-table-consolidado">
+          <table className="table table-dark table-hover table-bordered table-striped table-sm table-consolidado table-scroll hidden-xs w-100" >
             <thead id="table-consolidado-head" >
               <tr>
                 <th onClick={common.tableSort.bind(this, 'conta')} >Conta</th>
@@ -197,7 +196,7 @@ class Bet extends Component {
                 <th onClick={common.tableSort.bind(this, 'pendente')} >Pendente</th>
                 <th onClick={common.tableSort.bind(this, 'um')} >uM</th>
                 <th onClick={common.tableSort.bind(this, 'parcial')} >Parcial</th>
-                <th onClick={common.tableSort.bind(this, 'comissão')} >Comissão</th>
+                <th onClick={common.tableSort.bind(this, 'comissão')} >Com</th>
                 <th onClick={common.tableSort.bind(this, 'total')} >Total</th>
                 <th onClick={common.tableSort.bind(this, 'profit_percent')} >%</th>
                 <th onClick={common.tableSort.bind(this, 'resultado')} >Resultado</th>
@@ -301,7 +300,7 @@ class Bet extends Component {
                     <tbody dangerouslySetInnerHTML={{ __html: x.detail }}></tbody>
                   </table>
                 </td>
-                <td>{x.placement_date}</td>
+                <td>{formatDate(x.placement_date, 'DD-MM-YY hh:mm:ss')}</td>
                 <td>{x.total_stake}</td>
                 <td>{x.total_return}</td>
                 <td className={x.total < 0 ? 'green' : 'red'}>{x.total}</td>
@@ -312,18 +311,16 @@ class Bet extends Component {
               </tr>)}
             </tbody>
           </table>
-          <table className="table table-dark table-bordered table-striped table-consolidado-login-xs table-sm mt-1 table-scroll show-xs" >
-            <thead>
-              <tr className="row-consolidado-login-xs">
-                <th onClick={common.tableSort.bind(this, 'total_stake')} >Stake</th>
-                <th onClick={common.tableSort.bind(this, 'total_return')} >Return</th>
-                <th onClick={common.tableSort.bind(this, 'total')} >Total</th>
-                <th onClick={common.tableSort.bind(this, 'odds')} >Odds</th>
-                <th onClick={common.tableSort.bind(this, 'comissao')} >Com</th>
-              </tr>
-            </thead>
-            <tbody>
-              {this.state.details.map(x => <React.Fragment key={x.id}  >
+          <div className="div-consolidado-login-xs mt-1 show-xs" >
+            {this.state.details.map(x => <table className="table table-dark table-bordered table-striped table-consolidado-login-xs table-sm  mb-1" key={x.id}  >
+              <tbody>
+                <tr className="row-consolidado-login-xs">
+                  <th onClick={common.tableSort.bind(this, 'total_stake')} >Stake</th>
+                  <th onClick={common.tableSort.bind(this, 'total_return')} >Return</th>
+                  <th onClick={common.tableSort.bind(this, 'total')} >Total</th>
+                  <th onClick={common.tableSort.bind(this, 'odds')} >Odds</th>
+                  <th onClick={common.tableSort.bind(this, 'comissao')} >Com</th>
+                </tr>
                 <tr className="row-consolidado-login-xs">
                   <td>{x.total_stake}</td>
                   <td>{x.total_return}</td>
@@ -335,17 +332,17 @@ class Bet extends Component {
                   <td colSpan="5" >
                     <div>
                       <b className="text-white">{x.bet_confirmation.split('<br>')[x.bet_confirmation.split('<br>').length - 1]}</b> -
-                      <b className="ml-1">Data:</b> {x.placement_date}
-                      <b className="ml-1">Status:</b> {x.data_betstatus}
+                      {formatDate(x.placement_date, 'DD-MM-YY hh:mm:ss')} -
+                      <b className="ml-1">{x.data_betstatus == 0 ? 'Encerrado' : 'Aberto'}</b>
                     </div>
                     <table className="table-detail w-100" >
                       <tbody dangerouslySetInnerHTML={{ __html: x.detail }}></tbody>
                     </table>
                   </td>
                 </tr>
-              </React.Fragment>)}
-            </tbody>
-          </table>
+              </tbody>
+            </table>)}
+          </div>
         </div>
         <ReactTooltip />
       </React.Fragment>

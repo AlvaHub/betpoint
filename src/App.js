@@ -10,10 +10,9 @@ import User from './components/admin/User';
 import Matrix from './components/admin/Matrix';
 import Betlogin from './components/admin/Betlogin';
 import Bookmaker from './components/admin/Bookmaker';
-import Airplane from './components/admin/Airplane';
 import Parameter from './components/admin/Parameter';
-
 import * as common from './components/Common';
+import MenuIcon from './components/MenuIcon'
 
 import { BrowserRouter,  Route } from 'react-router-dom'
 
@@ -21,14 +20,21 @@ class App extends Component {
   constructor(props) {
     super(props);
    
+    document.documentElement.style.setProperty('--window', `${window.innerHeight}px`);
+    window.addEventListener('resize', () => {
+      document.documentElement.style.setProperty('--window', `${window.innerHeight}px`);
+    });
     if (window.location.pathname !== '/login' && common.getUser() === null)
       return window.location.href = "/login";
+
   }
   state = {
-    title: { left: '', center: "I bet you bet!", right: '' },
+    title: { left: '', center: "Natan Sports", right: '' },
     loading: '',
   }
   changeTitleHandler = title => {
+
+    if(!title.left) title.left = window.location.pathname === '/login' || <MenuIcon />;
     this.setState({ title: title });
   }
   loadingShow = () => {
@@ -67,7 +73,6 @@ class App extends Component {
             <Route path="/admin/matrix" render={() => <Matrix changeTitle={this.changeTitleHandler} show={this.loadingShow} hide={this.loadingHide} />} />
             <Route path="/admin/betlogin" render={() => <Betlogin changeTitle={this.changeTitleHandler} show={this.loadingShow} hide={this.loadingHide} />} />
             <Route path="/admin/bookmaker" render={() => <Bookmaker changeTitle={this.changeTitleHandler} show={this.loadingShow} hide={this.loadingHide} />} />
-            <Route path="/admin/airplane" render={() => <Airplane changeTitle={this.changeTitleHandler} show={this.loadingShow} hide={this.loadingHide} />} />
             <Route path="/admin/parameter" render={() => <Parameter changeTitle={this.changeTitleHandler} show={this.loadingShow} hide={this.loadingHide} />} />
 
           </div>

@@ -1,3 +1,5 @@
+import React from 'react'
+
 var lastScroll = 0;
 
 export var api_url = (window.location.hostname === 'localhost' ? 'http://betpoint:8001/api/' : 'https://betpoint.websiteseguro.com/api/');
@@ -55,6 +57,9 @@ Date.prototype.addDays = function(days) {
     var date = new Date(this.valueOf());
     date.setDate(date.getDate() + days);
     return date;
+}
+export function newButton(){
+    return <i className="fas fa-edit mr-2"></i>
 }
 export function formatNumber(x) {
     if(x == null)return "";

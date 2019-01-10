@@ -18,7 +18,7 @@ class RiskProfit extends Component {
     this.barList();
   }
   barList() {
-    this.props.changeTitle({ left: <div><i className="fas fa-futbol"></i> HULK BET</div>, center: 'Risco e Lucro' });
+    this.props.changeTitle({ left: null, center: 'Risco e Lucro', right: <div className="" onClick={this.showFilter.bind(this)}><i className="fas fa-filter show-xs"></i></div>});
   }
   barForm = (title) => {
     this.props.changeTitle({ left: <div className="btn-back" onClick={() => this.back()}><i className="fas fa-arrow-alt-circle-left"></i> Voltar</div>, center: title });
@@ -27,7 +27,7 @@ class RiskProfit extends Component {
     this.barList();
     document.getElementById('detail').className = 'form go';
     document.getElementById('list').className = '';
-    document.getElementById('filter').className = 'filter';
+    document.getElementById('filter').className = 'filter hidden-xs';
     common.scrollLast();
 
   }
@@ -104,6 +104,11 @@ class RiskProfit extends Component {
     this.setState({ data })
 
   }
+  showFilter() {
+    var css = document.getElementById('filter').className;
+    css = css.indexOf('hidden-xs') > 0 ? 'filter' : 'filter hidden-xs';
+    document.getElementById('filter').className = css;
+  }
   filter(e) {
     let items = [];
     if (e.target.value == '')
@@ -117,6 +122,8 @@ class RiskProfit extends Component {
   }
   filterEvent(e) {
 
+    document.getElementById('filter').className = 'filter hidden-xs';
+    
     let items = [];
     if (e.target.value == '')
       items = this.state.itemsAll;
@@ -139,7 +146,7 @@ class RiskProfit extends Component {
   render() {
     return (
       <React.Fragment>
-        <div className="filter" id="filter" >
+        <div className="filter hidden-xs" id="filter" >
           <div className="row no-gutters" >
             <div className="col-12 col-sm-6 p-1">
               <select className="form-control form-control-sm" name="event_name" value={this.state.event_name} onChange={this.filterEvent.bind(this)} >
@@ -177,9 +184,9 @@ class RiskProfit extends Component {
                 <td className={x.draw_value == 0 ? "hidden-xs yellow" : x.draw_value < 0 ? 'hidden-xs red' : 'hidden-xs green'}>{common.formatNumber(x.draw_value)}</td>
                 <td className={x.visitor_value == 0 ? "hidden-xs yellow" : x.visitor_value < 0 ? 'hidden-xs red' : 'hidden-xs green'}>{common.formatNumber(x.visitor_value)}</td>
                 <td className="show-xs">
-                  <div><b>C:</b> <span className={x.home_value == 0 ? "yellow" : x.home_value < 0 ? 'red' : 'green'} >{common.formatNumber(x.home_value)}</span></div>
-                  <div><b>E:</b> <span className={x.draw_value == 0 ? "yellow" : x.draw_value < 0 ? 'red' : 'green'} >{common.formatNumber(x.draw_value)}</span></div>
-                  <div><b>V:</b> <span className={x.visitor_value == 0 ? "yellow" : x.visitor_value < 0 ? 'red' : 'green'} >{common.formatNumber(x.visitor_value)}</span></div>
+                  <div className="no-break"><b>C:</b> <span className={x.home_value == 0 ? "yellow" : x.home_value < 0 ? 'red' : 'green'} >{common.formatNumber(x.home_value)}</span></div>
+                  <div className="no-break"><b>E:</b> <span className={x.draw_value == 0 ? "yellow" : x.draw_value < 0 ? 'red' : 'green'} >{common.formatNumber(x.draw_value)}</span></div>
+                  <div className="no-break"><b>V:</b> <span className={x.visitor_value == 0 ? "yellow" : x.visitor_value < 0 ? 'red' : 'green'} >{common.formatNumber(x.visitor_value)}</span></div>
                 </td>
               </tr>)}
             </tbody>
@@ -207,7 +214,7 @@ class RiskProfit extends Component {
               <tbody>
                 {this.state.details.map((x, i) => <tr key={x.id}  >
                   <td>{i + 1}</td>
-                  <td>{x.event_name}<div className="show-xs"><b>{x.selection}</b></div></td>
+                  <td>{x.event_name}<div className="show-xs  yellow"><b>{x.selection}</b></div></td>
                   <td className="hidden-xs">{x.selection}</td>
                   <td>{common.formatNumber(x.stake)}</td>
                   <td>{common.formatNumber(x.odds)}</td>

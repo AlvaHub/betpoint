@@ -22,7 +22,7 @@ class Bookmaker extends Component {
 
   }
   barList() {
-    this.props.changeTitle({ left: <div><i className="fas fa-futbol"></i> HULK BET</div>, center: 'Clientes', right: <button type="button" onClick={this.newData.bind(this)} className="btn-right">Novo</button> });
+    this.props.changeTitle({ left: null, center: 'Clientes', right: <div  onClick={this.newData.bind(this)} >{common.newButton()}</div>  });
   }
   barForm = () => {
     this.props.changeTitle({ left: <div className="btn-back" onClick={this.back.bind(this)}><i className="fas fa-arrow-alt-circle-left"></i> Voltar</div> });
@@ -44,7 +44,7 @@ class Bookmaker extends Component {
   back() {
     this.barList();
     document.getElementById('new').className = 'form go';
-    document.getElementById('list').className = 'div-table';
+    document.getElementById('list').className = 'table-responsive';
     document.getElementById('filter').className = 'filter';
     common.scrollLast();
   }
@@ -108,8 +108,9 @@ class Bookmaker extends Component {
         <div className="filter" id="filter" >
           <input type="text" className="form-control form-control-sm col-md-8 offset-md-2" placeholder="Buscar..." onChange={this.filter.bind(this)} />
         </div>
-        <div id="list" className="div-table">
-          <table className="table table-light table-hover table-bordered table-striped table-sm" >
+        <div className="div-table" ></div>
+        <div id="list" className="table-responsive">
+          <table className="table table-dark table-hover table-bordered table-striped table-sm" >
             <thead>
               <tr>
                 <th onClick={common.tableSort.bind(this, 'name')} >Nome</th>
