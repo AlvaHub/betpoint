@@ -4,6 +4,7 @@ import './App.css';
 import Menu from './components/Menu';
 import Bet from './components/Bet';
 import RiskProfit from './components/RiskProfit';
+import RiskProfitCEV from './components/RiskProfitCEV';
 import Login from './components/Login';
 import loadingImage from './images/loading-spinner.svg';
 import User from './components/admin/User';
@@ -68,6 +69,7 @@ class App extends Component {
             <Route path="/login" render={() => <Login changeTitle={this.changeTitleHandler} show={this.loadingShow} hide={this.loadingHide} />} />
             <Route path="/" exact render={() => <Bet changeTitle={this.changeTitleHandler} show={this.loadingShow} hide={this.loadingHide} />} />
             <Route path="/risk-profit" render={() => <RiskProfit changeTitle={this.changeTitleHandler} show={this.loadingShow} hide={this.loadingHide} />} />
+            <Route path="/risk-profit-cev" render={() => <RiskProfitCEV changeTitle={this.changeTitleHandler} show={this.loadingShow} hide={this.loadingHide} />} />
             <Route path="/default" />
             <Route path="/admin/user" render={() => <User changeTitle={this.changeTitleHandler} show={this.loadingShow} hide={this.loadingHide} />} />
             <Route path="/admin/matrix" render={() => <Matrix changeTitle={this.changeTitleHandler} show={this.loadingShow} hide={this.loadingHide} />} />

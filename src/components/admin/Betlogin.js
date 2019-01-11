@@ -126,6 +126,7 @@ class Betlogin extends Component {
           <table className="table table-dark table-hover table-bordered table-striped table-sm text-center w-100" >
             <thead>
               <tr>
+                <th onClick={common.tableSort.bind(this, 'dat_loaded')} >Atualização</th>
                 <th onClick={common.tableSort.bind(this, 'login_name')} >Login</th>
                 <th onClick={common.tableSort.bind(this, 'password_name')} >Senha</th>
                 <th onClick={common.tableSort.bind(this, 'bookmaker_name')} >Cliente</th>
@@ -137,6 +138,7 @@ class Betlogin extends Component {
             </thead>
             <tbody>
               {this.state.items.map(x => <tr key={x.id} onClick={this.editData.bind(this, x)} >
+                <td>{x.dat_loaded}</td>
                 <td>{x.login_name}</td>
                 <td>{x.password_name}</td>
                 <td>{x.bookmaker_name}</td>

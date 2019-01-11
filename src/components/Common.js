@@ -2,7 +2,7 @@ import React from 'react'
 
 var lastScroll = 0;
 
-export var api_url = (window.location.hostname === 'localhost' ? 'http://betpoint:8001/api/' : 'https://betpoint.websiteseguro.com/api/');
+export var api_url = (window.location.hostname === 'localhost' ? 'http://betpoint:8001/api/' : 'https://natansports.websiteseguro.com/api/');
 
 function scrollTop() {
     lastScroll = window.scrollY;
@@ -36,9 +36,9 @@ export function tableSort(key) {
 }
 export function tableSortNumber(key) {
 
-    let data = this.state.sortField === key ? 
-    this.state.items.sort((a, b) =>  b[key] - a[key]) :
-    this.state.items.sort((a, b) =>  a[key] - b[key]) ;
+    let data = this.state.sortField === key ?
+        this.state.items.sort((a, b) => b[key] - a[key]) :
+        this.state.items.sort((a, b) => a[key] - b[key]);
 
     this.setState({ items: data, sortField: (key === this.state.sortField ? '' : key) });
 }
@@ -53,20 +53,39 @@ export function getUser() {
     var user = localStorage.getItem("user");
     return user ? JSON.parse(user) : null;
 }
-Date.prototype.addDays = function(days) {
+Date.prototype.addDays = function (days) {
     var date = new Date(this.valueOf());
     date.setDate(date.getDate() + days);
     return date;
 }
-export function newButton(){
+export function newButton() {
     return <i className="fas fa-edit mr-2"></i>
 }
 export function formatNumber(x) {
-    if(x == null)return "";
+    if (x == null) return "";
     var parts = x.toString().split(".");
     if (parts.length == 1)
-      parts.push("00");
+        parts.push("00");
+    if (parts[1].length > 2)
+        parts[1] = parts[1].substring(0, 2);
+
     parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ".");
     return parts.join(",");
-  }
+}
+Array.prototype.sum = function (prop, color) {
+    var total = 0;
+    for (var i = 0, _len = this.length; i < _len; i++) {
+        total += isNaN(this[i][prop]) ? 0 : Number(this[i][prop]);
+    }
+    if (color)
+        return <span className={total == 0 ? "yellow" : total < 0 ? 'red' : 'green'} >{formatNumber(total)}</span>;
+    return formatNumber(total);
+}
+Array.prototype.sumInt = function (prop) {
+    var total = 0;
+    for (var i = 0, _len = this.length; i < _len; i++) {
+        total += isNaN(this[i][prop]) ? 0 : Number(this[i][prop]);
+    }
+    return total;
+}
 export { scrollTop, scrollLast, getData, postData } 

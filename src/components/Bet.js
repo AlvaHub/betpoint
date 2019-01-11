@@ -16,7 +16,7 @@ class Bet extends Component {
     this.barList();
   }
   barList() {
-    this.props.changeTitle({ left: null, center: 'Consolidado', right: <div className="" onClick={this.showFilter.bind(this)}><i className="fas fa-filter show-xs"></i></div> });
+    this.props.changeTitle({ left: null, center: <div className="pointer" onClick={this.bindList.bind(this)} >Consolidado</div>, right: <div className="" onClick={this.showFilter.bind(this)}><i className="fas fa-filter show-xs"></i></div> });
   }
   barForm = (title) => {
     this.props.changeTitle({ left: <div className="btn-back" onClick={() => this.back()}><i className="fas fa-arrow-alt-circle-left"></i> Voltar</div>, center: title });
@@ -24,7 +24,7 @@ class Bet extends Component {
   back() {
     this.barList();
     document.getElementById('detail').className = 'form  pb-0 go';
-    document.getElementById('list').className = 'div-table-consolidado';
+    document.getElementById('list').className = '';
     document.getElementById('filter').className = 'filter hidden-xs';
     common.scrollLast();
 
@@ -183,63 +183,80 @@ class Bet extends Component {
         </div>
         <div className="margin-top-filter margin-top-filter-xs" ></div>
 
-        <div id="list" className="div-table-consolidado">
-          <table className="table table-dark table-hover table-bordered table-striped table-sm table-consolidado table-scroll hidden-xs w-100" >
-            <thead id="table-consolidado-head" >
-              <tr>
-                <th onClick={common.tableSort.bind(this, 'conta')} >Conta</th>
-                <th onClick={common.tableSort.bind(this, 'cliente')} >Cliente</th>
-                <th onClick={common.tableSort.bind(this, 'qtd')} >Qtd</th>
-                <th onClick={common.tableSort.bind(this, 'volume')} >Volume</th>
-                <th onClick={common.tableSort.bind(this, 'vale')} >Vale</th>
-                <th onClick={common.tableSort.bind(this, 'atual')} >Atual</th>
-                <th onClick={common.tableSort.bind(this, 'pendente')} >Pendente</th>
-                <th onClick={common.tableSort.bind(this, 'um')} >uM</th>
-                <th onClick={common.tableSort.bind(this, 'parcial')} >Parcial</th>
-                <th onClick={common.tableSort.bind(this, 'comissão')} >Com</th>
-                <th onClick={common.tableSort.bind(this, 'total')} >Total</th>
-                <th onClick={common.tableSort.bind(this, 'profit_percent')} >%</th>
-                <th onClick={common.tableSort.bind(this, 'resultado')} >Resultado</th>
-              </tr>
-            </thead>
-            <tbody>
-              {this.state.items.map(x => <tr key={x.conta} id={x.conta} onClick={this.viewDetail.bind(this, x)} >
-                <td>{x.conta}</td>
-                <td>{x.cliente}</td>
-                <td>{x.qtd}</td>
-                <td className={x.volume == 0 ? "yellow" : x.volume < 0 ? 'red' : 'green'} >{common.formatNumber(x.volume)}</td>
-                <td>{x.vale}</td>
-                <td>{x.atual}</td>
-                <td>{x.pendente}</td>
-                <td>{x.um}</td>
-                <td>{common.formatNumber(x.parcial)}</td>
-                <td>{x.comissão}</td>
-                <td className={x.total == 0 ? "yellow" : x.total < 0 ? 'red' : 'green'} >{common.formatNumber(x.total)}</td>
-                <td>{x.profit_percent}</td>
-                <td className={x.resultado == 0 ? "" : x.resultado < 0 ? 'red' : 'green'} >{common.formatNumber(x.resultado)}</td>
-              </tr>)}
-            </tbody>
-          </table>
+        <div id="list">
+          <div className="div-table-consolidado" >
+            <table className="table table-dark table-hover table-bordered table-striped table-sm table-consolidado table-scroll hidden-xs w-100" >
+              <thead id="table-consolidado-head" >
+                <tr>
+                  <th onClick={common.tableSort.bind(this, 'conta')} >Conta</th>
+                  <th onClick={common.tableSort.bind(this, 'cliente')} >Cliente</th>
+                  <th onClick={common.tableSortNumber.bind(this, 'qtd')} >Qtd</th>
+                  <th onClick={common.tableSortNumber.bind(this, 'volume')} >Volume</th>
+                  <th onClick={common.tableSortNumber.bind(this, 'vale')} >Vale</th>
+                  <th onClick={common.tableSortNumber.bind(this, 'atual')} >Atual</th>
+                  <th onClick={common.tableSortNumber.bind(this, 'pendente')} >Pend</th>
+                  <th onClick={common.tableSortNumber.bind(this, 'um')} >uM</th>
+                  <th onClick={common.tableSortNumber.bind(this, 'parcial')} >Parcial</th>
+                  <th onClick={common.tableSortNumber.bind(this, 'comissao')} >Com</th>
+                  <th onClick={common.tableSortNumber.bind(this, 'total')} >Total</th>
+                  <th onClick={common.tableSortNumber.bind(this, 'profit_percent')} >%</th>
+                  <th onClick={common.tableSortNumber.bind(this, 'resultado')} >Resultado</th>
+                </tr>
+                <tr className="font-xs totals">
+                  <th></th>
+                  <th></th>
+                  <th>{this.state.items.sumInt('qtd')}</th>
+                  <th>{this.state.items.sum('volume')}</th>
+                  <th>{this.state.items.sum('vale')}</th>
+                  <th>{this.state.items.sum('atual')}</th>
+                  <th>{this.state.items.sum('pendente', true)}</th>
+                  <th></th>
+                  <th>{this.state.items.sum('parcial', true)}</th>
+                  <th>{this.state.items.sum('comissao')}</th>
+                  <th>{this.state.items.sum('total', true)}</th>
+                  <th></th>
+                  <th>{this.state.items.sum('resultado', true)}</th>
+                </tr>
+              </thead>
+              <tbody>
+                {this.state.items.map((x, i) => <tr key={i} id={x.conta} onClick={this.viewDetail.bind(this, x)} >
+                  <td>{x.conta}</td>
+                  <td>{x.cliente}</td>
+                  <td>{x.qtd}</td>
+                  <td className={x.volume == 0 ? "yellow" : x.volume < 0 ? 'red' : 'green'} >{common.formatNumber(x.volume)}</td>
+                  <td>{x.vale}</td>
+                  <td>{x.atual}</td>
+                  <td>{x.pendente}</td>
+                  <td>{x.um}</td>
+                  <td>{common.formatNumber(x.parcial)}</td>
+                  <td>{x.comissão}</td>
+                  <td className={x.total == 0 ? "yellow" : x.total < 0 ? 'red' : 'green'} >{common.formatNumber(x.total)}</td>
+                  <td>{x.profit_percent}</td>
+                  <td className={x.resultado == 0 ? "" : x.resultado < 0 ? 'red' : 'green'} >{common.formatNumber(x.resultado)}</td>
+                </tr>)}
+              </tbody>
+            </table>
+          </div>
           <table className="table table-dark table-hover table-bordered table-striped table-sm show-xs table-consolidado-xs table-scroll" >
             <thead id="table-consolidado-head-xs">
               <tr>
                 <th>
                   <div className="row no-gutters" >
-                    <div className="col-3" onClick={common.tableSort.bind(this, 'volume')} >Vol</div>
-                    <div className="col-3" onClick={common.tableSort.bind(this, 'vale')} >Vale</div>
-                    <div className="col-3" onClick={common.tableSort.bind(this, 'atual')} >Atual</div>
-                    <div className="col-3" onClick={common.tableSort.bind(this, 'pendente')} >Pend</div>
+                    <div className="col-3" onClick={common.tableSortNumber.bind(this, 'volume')} >Vol<small>{this.state.items.sum('volume')}</small> </div>
+                    <div className="col-3" onClick={common.tableSortNumber.bind(this, 'vale')} >Vale<small>{this.state.items.sum('vale')}</small></div>
+                    <div className="col-3" onClick={common.tableSortNumber.bind(this, 'atual')} >Atual<small>{this.state.items.sum('atual')}</small></div>
+                    <div className="col-3" onClick={common.tableSortNumber.bind(this, 'pendente')} >Pend<small>{this.state.items.sum('pendente', true)}</small></div>
                     <div className="w-100" ></div>
-                    <div className="col-3" onClick={common.tableSort.bind(this, 'parcial')} >Parc</div>
-                    <div className="col-3" onClick={common.tableSort.bind(this, 'comissão')} >Com</div>
-                    <div className="col-3" onClick={common.tableSort.bind(this, 'total')} >Tot</div>
-                    <div className="col-3" onClick={common.tableSort.bind(this, 'resultado')} >Res</div>
+                    <div className="col-3" onClick={common.tableSortNumber.bind(this, 'parcial')} >Parc<small>{this.state.items.sum('parcial', true)}</small></div>
+                    <div className="col-3" onClick={common.tableSortNumber.bind(this, 'comissao')} >Com<small>{this.state.items.sum('comissao')}</small></div>
+                    <div className="col-3" onClick={common.tableSortNumber.bind(this, 'total')} >Tot<small>{this.state.items.sum('total', true)}</small></div>
+                    <div className="col-3" onClick={common.tableSortNumber.bind(this, 'resultado')} >Res<small>{this.state.items.sum('resultado', true)}</small></div>
                   </div>
                 </th>
               </tr>
             </thead>
             <tbody>
-              {this.state.items.map(x => <tr key={x.conta} id={x.conta + '-xs'} onClick={this.viewDetail.bind(this, x)} >
+              {this.state.items.map((x, i) => <tr key={i} id={x.conta + '-xs'} onClick={this.viewDetail.bind(this, x)} >
                 <td>
                   <div className="row no-gutters" >
                     <div className="col-12 text-left pl-1" ><b>{x.conta} - {x.cliente} - {x.um} - {x.profit_percent}% - {x.qtd}</b></div>
@@ -331,8 +348,8 @@ class Bet extends Component {
                 <tr>
                   <td colSpan="5" >
                     <div>
-                      <b className="text-white">{x.bet_confirmation.split('<br>')[x.bet_confirmation.split('<br>').length - 1]}</b> -
-                      {formatDate(x.placement_date, 'DD-MM-YY hh:mm:ss')} -
+                      <b className="text-white">{x.bet_confirmation.split('<br>')[x.bet_confirmation.split('<br>').length - 1]}</b> - 
+                      <span className="ml-1">{formatDate(x.placement_date, 'DD-MM-YY hh:mm:ss')}</span> -
                       <b className="ml-1">{x.data_betstatus == 0 ? 'Encerrado' : 'Aberto'}</b>
                     </div>
                     <table className="table-detail w-100" >

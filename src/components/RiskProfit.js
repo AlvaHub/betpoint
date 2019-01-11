@@ -1,12 +1,8 @@
 import React, { Component } from 'react';
 import { withRouter } from 'react-router-dom';
-// HCY=Y
-import DateCombo from './DateCombo'
-import CurrencyFormat from 'react-currency-format';
 import * as common from './Common';
-import ReactTooltip from 'react-tooltip';
-import DayPickerInput from 'react-day-picker/DayPickerInput';
 import 'react-day-picker/lib/style.css';
+import DayPickerInput from 'react-day-picker/DayPickerInput';
 import MomentLocaleUtils, { formatDate, parseDate } from 'react-day-picker/moment';
 import 'moment/locale/pt-br';
 
@@ -18,7 +14,7 @@ class RiskProfit extends Component {
     this.barList();
   }
   barList() {
-    this.props.changeTitle({ left: null, center: 'Risco e Lucro', right: <div className="" onClick={this.showFilter.bind(this)}><i className="fas fa-filter show-xs"></i></div>});
+    this.props.changeTitle({ left: null, center: 'Risco e Lucro', right: <div className="" onClick={this.showFilter.bind(this)}><i className="fas fa-filter show-xs"></i></div> });
   }
   barForm = (title) => {
     this.props.changeTitle({ left: <div className="btn-back" onClick={() => this.back()}><i className="fas fa-arrow-alt-circle-left"></i> Voltar</div>, center: title });
@@ -65,8 +61,7 @@ class RiskProfit extends Component {
     var that = this;
     let date_from = formatDate(this.state.date_from, "YYYY-MM-DD");
     let date_to = formatDate(this.state.date_to, "YYYY-MM-DD");
-    common.getData('combo/risk-profit-event').then((events) => { this.setState({ events }); });
-    common.postData(`report/risk-profit`, "").then((data) => { that.props.hide(); this.setState({ items: data, itemsAll: data }) });
+    common.getData(`report/risk-profit`).then((data) => { that.props.hide(); this.setState({ items: data, itemsAll: data }) });
   }
   componentDidMount() {
 
@@ -91,12 +86,6 @@ class RiskProfit extends Component {
       index--;
     }
     return date_from;
-  }
-  getNewData() {
-
-    return {
-
-    }
   }
   handleChange = e => {
     let data = this.state.data;
@@ -123,7 +112,7 @@ class RiskProfit extends Component {
   filterEvent(e) {
 
     document.getElementById('filter').className = 'filter hidden-xs';
-    
+
     let items = [];
     if (e.target.value == '')
       items = this.state.itemsAll;
@@ -144,90 +133,62 @@ class RiskProfit extends Component {
   }
 
   render() {
+
     return (
       <React.Fragment>
-        <div className="filter hidden-xs" id="filter" >
+        <div className="filter hidden" id="filter" >
           <div className="row no-gutters" >
-            <div className="col-12 col-sm-6 p-1">
-              <select className="form-control form-control-sm" name="event_name" value={this.state.event_name} onChange={this.filterEvent.bind(this)} >
-                <option value="" >Eventos</option>
-                {this.state.events.map((x, i) => <option key={i} value={x.event_date + ' - ' + x.event_key} >{x.event_date + ' - ' + x.event_key}</option>)}
-              </select>
+          <div className="col-6 col-sm-3 p-1">
+              <DayPickerInput name="date_from" dayPickerProps={{ selectedDay: this.state.date_from }}
+                placeholder={formatDate(this.state.date_from, 'DD/MM/YYYY')} onDayChange={this.handleDayChange.bind(this)} parseDate={parseDate} formatDate={formatDate}
+                dayPickerProps={{ locale: 'pt-br', localeUtils: MomentLocaleUtils }} inputProps={{ readOnly: true }} />
             </div>
-            <div className="col-12 col-sm-6 p-1">
-              <input type="text" className="form-control form-control-sm" placeholder="Buscar..." onChange={this.filter.bind(this)} />
+            <div className="col-6 col-sm-3 p-1 date-to">
+              <DayPickerInput name="date_to"
+                placeholder={formatDate(this.state.date_to, 'DD/MM/YYYY')} onDayChange={this.handleDayChange.bind(this)} parseDate={parseDate} formatDate={formatDate}
+                dayPickerProps={{ locale: 'pt-br', localeUtils: MomentLocaleUtils }} inputProps={{ readOnly: true }} />
             </div>
           </div>
         </div>
-        <div className="margin-top-filter margin-top-filter-xs" ></div>
-        <div id="list">
+        <div className="margin-top-filter-xs" ></div>
+        <div id="list" className="table-responsive">
           <table className="table table-dark table-hover table-bordered table-striped table-sm" >
             <thead id="table-risk-profit-head" >
               <tr>
-                <th>NR</th>
-                <th onClick={common.tableSort.bind(this, 'event')} >Evento</th>
-                <th onClick={common.tableSort.bind(this, 'date')} className="hidden-xs">Data</th>
-                <th onClick={common.tableSortNumber.bind(this, 'bet_count')} >Qtd</th>
-                <th onClick={common.tableSortNumber.bind(this, 'home_value')} className="hidden-xs">Casa</th>
-                <th onClick={common.tableSortNumber.bind(this, 'draw_value')} className="hidden-xs">Empate</th>
-                <th onClick={common.tableSortNumber.bind(this, 'visitor_value')} className="hidden-xs">Visitante</th>
+                <th onClick={common.tableSort.bind(this, 'event')} >Qtd</th>
+                <th onClick={common.tableSort.bind(this, 'selection')} >Seleção</th>
+                <th onClick={common.tableSortNumber.bind(this, 'event_name')} >Evento</th>
+                <th onClick={common.tableSortNumber.bind(this, 'placement_date')} >Registro</th>
+                <th onClick={common.tableSortNumber.bind(this, 'event_date')}>Data Evento</th>
+                <th onClick={common.tableSortNumber.bind(this, 'total_stake')} >Aposta</th>
+                <th onClick={common.tableSortNumber.bind(this, 'total_return_potential')} >Retorno</th>
+                <th onClick={common.tableSortNumber.bind(this, 'risk')} >Risco</th>
+                <th onClick={common.tableSortNumber.bind(this, 'profit')} >Lucro</th>
+                <th onClick={common.tableSortNumber.bind(this, 'login_name')} >Conta</th>
+                <th onClick={common.tableSortNumber.bind(this, 'bookmaker_name')}>Responsável</th>
                 <th className="show-xs">Valores</th>
               </tr>
             </thead>
             <tbody>
-              {this.state.items.map((x, i) => <tr key={i} id={x.event + '_' + x.date} onClick={this.viewDetail.bind(this, x)} >
+              {this.state.items.map((x, i) => <tr key={i} id={x.event + '_' + x.date} >
                 <td>{i + 1}</td>
-                <td>{x.event}<div className="show-xs" >{x.date}</div></td>
-                <td className="hidden-xs"  >{x.date}</td>
-                <td>{x.bet_count}</td>
-                <td className={x.home_value == 0 ? "hidden-xs yellow" : x.home_value < 0 ? 'hidden-xs red' : 'hidden-xs green'} >{common.formatNumber(x.home_value)}</td>
-                <td className={x.draw_value == 0 ? "hidden-xs yellow" : x.draw_value < 0 ? 'hidden-xs red' : 'hidden-xs green'}>{common.formatNumber(x.draw_value)}</td>
-                <td className={x.visitor_value == 0 ? "hidden-xs yellow" : x.visitor_value < 0 ? 'hidden-xs red' : 'hidden-xs green'}>{common.formatNumber(x.visitor_value)}</td>
-                <td className="show-xs">
-                  <div className="no-break"><b>C:</b> <span className={x.home_value == 0 ? "yellow" : x.home_value < 0 ? 'red' : 'green'} >{common.formatNumber(x.home_value)}</span></div>
-                  <div className="no-break"><b>E:</b> <span className={x.draw_value == 0 ? "yellow" : x.draw_value < 0 ? 'red' : 'green'} >{common.formatNumber(x.draw_value)}</span></div>
-                  <div className="no-break"><b>V:</b> <span className={x.visitor_value == 0 ? "yellow" : x.visitor_value < 0 ? 'red' : 'green'} >{common.formatNumber(x.visitor_value)}</span></div>
-                </td>
+                <td>{x.bet_confirmation.split('<br>').map((x,b) => <div className="no-break" key={b}>{x}</div>)}</td>
+                <td>{x.event_names.split(',').map((x,n) => <div className="no-break" key={n}>{x}</div>)}</td>
+                <td className="middle">{formatDate(x.placement_date, 'DD-MM-YY hd:mm:ss')}</td>
+                <td>{x.event_dates.split(',').map((x,d) => <div className="no-break" key={d}>{formatDate(x, 'DD-MM-YY')}</div>)}</td>
+                <td className="middle">{common.formatNumber(x.total_stake)}</td>
+                <td className="middle">{common.formatNumber(x.total_return_potential)}</td>
+                <td className="middle">{common.formatNumber(x.risk)}</td>
+                <td className="middle">{common.formatNumber(x.profit)}</td>
+                <td className="middle">{x.login_name}</td>
+                <td className="middle">{x.bookmaker_name}</td>
               </tr>)}
             </tbody>
           </table>
-        </div>
-        <div id="detail" className="form">
-          <div className="table-responsive" >
-            <table className="table table-dark table-hover table-bordered table-striped table-sm mt-1" >
-              <thead id="table-detail-head" >
-              </thead>
-              <tbody id="table-detail-body" >
-              </tbody>
-            </table>
-            <table className="table table-dark table-bordered table-striped table-sm mt-1" >
-              <thead>
-                <tr>
-                  <th >NR</th>
-                  <th onClick={common.tableSort.bind(this, 'event_name')} >Evento</th>
-                  <th onClick={common.tableSort.bind(this, 'selection')} className="hidden-xs" >Seleção</th>
-                  <th onClick={common.tableSort.bind(this, 'stake')} >Aposta</th>
-                  <th onClick={common.tableSort.bind(this, 'odds')} >Cotação</th>
-                  <th onClick={common.tableSort.bind(this, 'result')} className="text-center" >Res</th>
-                </tr>
-              </thead>
-              <tbody>
-                {this.state.details.map((x, i) => <tr key={x.id}  >
-                  <td>{i + 1}</td>
-                  <td>{x.event_name}<div className="show-xs  yellow"><b>{x.selection}</b></div></td>
-                  <td className="hidden-xs">{x.selection}</td>
-                  <td>{common.formatNumber(x.stake)}</td>
-                  <td>{common.formatNumber(x.odds)}</td>
-                  <td className={'text-center ' + x.result.substr(0, 4)}>{x.result}</td>
-                </tr>)}
-              </tbody>
-            </table>
-          </div>
         </div>
         <div className="page-margin-bottom" ></div>
       </React.Fragment>
     );
   }
 }
-
 export default withRouter(RiskProfit);

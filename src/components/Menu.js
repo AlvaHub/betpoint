@@ -20,22 +20,13 @@ class Menu extends Component {
     }
 
   }
-  redirectLastLeg() {
-    this.props.show();
-    common.getData('flight-leg-last').then((data) => {
-      this.props.hide();
-      if (data === "0")
-        return alert('Ainda não há nenhum trecho cadastrado');
-      this.redirect('/leg-expense/' + data.flight_id + '/' + data.id + '?id=new');
-    });
-  }
   render() {
 
     return (
       <React.Fragment>
         <div className="menu-more " id="menu-more" >
           <div className="text-center mb-3 logo-text">
-            NATAN SPORTS
+            NATAN SPORTS 
             {/* <div className="logo-icons">
               <i className="fas fa-futbol"></i>
               <i className="fas fa-volleyball-ball"></i>
@@ -51,7 +42,10 @@ class Menu extends Component {
               <div onClick={this.redirect.bind(this, '/')}  ><i className="fas fa-futbol"></i> Consolidado</div>
             </div>
             <div>
-              <div onClick={this.redirect.bind(this, '/risk-profit')}  ><i className="fas fa-chart-bar"></i> Risco</div>
+              <div onClick={this.redirect.bind(this, '/risk-profit')}  ><i className="fas fa-chart-line"></i> Risco e Lucro</div>
+            </div>
+            <div>
+              <div onClick={this.redirect.bind(this, '/risk-profit-cev')}  ><i className="fas fa-chart-bar"></i> Risco CEV</div>
             </div>
             <div>
               <div onClick={this.redirect.bind(this, '/admin/betlogin')}  ><i className="fas fa-key"></i> Contas BET 365</div>
