@@ -12,6 +12,8 @@ class RiskProfit extends Component {
 
     this.handleChange = this.handleChange.bind(this);
     this.barList();
+
+  
   }
   barList() {
     this.props.changeTitle({ left: null, center: 'Risco e Lucro', right: <div className="" onClick={this.showFilter.bind(this)}><i className="fas fa-filter show-xs"></i></div> });
@@ -155,33 +157,32 @@ class RiskProfit extends Component {
           <table className="table table-dark table-hover table-bordered table-striped table-sm" >
             <thead id="table-risk-profit-head" >
               <tr>
-                <th onClick={common.tableSort.bind(this, 'event')} >Qtd</th>
+                <th onClick={this.props.history.goBack}>Qtd</th>
                 <th onClick={common.tableSort.bind(this, 'selection')} >Seleção</th>
                 <th onClick={common.tableSortNumber.bind(this, 'event_name')} >Evento</th>
                 <th onClick={common.tableSortNumber.bind(this, 'placement_date')} >Registro</th>
-                <th onClick={common.tableSortNumber.bind(this, 'event_date')}>Data Evento</th>
+                <th onClick={common.tableSortNumber.bind(this, 'event_date')} className="no-break">Data Evento</th>
                 <th onClick={common.tableSortNumber.bind(this, 'total_stake')} >Aposta</th>
                 <th onClick={common.tableSortNumber.bind(this, 'total_return_potential')} >Retorno</th>
                 <th onClick={common.tableSortNumber.bind(this, 'risk')} >Risco</th>
                 <th onClick={common.tableSortNumber.bind(this, 'profit')} >Lucro</th>
                 <th onClick={common.tableSortNumber.bind(this, 'login_name')} >Conta</th>
                 <th onClick={common.tableSortNumber.bind(this, 'bookmaker_name')}>Responsável</th>
-                <th className="show-xs">Valores</th>
               </tr>
             </thead>
             <tbody>
               {this.state.items.map((x, i) => <tr key={i} id={x.event + '_' + x.date} >
-                <td>{i + 1}</td>
-                <td>{x.bet_confirmation.split('<br>').map((x,b) => <div className="no-break" key={b}>{x}</div>)}</td>
-                <td>{x.event_names.split(',').map((x,n) => <div className="no-break" key={n}>{x}</div>)}</td>
-                <td className="middle">{formatDate(x.placement_date, 'DD-MM-YY hd:mm:ss')}</td>
-                <td>{x.event_dates.split(',').map((x,d) => <div className="no-break" key={d}>{formatDate(x, 'DD-MM-YY')}</div>)}</td>
-                <td className="middle">{common.formatNumber(x.total_stake)}</td>
-                <td className="middle">{common.formatNumber(x.total_return_potential)}</td>
+                <td>{x.bet_count}</td>
+                <td>{x.bet_confirmation.split('<br>').map((y,n) => <div className="no-break" key={n}>{y}</div>)}</td>
+                <td>{x.event_names_ordered.split(',').map((y,n) => <div className="no-break" key={n}>{y}</div>)}</td>
+                <td className="middle">{x.placement_dates.split(',').map((y,n) => <div className="no-break" key={n}>{formatDate(y, 'DD-MM-YY hh:mm:ss')}</div>)}</td>
+                <td className="middle">{x.event_dates.split(',').map((y,n) => <div className="no-break" key={n}>{formatDate(y, 'DD-MM-YY')}</div>)}</td>
+                <td className="middle">{x.stakes.split(',').map((y,n) => <div className="no-break" key={n}>{common.formatNumber(y)}</div>)}</td>
+                <td className="middle">{x.total_returns.split(',').map((y,n) => <div className="no-break" key={n}>{common.formatNumber(y)}</div>)}</td>
                 <td className="middle">{common.formatNumber(x.risk)}</td>
                 <td className="middle">{common.formatNumber(x.profit)}</td>
-                <td className="middle">{x.login_name}</td>
-                <td className="middle">{x.bookmaker_name}</td>
+                <td className="middle">{x.login_names.split(',').map((y,n) => <div className="no-break" key={n}>{y}</div>)}</td>
+                <td className="middle">{x.bookmaker_names.split(',').map((y,n) => <div className="no-break" key={n}>{y}</div>)}</td>
               </tr>)}
             </tbody>
           </table>

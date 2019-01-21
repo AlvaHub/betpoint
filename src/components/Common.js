@@ -43,6 +43,8 @@ export function tableSortNumber(key) {
     this.setState({ items: data, sortField: (key === this.state.sortField ? '' : key) });
 }
 export function hideMore() {
+    
+    document.body.className = "";
     document.getElementById('menu-more').className = 'menu-more';
     document.body.removeEventListener('click', hideMore);
 }
@@ -61,8 +63,8 @@ Date.prototype.addDays = function (days) {
 export function newButton() {
     return <i className="fas fa-edit mr-2"></i>
 }
-export function formatNumber(x) {
-    if (x == null) return "";
+export function formatNumber(x, color) {
+    if (x == null || isNaN(x)) return "";
     var parts = x.toString().split(".");
     if (parts.length == 1)
         parts.push("00");
@@ -70,6 +72,8 @@ export function formatNumber(x) {
         parts[1] = parts[1].substring(0, 2);
 
     parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+    if (color)
+        return <span className={Number(x) == 0 ? "yellow" : Number(x) < 0 ? 'red' : 'green'} >{parts.join(",")}</span>;
     return parts.join(",");
 }
 Array.prototype.sum = function (prop, color) {

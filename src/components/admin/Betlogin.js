@@ -29,7 +29,7 @@ class Betlogin extends Component {
 
   }
   barList() {
-    this.props.changeTitle({ left: null, center: 'Contas Bet 365', right: <div  onClick={this.newData.bind(this)} >{common.newButton()}</div>  });
+    this.props.changeTitle({ left: null, center: 'Contas Bet 365', right: <div onClick={this.newData.bind(this)} >{common.newButton()}</div> });
   }
   barForm = () => {
     this.props.changeTitle({ left: <div className="btn-back" onClick={this.back.bind(this)}><i className="fas fa-arrow-alt-circle-left"></i> Voltar</div> });
@@ -61,6 +61,7 @@ class Betlogin extends Component {
       this.props.hide();
       common.scrollTop();
       data.active = data.active === '1';
+      data.hide_report = data.hide_report === '1';
       this.setState({ data: data })
       document.getElementById('new').className = 'form come';
       document.getElementById('list').className = 'hidden';
@@ -73,6 +74,8 @@ class Betlogin extends Component {
 
     if (!data.login_name || data.login_name === "") return alert("Preencha o Login!");
     if (!data.password_name || data.password_name === "") return alert("Preencha a Senha!");
+    if (!data.bookmaker_id || data.bookmaker_id == 0) return alert("Selecione o Cliente!");
+
 
     this.props.show();
     var that = this;
@@ -108,11 +111,19 @@ class Betlogin extends Component {
     let items = [];
     if (e.target.value === '')
       items = this.state.itemsAll;
-    else{
+    else {
       let value = e.target.value.toLowerCase();
       items = this.state.itemsAll.filter(x => x.login_name.toLowerCase().indexOf(value) >= 0 || (x.bookmaker_name + "").toLowerCase().indexOf(value) >= 0);
     }
-     this.setState({ items });
+    this.setState({ items });
+  }
+  updateOrder = () => {
+    this.props.show();
+    var that = this;
+    common.postData('betlogin/update-order', this.state.data.login_order).then(function (data) {
+      that.props.hide();
+      if (data == 1) alert('Ordem atualizada com sucesso!')
+    });
   }
   render() {
 
@@ -123,6 +134,7 @@ class Betlogin extends Component {
         </div>
         <div className="div-table" ></div>
         <div id="list" className="table-responsive">
+        
           <table className="table table-dark table-hover table-bordered table-striped table-sm text-center w-100" >
             <thead>
               <tr>
@@ -139,7 +151,7 @@ class Betlogin extends Component {
             <tbody>
               {this.state.items.map(x => <tr key={x.id} onClick={this.editData.bind(this, x)} >
                 <td>{x.dat_loaded}</td>
-                <td>{x.login_name}</td>
+                <td>{x.hide_report == 1 ?  <span className="text-secondary">{x.login_name}</span> : x.login_name }</td>
                 <td>{x.password_name}</td>
                 <td>{x.bookmaker_name}</td>
                 <td>{x.initial_balance}</td>
@@ -149,6 +161,12 @@ class Betlogin extends Component {
               </tr>)}
             </tbody>
           </table>
+          <div className="row no-gutters mb-1 mt-2 p-1">
+            <textarea name="login_order" className="form-control col-md-3 mr-1" rows="1" onChange={this.handleChange} ></textarea>
+            <div className="col-md-2">
+              <button type="button" className="btn btn-success" onClick={this.updateOrder} >Atualizar Ordem</button>
+            </div>
+          </div>
         </div>
         <div id="new" className="form" >
           <div className="row m-0 p-0" >
@@ -162,25 +180,26 @@ class Betlogin extends Component {
             </div>
             <div className="col-sm-6">
               <div className="label">Cliente</div>
-              <select className="form-control" name="bookmaker_id" value={this.state.data.bookmaker_id} onChange={this.handleChange} >
+              <select className="form-control" name="bookmaker_id" value={this.state.data.bookmaker_id || "0"} onChange={this.handleChange} >
+              <option value="0">Clientes</option>
                 {this.state.bookmakers.map((x, i) => <option key={x.id} value={x.id} >{x.name}</option>)}
               </select>
             </div>
             <div className="col-sm-6">
               <div className="label">Comissão</div>
-              <select className="form-control" name="commission_formula_id" value={this.state.data.commission_formula_id} onChange={this.handleChange} >
+              <select className="form-control" name="commission_formula_id" value={this.state.data.commission_formula_id || ""} onChange={this.handleChange} >
                 {this.state.commissions.map((x, i) => <option key={x.id} value={x.id} >{x.name}</option>)}
               </select>
             </div>
             <div className="col-sm-6">
               <div className="label">Multiplicador</div>
-              <select className="form-control" name="multiplier_id" value={this.state.data.multiplier_id} onChange={this.handleChange} >
+              <select className="form-control" name="multiplier_id" value={this.state.data.multiplier_id || ""} onChange={this.handleChange} >
                 {this.state.multipliers.map((x, i) => <option key={x.id} value={x.id} >{x.equation}</option>)}
               </select>
             </div>
             <div className="col-sm-6">
               <div className="label">Percentual</div>
-              <select className="form-control" name="profit_percent_id" value={this.state.data.profit_percent_id} onChange={this.handleChange} >
+              <select className="form-control" name="profit_percent_id" value={this.state.data.profit_percent_id || ""} onChange={this.handleChange} >
                 {this.state.profits.map((x, i) => <option key={x.id} value={x.id} >{x.equation}</option>)}
               </select>
             </div>
@@ -203,13 +222,18 @@ class Betlogin extends Component {
             </div>
             <div className="col-sm-6">
               <div className="label">Ativo</div>
-              <input type="checkbox" placeholder="Senha..." name="active" checked={this.state.data.active || ""} onChange={this.handleChange}  ></input>
+              <input type="checkbox"  name="active" checked={this.state.data.active || ""} onChange={this.handleChange}  ></input>
+            </div>
+            <div className="col-sm-6">
+              <div className="label">Ocultar no Consolidado</div>
+              <input type="checkbox" name="hide_report" checked={this.state.data.hide_report || ""} onChange={this.handleChange}  ></input>
             </div>
             <div className="text-right pt-2 col-12">
               <button className="btn btn-main" onClick={this.save.bind(this)} >Salvar</button>
             </div>
           </div>
         </div>
+ 
         <div className="page-margin-bottom" ></div>
       </React.Fragment>
     );

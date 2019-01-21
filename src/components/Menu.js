@@ -8,7 +8,7 @@ class Menu extends Component {
   componentWillReceiveProps() {
 
   }
-  redirect = (path) => {
+  redirect = (path, e) => {
 
     if (document.location.pathname !== path)
       this.props.history.push(path);
@@ -24,9 +24,9 @@ class Menu extends Component {
 
     return (
       <React.Fragment>
-        <div className="menu-more " id="menu-more" >
+        <div className="menu-more " id="menu-more" onClick={common.hideMore} >
           <div className="text-center mb-3 logo-text">
-            NATAN SPORTS 
+            NATAN SPORTS
             {/* <div className="logo-icons">
               <i className="fas fa-futbol"></i>
               <i className="fas fa-volleyball-ball"></i>
@@ -34,7 +34,7 @@ class Menu extends Component {
               <i className="fas fa-baseball-ball"></i>
             </div> */}
           </div>
-          <div className="col-md-8 offset-md-2 menu-item page-margin-bottom">
+          <div className="col-md-8 offset-md-2 menu-item pt-2">
             <div>
               <div>Bem-Vindo <b>{common.getUser() ? common.getUser().first_name : ""}!</b></div>
             </div>
@@ -42,10 +42,13 @@ class Menu extends Component {
               <div onClick={this.redirect.bind(this, '/')}  ><i className="fas fa-futbol"></i> Consolidado</div>
             </div>
             <div>
-              <div onClick={this.redirect.bind(this, '/risk-profit')}  ><i className="fas fa-chart-line"></i> Risco e Lucro</div>
+                <div  onClick={this.redirect.bind(this, '/risk-profit')}  ><i className="fas fa-chart-line"></i> Risco e Lucro</div>
             </div>
             <div>
-              <div onClick={this.redirect.bind(this, '/risk-profit-cev')}  ><i className="fas fa-chart-bar"></i> Risco CEV</div>
+                <div onClick={this.redirect.bind(this, '/risk-profit-cev')}  ><i className="fas fa-chart-bar"></i> Risco CEV</div>
+            </div>
+            <div>
+              <div onClick={this.redirect.bind(this, '/reports')}  ><i className="fas fa-chart-bar"></i> Indicadores</div>
             </div>
             <div>
               <div onClick={this.redirect.bind(this, '/admin/betlogin')}  ><i className="fas fa-key"></i> Contas BET 365</div>
@@ -53,16 +56,16 @@ class Menu extends Component {
             <div>
               <div onClick={this.redirect.bind(this, '/admin/bookmaker')}  ><i className="fas fa-users"></i> Clientes</div>
             </div>
-            <div>
+            <div >
               <div onClick={this.redirect.bind(this, '/admin/matrix')}  ><i className="fas fa-users"></i> Matrizes</div>
             </div>
-            <div>
+            <div >
               <div onClick={this.redirect.bind(this, '/admin/user')}  ><i className="fas fa-user-circle"></i> Usuários</div>
             </div>
             {/* <div>
               <div onClick={this.redirect.bind(this, '/admin/parameter')}  ><i className="fas fa-cogs"></i> Parâmetros</div>
             </div> */}
-            <div>
+            <div >
               <div onClick={() => { common.setUser(null); this.redirect('/login') }}  ><i className="fas fa-sign-out-alt"></i> Sair</div>
             </div>
           </div>

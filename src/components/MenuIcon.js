@@ -4,7 +4,10 @@ import * as common from './Common';
 function showMore(e) {
     e.stopPropagation();
     document.getElementById('menu-more').className = 'menu-more menu-come';
-    document.body.addEventListener('click', common.hideMore);
+    //document.body.addEventListener('click', common.hideMore);
+   setTimeout(() => {
+    document.body.className  = 'no-overflow';
+   }, 600); 
   }
 function MenuIcon(props) {
     return ( 
