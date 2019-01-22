@@ -51,6 +51,9 @@ class Menu extends Component {
               <div onClick={this.redirect.bind(this, '/reports')}  ><i className="fas fa-chart-bar"></i> Indicadores</div>
             </div>
             <div>
+              <div onClick={this.redirect.bind(this, '/admin/bet')}  ><i className="fas fa-dice"></i> Apostas</div>
+            </div>
+            <div>
               <div onClick={this.redirect.bind(this, '/admin/betlogin')}  ><i className="fas fa-key"></i> Contas BET 365</div>
             </div>
             <div>

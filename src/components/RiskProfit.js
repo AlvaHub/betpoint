@@ -13,10 +13,13 @@ class RiskProfit extends Component {
     this.handleChange = this.handleChange.bind(this);
     this.barList();
 
-  
+    window.addEventListener('resize', () => {
+      this.setColumnWitdth();
+    });
+
   }
   barList() {
-    this.props.changeTitle({ left: null, center: 'Risco e Lucro', right: <div className="" onClick={this.showFilter.bind(this)}><i className="fas fa-filter show-xs"></i></div> });
+    this.props.changeTitle({ left: null, center:  <div className="pointer" onClick={this.bindList.bind(this)} >Risco e Lucro</div>, right: <div className="" onClick={this.showFilter.bind(this)}><i className="fas fa-filter show-xs"></i></div> });
   }
   barForm = (title) => {
     this.props.changeTitle({ left: <div className="btn-back" onClick={() => this.back()}><i className="fas fa-arrow-alt-circle-left"></i> Voltar</div>, center: title });
@@ -133,6 +136,29 @@ class RiskProfit extends Component {
     }, 1);
 
   }
+  componentDidUpdate() {
+    this.setColumnWitdth();
+  }
+  setColumnWitdth() {
+    let w = document.getElementById('th-bet').clientWidth;
+    document.documentElement.style.setProperty('--table-risk-profit-td-bet', `${w}px`);
+
+    w = document.getElementById('th-event').clientWidth;
+    document.documentElement.style.setProperty('--table-risk-profit-td-event', `${w}px`);
+  }
+  divClick = (id) => {
+
+    let div = document.getElementById(id);
+
+    if (div.className.indexOf('no-break ') >= 0) {
+      div.className = div.className.replace('no-break ', '');
+      div.className = 'font-weight-bold ' + div.className;
+    } else {
+      div.className = div.className.replace('font-weight-bold ', '');
+      div.className = 'no-break ' + div.className;
+    }
+
+  }
 
   render() {
 
@@ -140,7 +166,7 @@ class RiskProfit extends Component {
       <React.Fragment>
         <div className="filter hidden" id="filter" >
           <div className="row no-gutters" >
-          <div className="col-6 col-sm-3 p-1">
+            <div className="col-6 col-sm-3 p-1">
               <DayPickerInput name="date_from" dayPickerProps={{ selectedDay: this.state.date_from }}
                 placeholder={formatDate(this.state.date_from, 'DD/MM/YYYY')} onDayChange={this.handleDayChange.bind(this)} parseDate={parseDate} formatDate={formatDate}
                 dayPickerProps={{ locale: 'pt-br', localeUtils: MomentLocaleUtils }} inputProps={{ readOnly: true }} />
@@ -153,36 +179,49 @@ class RiskProfit extends Component {
           </div>
         </div>
         <div className="margin-top-filter-xs" ></div>
-        <div id="list" className="table-responsive">
-          <table className="table table-dark table-hover table-bordered table-striped table-sm" >
+        <div id="list" className="div-table-risk-profit">
+          <table className="table table-dark table-hover table-bordered table-striped table-scroll table-risk-profit table-sm" >
             <thead id="table-risk-profit-head" >
               <tr>
-                <th onClick={this.props.history.goBack}>Qtd</th>
-                <th onClick={common.tableSort.bind(this, 'selection')} >Seleção</th>
-                <th onClick={common.tableSortNumber.bind(this, 'event_name')} >Evento</th>
+                <th>Qtd</th>
+                <th id="th-bet">Seleção</th>
+                <th id="th-event">Evento</th>
                 <th onClick={common.tableSortNumber.bind(this, 'placement_date')} >Registro</th>
-                <th onClick={common.tableSortNumber.bind(this, 'event_date')} className="no-break">Data Evento</th>
-                <th onClick={common.tableSortNumber.bind(this, 'total_stake')} >Aposta</th>
-                <th onClick={common.tableSortNumber.bind(this, 'total_return_potential')} >Retorno</th>
-                <th onClick={common.tableSortNumber.bind(this, 'risk')} >Risco</th>
-                <th onClick={common.tableSortNumber.bind(this, 'profit')} >Lucro</th>
-                <th onClick={common.tableSortNumber.bind(this, 'login_name')} >Conta</th>
-                <th onClick={common.tableSortNumber.bind(this, 'bookmaker_name')}>Responsável</th>
+                <th className="no-break">DT.Evento</th>
+                <th>Aposta</th>
+                <th>Retorno</th>
+                <th>Risco</th>
+                <th>Lucro</th>
+                <th>Conta</th>
+                <th>Resp.</th>
+              </tr>
+              <tr className="no-border-top">
+                <th></th>
+                <th></th>
+                <th></th>
+                <th></th>
+                <th></th>
+                <th className="font-vxs middle">{this.state.items.sumWithComma('stakes')}</th>
+                <th className="font-vxs middle">{this.state.items.sumWithComma('total_returns')}</th>
+                <th className="red font-xs"  >{this.state.items.sum('risk')}</th>
+                <th className="green font-xs" >{this.state.items.sum('profit')}</th>
+                <th></th> 
+                <th></th>
               </tr>
             </thead>
             <tbody>
               {this.state.items.map((x, i) => <tr key={i} id={x.event + '_' + x.date} >
-                <td>{x.bet_count}</td>
-                <td>{x.bet_confirmation.split('<br>').map((y,n) => <div className="no-break" key={n}>{y}</div>)}</td>
-                <td>{x.event_names_ordered.split(',').map((y,n) => <div className="no-break" key={n}>{y}</div>)}</td>
-                <td className="middle">{x.placement_dates.split(',').map((y,n) => <div className="no-break" key={n}>{formatDate(y, 'DD-MM-YY hh:mm:ss')}</div>)}</td>
-                <td className="middle">{x.event_dates.split(',').map((y,n) => <div className="no-break" key={n}>{formatDate(y, 'DD-MM-YY')}</div>)}</td>
-                <td className="middle">{x.stakes.split(',').map((y,n) => <div className="no-break" key={n}>{common.formatNumber(y)}</div>)}</td>
-                <td className="middle">{x.total_returns.split(',').map((y,n) => <div className="no-break" key={n}>{common.formatNumber(y)}</div>)}</td>
-                <td className="middle">{common.formatNumber(x.risk)}</td>
-                <td className="middle">{common.formatNumber(x.profit)}</td>
-                <td className="middle">{x.login_names.split(',').map((y,n) => <div className="no-break" key={n}>{y}</div>)}</td>
-                <td className="middle">{x.bookmaker_names.split(',').map((y,n) => <div className="no-break" key={n}>{y}</div>)}</td>
+                <td className="middle text-center" >{x.bet_count}</td>
+                <td className="td-bet">{x.bet_confirmation.split('<br>').map((y, n) => <div id={'bet-' + i + '-' + n} onClick={this.divClick.bind(this, 'bet-' + i + '-' + n)} className="no-break " key={n}>{y}</div>)}</td>
+                <td className="td-event">{x.event_names_ordered.split(',').map((y, n) => <div id={'event-' + i + '-' + n} onClick={this.divClick.bind(this, 'event-' + i + '-' + n)} className="no-break " key={n}>{y}</div>)}</td>
+                <td className="middle">{x.placement_dates.split(',').map((y, n) => <div className="no-break" key={n}>{formatDate(y, 'DD-MM-YY hh:mm:ss')}</div>)}</td>
+                <td className="middle">{x.event_dates.split(',').map((y, n) => <div className="no-break" key={n}>{formatDate(y, 'DD-MM-YY')}</div>)}</td>
+                <td className="middle">{x.stakes.split(',').map((y, n) => <div className="no-break" key={n}>{common.formatNumber(y)}</div>)}</td>
+                <td className="middle">{x.total_returns.split(',').map((y, n) => <div className="no-break" key={n}>{common.formatNumber(y)}</div>)}</td>
+                <td className="middle red">{common.formatNumber(x.risk)}</td>
+                <td className="middle green">{common.formatNumber(x.profit)}</td>
+                <td className="middle">{x.login_names.split(',').map((y, n) => <div className="no-break" key={n}>{y}</div>)}</td>
+                <td className="middle">{x.bookmaker_names.split(',').map((y, n) => <div className="no-break" key={n}>{y}</div>)}</td>
               </tr>)}
             </tbody>
           </table>

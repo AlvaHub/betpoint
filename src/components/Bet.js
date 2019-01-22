@@ -43,7 +43,7 @@ class Bet extends Component {
     let date_from = formatDate(this.state.date_from, "YYYY-MM-DD");
     let date_to = formatDate(this.state.date_to, "YYYY-MM-DD");
 
-    common.getData('bet/detail-by-login/' + item.conta + '/' + date_from + '/' + date_to).then((data) => {
+    common.getData('bet/consolidado-by-login/' + item.conta + '/' + date_from + '/' + date_to).then((data) => {
       this.props.hide();
       common.scrollTop();
       this.setState({ details: data })
@@ -58,7 +58,7 @@ class Bet extends Component {
     var that = this;
     let date_from = formatDate(this.state.date_from, "YYYY-MM-DD");
     let date_to = formatDate(this.state.date_to, "YYYY-MM-DD");
-    common.getData(`bet/get-by-date/${date_from}/${date_to}`).then((data) => { that.props.hide(); this.setState({ items: data, itemsAll: data }) });
+    common.getData(`bet/consolidado/${date_from}/${date_to}`).then((data) => { that.props.hide(); this.setState({ items: data, itemsAll: data }) });
   }
 
   componentDidMount() {
@@ -70,6 +70,7 @@ class Bet extends Component {
     var divsEvents = document.getElementsByClassName('td-event');
     for (let index = 0; index < divsEvents.length; index++) {
       divsEvents[index].style.maxWidth = w;
+    
     }
     w = document.getElementById('th-bet').clientWidth;
     divsEvents = document.getElementsByClassName('td-bet');
@@ -95,26 +96,10 @@ class Bet extends Component {
     }
     return date_from;
   }
-  getNewData() {
-
-    return {
-
-    }
-  }
   handleChange = e => {
     let data = this.state.data;
     data[e.target.name] = e.target.value;
     this.setState({ data })
-
-  }
-  save() {
-    this.props.show();
-    var that = this;
-    common.postData('flight', this.state.data).then(function (data) {
-      that.props.hide();
-      that.bindList();
-      that.back();
-    });
 
   }
   showFilter() {
@@ -365,7 +350,7 @@ class Bet extends Component {
                   <td className="td-bet">{x.bet_confirmation.split('<br>').map((y, n) => <div title={y} id={'bet-' + x.id + '-' + n} onClick={this.divClick.bind(this, 'bet-' + x.id + '-' + n)} className="no-break font-sm overflow-x" key={n}>{y}</div>)}</td>
                   <td className="top td-event">{x.event_names.split(',').map((y, n) => <div title={y} id={'event-' + x.id + '-' + n} onClick={this.divClick.bind(this, 'event-' + x.id + '-' + n)} className="no-break font-sm" key={n}>{y}</div>)}</td>
                   <td className="top">{x.event_dates.split(',').map((x, n) => <div className="no-break font-sm" key={n}>{formatDate(x, 'DD-MM-YY')}</div>)}</td>
-                  <td className="top">{x.event_results.split(',').map((x, n) => <div className="no-break font-sm" key={n}><span className={x.substring(0, 4) + '-Text'}>{x}</span></div>)}</td>
+                  <td className="top">{x.event_results.split(',').map((x, n) => <div className="font-sm" key={n}><span className={x.substring(0, 4) + '-Text'}>{x.replace("Ainda por Acontecer","Aberto")}</span></div>)}</td>
                   <td>{formatDate(x.placement_date, 'DD-MM-YY hh:mm:ss')}</td>
                   <td className="font-sm">{x.total_return}</td>
                   <td className={x.total < 0 ? 'red' : 'green'}>{x.total}</td>

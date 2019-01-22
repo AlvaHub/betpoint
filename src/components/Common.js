@@ -70,6 +70,8 @@ export function formatNumber(x, color) {
         parts.push("00");
     if (parts[1].length > 2)
         parts[1] = parts[1].substring(0, 2);
+        if (parts[1].length == 1)
+        parts[1] += "0";
 
     parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ".");
     if (color)
@@ -80,6 +82,18 @@ Array.prototype.sum = function (prop, color) {
     var total = 0;
     for (var i = 0, _len = this.length; i < _len; i++) {
         total += isNaN(this[i][prop]) ? 0 : Number(this[i][prop]);
+    }
+    if (color)
+        return <span className={total == 0 ? "yellow" : total < 0 ? 'red' : 'green'} >{formatNumber(total)}</span>;
+    return formatNumber(total);
+}
+Array.prototype.sumWithComma = function (prop, color) {
+    var total = 0;
+    for (var i = 0, _len = this.length; i < _len; i++) {
+        let numbers = this[i][prop].split(',');
+        numbers.forEach(x => {
+            total += isNaN(x) ? 0 : Number(x);
+        }); 
     }
     if (color)
         return <span className={total == 0 ? "yellow" : total < 0 ? 'red' : 'green'} >{formatNumber(total)}</span>;
