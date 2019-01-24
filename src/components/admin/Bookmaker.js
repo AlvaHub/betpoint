@@ -148,7 +148,7 @@ class Bookmaker extends Component {
           </div>
           <div>
             <div className="label">Ativo</div>
-            <input type="checkbox" placeholder="Senha..." name="active" checked={this.state.data.active || ""} onChange={this.handleChange}  ></input>
+            <input type="checkbox"  name="active" checked={this.state.data.active || ""} onChange={this.handleChange}  ></input>
           </div>
           <div className="text-right pt-2">
             <button className="btn btn-main" onClick={this.save.bind(this)} >Salvar</button>
