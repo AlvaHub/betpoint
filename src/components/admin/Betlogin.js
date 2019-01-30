@@ -161,9 +161,9 @@ class Betlogin extends Component {
               </tr>)}
             </tbody>
           </table>
-          <div className="row no-gutters mb-1 mt-2 p-1">
-            <textarea name="login_order" className="form-control col-md-3 mr-1" rows="1" onChange={this.handleChange} ></textarea>
-            <div className="col-md-2">
+          <div className={'row no-gutters mb-1 p-1 ' + (this.state.items.length == 0 ? 'hidden' : '')}>
+            <textarea name="login_order" placeholder="Insira os logins um abaixo do outro..." className="form-control col-md-4 p-1 mr-1 mt-1" rows="1" onChange={this.handleChange} ></textarea>
+            <div className="col-md-2 mt-1">
               <button type="button" className="btn btn-success" onClick={this.updateOrder} >Atualizar Ordem</button>
             </div>
           </div>

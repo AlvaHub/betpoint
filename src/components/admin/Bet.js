@@ -17,10 +17,10 @@ class AdminBet extends Component {
     common.getData('combo/week').then((data) => { this.setState({ weeks: data }) })
     common.getData('combo/betstatus').then((data) => { this.setState({ betstatus: data }) })
 
-    window.addEventListener('resize', () => {
-      this.setColumnWitdth();
-    });
-
+    window.addEventListener('resize', this.setColumnWitdth);
+  }
+  componentWillUnmount(){
+    window.removeEventListener('resize', this.setColumnWitdth);
   }
   state = {
     items: [],
@@ -40,7 +40,11 @@ class AdminBet extends Component {
     event: {},
   }
   barList() {
-    this.props.changeTitle({ left: null, center: 'Apostas', right: <div onClick={this.newData.bind(this)} >{common.newButton()}</div> });
+    this.props.changeTitle({ left: null, center: 'Apostas', right:
+    <div>
+      <div className="block-inline mr-2" onClick={this.showFilter.bind(this)}><i className="fas fa-filter show-xs"></i></div>
+      <div className="block-inline" onClick={this.newData.bind(this)} >{common.newButton()}</div> 
+    </div> });
   }
   barForm = () => {
     this.props.changeTitle({ left: <div className="btn-back" onClick={this.back.bind(this)}><i className="fas fa-arrow-alt-circle-left"></i> Voltar</div> });
@@ -73,7 +77,7 @@ class AdminBet extends Component {
     this.barList();
     document.getElementById('new').className = 'form go';
     document.getElementById('list').className = 'div-table-bets';
-    document.getElementById('filter').className = 'filter';
+    document.getElementById('filter').className = 'filter hidden-xs';
     common.scrollLast();
   }
   editData(item) {
@@ -187,7 +191,7 @@ class AdminBet extends Component {
     this.setState({ event })
   }
   handleBetChangeDate(selectedDay, modifiers, dayPickerInput) {
-    let data = this.data;
+    let data = this.state.data;
     data.placement_date = formatDate(selectedDay, "DD/MM/YYYY");
     this.setState({ data })
   }
@@ -276,7 +280,6 @@ class AdminBet extends Component {
           </div>
         </div>
         <div className="margin-top-filter margin-top-filter-xs" ></div>
-        <div className="div-table-bets-responsive" >
           <div id="list" className="div-table-bets">
             <table className="table table-dark table-bordered table-striped table-sm table-bets table-scroll" >
               <thead>
@@ -316,7 +319,6 @@ class AdminBet extends Component {
               </tbody>
             </table>
           </div>
-        </div>
         <div id="new" className="form" >
           <div className="row m-0 p-0" >
             <div className="col-sm-6">

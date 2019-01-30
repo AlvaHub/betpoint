@@ -159,10 +159,10 @@ class RiskProfitCEV extends Component {
           <table className="table table-dark table-hover table-bordered table-striped table-sm" >
             <thead id="table-risk-profit-head" >
               <tr>
-                <th>NR</th>
+                <th className="center">NR</th>
                 <th onClick={common.tableSort.bind(this, 'event')} >Evento</th>
                 <th onClick={common.tableSort.bind(this, 'date')} className="hidden-xs">Data</th>
-                <th onClick={common.tableSortNumber.bind(this, 'bet_count')} >Qtd</th>
+                <th  className="center" onClick={common.tableSortNumber.bind(this, 'bet_count')} >Qtd</th>
                 <th onClick={common.tableSortNumber.bind(this, 'home_value')} className="hidden-xs">Casa</th>
                 <th onClick={common.tableSortNumber.bind(this, 'draw_value')} className="hidden-xs">Empate</th>
                 <th onClick={common.tableSortNumber.bind(this, 'visitor_value')} className="hidden-xs">Visitante</th>
@@ -171,10 +171,10 @@ class RiskProfitCEV extends Component {
             </thead>
             <tbody>
               {this.state.items.map((x, i) => <tr key={i} id={x.event + '_' + x.date} onClick={this.viewDetail.bind(this, x)} >
-                <td>{i + 1}</td>
-                <td>{x.event}<div className="show-xs" >{x.date}</div></td>
-                <td className="hidden-xs"  >{x.date}</td>
-                <td>{x.bet_count}</td>
+                <td className="middle-center">{i + 1}</td>
+                <td>{x.event}<div className="show-xs" >{formatDate(x.date, "DD-MM-YY")}</div></td>
+                <td className="hidden-xs"  >{formatDate(x.date, "DD-MM-YY")}</td>
+                <td className="middle-center">{x.bet_count}</td>
                 <td className={x.home_value == 0 ? "hidden-xs yellow" : x.home_value < 0 ? 'hidden-xs red' : 'hidden-xs green'} >{common.formatNumber(x.home_value)}</td>
                 <td className={x.draw_value == 0 ? "hidden-xs yellow" : x.draw_value < 0 ? 'hidden-xs red' : 'hidden-xs green'}>{common.formatNumber(x.draw_value)}</td>
                 <td className={x.visitor_value == 0 ? "hidden-xs yellow" : x.visitor_value < 0 ? 'hidden-xs red' : 'hidden-xs green'}>{common.formatNumber(x.visitor_value)}</td>
@@ -198,7 +198,7 @@ class RiskProfitCEV extends Component {
             <table className="table table-dark table-bordered table-striped table-sm mt-1" >
               <thead>
                 <tr>
-                  <th >NR</th>
+                  <th>NR</th>
                   <th onClick={common.tableSort.bind(this, 'event_name')} >Evento</th>
                   <th onClick={common.tableSort.bind(this, 'selection')} className="hidden-xs" >Seleção</th>
                   <th onClick={common.tableSort.bind(this, 'stake')} >Aposta</th>

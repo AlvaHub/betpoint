@@ -43,7 +43,7 @@ export function tableSortNumber(key) {
     this.setState({ items: data, sortField: (key === this.state.sortField ? '' : key) });
 }
 export function hideMore() {
-    
+
     document.body.className = "";
     document.getElementById('menu-more').className = 'menu-more';
     document.body.removeEventListener('click', hideMore);
@@ -70,13 +70,16 @@ export function formatNumber(x, color) {
         parts.push("00");
     if (parts[1].length > 2)
         parts[1] = parts[1].substring(0, 2);
-        if (parts[1].length == 1)
+    if (parts[1].length == 1)
         parts[1] += "0";
 
     parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ".");
     if (color)
         return <span className={Number(x) == 0 ? "yellow" : Number(x) < 0 ? 'red' : 'green'} >{parts.join(",")}</span>;
     return parts.join(",");
+}
+export function closeModal() {
+    this.setState({ showModal: false });
 }
 Array.prototype.sum = function (prop, color) {
     var total = 0;
@@ -93,7 +96,7 @@ Array.prototype.sumWithComma = function (prop, color) {
         let numbers = this[i][prop].split(',');
         numbers.forEach(x => {
             total += isNaN(x) ? 0 : Number(x);
-        }); 
+        });
     }
     if (color)
         return <span className={total == 0 ? "yellow" : total < 0 ? 'red' : 'green'} >{formatNumber(total)}</span>;

@@ -17,6 +17,7 @@ import AdminBet from './components/admin/Bet';
 import * as common from './components/Common';
 import MenuIcon from './components/MenuIcon'
 
+
 import { BrowserRouter, Route } from 'react-router-dom'
 
 class App extends Component {
@@ -30,10 +31,15 @@ class App extends Component {
     if (window.location.pathname !== '/login' && common.getUser() === null)
       return window.location.href = "/login";
 
+      this.handleShow = this.handleShow.bind(this);
+      this.handleClose = this.handleClose.bind(this);
+  
+    
   }
   state = {
     title: { left: '', center: "Natan Sports", right: '' },
     loading: '',
+    show: false,
   }
   changeTitleHandler = title => {
 
@@ -51,6 +57,13 @@ class App extends Component {
   }
   dateChanged = (e) => {
     this.setState({ year: e.target.value });
+  }
+  handleClose() {
+    this.setState({ show: false });
+  }
+
+  handleShow() {
+    this.setState({ show: true });
   }
   render() {
 

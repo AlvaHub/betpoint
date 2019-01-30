@@ -6,6 +6,7 @@ import DayPickerInput from 'react-day-picker/DayPickerInput';
 import 'react-day-picker/lib/style.css';
 import MomentLocaleUtils, { formatDate, parseDate } from 'react-day-picker/moment';
 import 'moment/locale/pt-br';
+import MyModal from './MyModal';
 
 
 class Bet extends Component {
@@ -16,10 +17,15 @@ class Bet extends Component {
     this.barList();
   }
   barList() {
-    this.props.changeTitle({ left: null, center: <div className="pointer" onClick={this.bindList.bind(this)} >Consolidado</div>, right: <div className="" onClick={this.showFilter.bind(this)}><i className="fas fa-filter show-xs"></i></div> });
+    this.props.changeTitle({
+      left: null, center: <div className="pointer" onClick={this.bindList.bind(this)} >Consolidado</div>, right: <div className="" onClick={this.showFilter.bind(this)}><i className="fas fa-filter show-xs"></i></div>
+    });
   }
   barForm = (title) => {
-    this.props.changeTitle({ left: <div className="btn-back" onClick={() => this.back()}><i className="fas fa-arrow-alt-circle-left"></i> Voltar</div>, center: title });
+    this.props.changeTitle({
+      left: <div className="btn-back" onClick={() => this.back()}><i className="fas fa-arrow-alt-circle-left"></i> Voltar</div>, center: title,
+      right: <i className="fas fa-exchange-alt mr-2" onClick={() => { this.setState({ showModal: true , login_destination : "0"}); }}></i>
+    });
   }
   back() {
     this.barList();
@@ -46,10 +52,11 @@ class Bet extends Component {
     common.getData('bet/consolidado-by-login/' + item.conta + '/' + date_from + '/' + date_to).then((data) => {
       this.props.hide();
       common.scrollTop();
-      this.setState({ details: data })
+      this.setState({ details: data})
       document.getElementById('list').className = 'hidden';
       document.getElementById('filter').className = 'hidden';
       document.getElementById('detail').className = 'form  pb-0 come';
+      document.getElementById('bet_selected_all').checked = false;
       this.barForm(item.conta);
     });
   }
@@ -63,6 +70,7 @@ class Bet extends Component {
 
   componentDidMount() {
     this.bindList();
+    common.getData('combo/betlogin').then((data) => { this.setState({ betlogins: data }) })
   }
   componentDidUpdate() {
 
@@ -70,7 +78,7 @@ class Bet extends Component {
     var divsEvents = document.getElementsByClassName('td-event');
     for (let index = 0; index < divsEvents.length; index++) {
       divsEvents[index].style.maxWidth = w;
-    
+
     }
     w = document.getElementById('th-bet').clientWidth;
     divsEvents = document.getElementsByClassName('td-bet');
@@ -83,7 +91,9 @@ class Bet extends Component {
     items: [],
     details: [],
     date_from: this.getLastMonday(),
-    date_to: new Date(this.getLastMonday()).addDays(6)
+    date_to: new Date(this.getLastMonday()).addDays(6),
+    betlogins: [],
+    login_destination: "0"
   }
   getLastMonday() {
     var index = 0;
@@ -98,10 +108,26 @@ class Bet extends Component {
   }
   handleChange = e => {
     let data = this.state.data;
-    data[e.target.name] = e.target.value;
-    this.setState({ data })
+    if (e.target.name == 'bet_selected_all') {
+      let details = this.state.details;
+      details.forEach(x => x.selected = e.target.checked ? 1 : 0);
+      this.setState({ details })
+      return;
+    }
+    else
+      this.setState({ [e.target.name]: e.target.value })
 
   }
+  handleChangeDetail = (index, e) => {
+    let details = this.state.details;
+    if (e.target.type === 'checkbox')
+      details[index][e.target.name] = e.target.checked ? 1 : 0;
+    else
+      details[index][e.target.name] = e.target.value;
+    this.setState({ details })
+
+  }
+
   showFilter() {
     var css = document.getElementById('filter').className;
     css = css.indexOf('hidden-xs') > 0 ? 'filter' : 'filter hidden-xs';
@@ -142,7 +168,7 @@ class Bet extends Component {
     setTimeout(() => { this.hideFilter() }, 1000);
   }
   divClick = (id) => {
- 
+
     let div = document.getElementById(id);
 
     if (div.className.indexOf('no-break ') >= 0) {
@@ -154,11 +180,42 @@ class Bet extends Component {
     }
 
   }
+  transferLogin = () => {
+    let bets = this.state.details.filter(x => x.selected);
+    if (bets.length === 0) return alert('Nenhuma aposta foi selecionada!');
+    if(this.state.login_destination  == "0")return alert('Selecione o login de destino!');
+    let loginName = this.state.betlogins.filter(x => x.id == this.state.login_destination)[0].name;
+    if (window.confirm('Confirma a transferência de ' + bets.length + ' apostas para o login ' + loginName + ' ?')) {
+      let ids = [];
+      bets.forEach(x => ids.push(x.id));
+      common.postData('bet/transfer-bets', {ids : ids, login_id: this.state.login_destination, user_id : common.getUser().id}).then((data) => {
+        if(data !== 0){
+          this.bindList();
+          this.back();
+          this.setState({ showModal: false });
+
+        }
+       })
+    }
+  }
 
   render() {
 
     return (
       <React.Fragment>
+        <MyModal handleShow={this.state.showModal} handleClose={() => { this.setState({ showModal: false }) }} title="Trocar Login" >
+          <div className="row" >
+            <div className="col-12" >
+              <select className="form-control" name="login_destination" value={this.state.login_destination || "0"} onChange={this.handleChange} >
+                <option value="0">Logins</option>
+                {this.state.betlogins.map((x, i) => <option key={x.id} value={x.id} >{x.name}</option>)}
+              </select>
+              <div className="col-12 p-0 mt-2 text-right" >
+                <button className="btn btn-danger" onClick={this.transferLogin} >Transferir</button>
+              </div>
+            </div>
+          </div>
+        </MyModal>
         <div className="filter hidden-xs" id="filter">
           <div className="row no-gutters" >
             <div className="col-12 col-sm-4 p-1">
@@ -332,6 +389,7 @@ class Bet extends Component {
             <table className="table table-dark table-bordered table-striped table-sm mt-1 table-consolidado-login table-scroll hidden-xs" >
               <thead>
                 <tr>
+                  <th ><input type="checkbox" id="bet_selected_all" name="bet_selected_all" onChange={this.handleChange} /></th>
                   <th id="th-bet" >Bet Details</th>
                   <th id="th-event">Event</th>
                   <th>EventDate</th>
@@ -346,12 +404,13 @@ class Bet extends Component {
                 </tr>
               </thead>
               <tbody>
-                {this.state.details.map(x => <tr key={x.id}  >
+                {this.state.details.map((x, i) => <tr key={x.id}  >
+                  <td className="font-sm"><input type="checkbox" name="selected" checked={x.selected || ""} onChange={this.handleChangeDetail.bind(this, i)} /></td>
                   <td className="td-bet">{x.bet_confirmation.split('<br>').map((y, n) => <div title={y} id={'bet-' + x.id + '-' + n} onClick={this.divClick.bind(this, 'bet-' + x.id + '-' + n)} className="no-break font-sm overflow-x" key={n}>{y}</div>)}</td>
                   <td className="top td-event">{x.event_names.split(',').map((y, n) => <div title={y} id={'event-' + x.id + '-' + n} onClick={this.divClick.bind(this, 'event-' + x.id + '-' + n)} className="no-break font-sm" key={n}>{y}</div>)}</td>
                   <td className="top">{x.event_dates.split(',').map((x, n) => <div className="no-break font-sm" key={n}>{formatDate(x, 'DD-MM-YY')}</div>)}</td>
-                  <td className="top">{x.event_results.split(',').map((x, n) => <div className="font-sm" key={n}><span className={x.substring(0, 4) + '-Text'}>{x.replace("Ainda por Acontecer","Aberto")}</span></div>)}</td>
-                  <td>{formatDate(x.placement_date, 'DD-MM-YY hh:mm:ss')}</td>
+                  <td className="top">{x.event_results.split(',').map((x, n) => <div className="font-sm" key={n}><span className={x.substring(0, 4) + '-Text'}>{x.replace("Ainda por Acontecer", "Aberto")}</span></div>)}</td>
+                  <td>{formatDate(x.placement_date, 'DD-MM-YY HH:mm:ss')}</td>
                   <td className="font-sm">{x.total_return}</td>
                   <td className={x.total < 0 ? 'red' : 'green'}>{x.total}</td>
                   <td>{x.odds}</td>
@@ -364,6 +423,15 @@ class Bet extends Component {
           <div className="div-consolidado-login-xs mt-1 show-xs" >
             {this.state.details.map(x => <table className="table table-dark table-bordered table-striped table-consolidado-login-xs table-sm  mb-1" key={x.id}  >
               <tbody>
+                <tr>
+                  <th colSpan="5" >
+                    <div className="font-weight-normal">
+                      <b className="text-white">{x.bet_confirmation.split('<br>')[x.bet_confirmation.split('<br>').length - 1]}</b> -
+                      <span className="ml-1">{formatDate(x.placement_date, 'DD-MM-YY HH:mm:ss')}</span> -
+                      <b className="ml-1">{x.data_betstatus == 0 ? 'Encerrado' : 'Aberto'}</b>
+                    </div>
+                  </th>
+                </tr>
                 <tr className="row-consolidado-login-xs">
                   <th onClick={common.tableSort.bind(this, 'total_stake')} >Stake</th>
                   <th onClick={common.tableSort.bind(this, 'total_return')} >Return</th>
@@ -374,19 +442,20 @@ class Bet extends Component {
                 <tr className="row-consolidado-login-xs">
                   <td>{x.total_stake}</td>
                   <td>{x.total_return}</td>
-                  <td className={x.total < 0 ? 'green' : 'red'}>{x.total}</td>
+                  <td className={x.total == 0 ? 'yellow' : x.total > 0 ? 'green' : 'red'}>{x.total}</td>
                   <td>{x.odds}</td>
                   <td>{x.comissao}</td>
                 </tr>
                 <tr>
                   <td colSpan="5" >
-                    <div>
-                      <b className="text-white">{x.bet_confirmation.split('<br>')[x.bet_confirmation.split('<br>').length - 1]}</b> -
-                      <span className="ml-1">{formatDate(x.placement_date, 'DD-MM-YY hh:mm:ss')}</span> -
-                      <b className="ml-1">{x.data_betstatus == 0 ? 'Encerrado' : 'Aberto'}</b>
-                    </div>
                     <table className="table-detail w-100" >
-                      <tbody dangerouslySetInnerHTML={{ __html: x.detail }}></tbody>
+                      <tbody>
+                        {x.event_names.split(',').map((y, n) => <tr key={n} >
+                          <td>{x.event_names.split(',')[n]}<div className="selection">{x.bet_confirmation.split('<br>')[n]}</div></td>
+                          <td>{x.event_dates.split(',')[n]}</td>
+                          <td className={x.event_results.split(',')[n].substring(0, 4) + ' text-center'}>{x.event_results.split(',')[n]}</td>
+                        </tr>)}
+                      </tbody>
                     </table>
                   </td>
                 </tr>
