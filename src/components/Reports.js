@@ -157,14 +157,14 @@ class Reports extends Component {
                 <th onClick={common.tableSort.bind(this, 'date_bets')} >Data</th>
                 <th onClick={common.tableSortNumber.bind(this, 'bet_count')} >Qtd</th>
                 <th onClick={common.tableSortNumber.bind(this, 'total_stake')} >Apostas</th>
-                <th onClick={common.tableSortNumber.bind(this, 'total_return')} >Retorno</th>
+                <th className="hidden-xs" onClick={common.tableSortNumber.bind(this, 'total_return')} >Retorno</th>
                 <th onClick={common.tableSortNumber.bind(this, 'resultado')}>Resultado</th>
               </tr>
               <tr className="no-border-bottom">
                 <th></th>
                 <th>{this.state.items.sumInt('bet_count')}</th>
                 <th>{this.state.items.sum('total_stake')}</th>
-                <th>{this.state.items.sum('total_return')}</th>
+                <th className="hidden-xs">{this.state.items.sum('total_return')}</th>
                 <th>{this.state.items.sum('resultado', true)}</th>
               </tr>
             </thead>
@@ -173,7 +173,7 @@ class Reports extends Component {
                 <td>{x.date_bets}</td>
                 <td>{x.bet_count}</td>
                 <td>{common.formatNumber(x.total_stake)}</td>
-                <td>{common.formatNumber(x.total_return)}</td>
+                <td className="hidden-xs" >{common.formatNumber(x.total_return)}</td>
                 <td>{common.formatNumber(x.resultado, true)}</td>
               </tr>)}
             </tbody>

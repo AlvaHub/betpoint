@@ -42,6 +42,9 @@ class Menu extends Component {
               <div onClick={this.redirect.bind(this, '/')}  ><i className="fas fa-futbol"></i> Consolidado</div>
             </div>
             <div>
+              <div onClick={this.redirect.bind(this, '/bet-fixed')}  ><i className="fas fa-mountain"></i> Consolidado (Cadastro de Montantes)</div>
+            </div>
+            <div>
                 <div  onClick={this.redirect.bind(this, '/risk-profit')}  ><i className="fas fa-chart-line"></i> Risco e Lucro</div>
             </div>
             <div>

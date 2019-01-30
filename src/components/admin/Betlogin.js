@@ -228,6 +228,16 @@ class Betlogin extends Component {
               <div className="label">Ocultar no Consolidado</div>
               <input type="checkbox" name="hide_report" checked={this.state.data.hide_report || ""} onChange={this.handleChange}  ></input>
             </div>
+            <div className="col-sm-6">
+              <div className="label">Tipo</div>
+              <select className="form-control" name="type_id" value={this.state.data.type_id || ""} onChange={this.handleChange} >
+              <option value="">BET 365</option>
+              <option value="DE">Descarrego</option>
+              <option value="AF">A/F</option>
+              <option value="RE">Repasse</option>
+
+              </select>
+            </div>
             <div className="text-right pt-2 col-12">
               <button className="btn btn-main" onClick={this.save.bind(this)} >Salvar</button>
             </div>

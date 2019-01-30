@@ -90,6 +90,18 @@ Array.prototype.sum = function (prop, color) {
         return <span className={total == 0 ? "yellow" : total < 0 ? 'red' : 'green'} >{formatNumber(total)}</span>;
     return formatNumber(total);
 }
+Array.prototype.sumString = function (prop, color) {
+    var total = 0;
+    for (var i = 0, _len = this.length; i < _len; i++) {
+        if (this[i][prop] != null) {
+            let num = this[i][prop].replace(/\./g, '').replace(',', '.');
+            total += isNaN(num) ? 0 : Number(num);
+        }
+    }
+    if (color)
+        return <span className={total == 0 ? "yellow" : total < 0 ? 'red' : 'green'} >{formatNumber(total)}</span>;
+    return formatNumber(total);
+}
 Array.prototype.sumWithComma = function (prop, color) {
     var total = 0;
     for (var i = 0, _len = this.length; i < _len; i++) {

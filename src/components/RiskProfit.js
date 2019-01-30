@@ -180,7 +180,7 @@ class RiskProfit extends Component {
         </div>
         <div className="margin-top-filter-xs" ></div>
         <div id="list" className="div-table-risk-profit">
-          <table className="table table-dark table-hover table-bordered table-striped table-scroll table-risk-profit table-sm" >
+          <table className="table table-dark table-bordered table-striped table-scroll table-risk-profit table-sm" >
             <thead id="table-risk-profit-head" >
               <tr>
                 <th>Qtd</th>
