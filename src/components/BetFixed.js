@@ -40,21 +40,26 @@ class BetFixed extends Component {
     var that = this;
     let date_from = formatDate(this.state.date_from, "YYYY-MM-DD");
     let date_to = formatDate(this.state.date_to, "YYYY-MM-DD");
-    common.getData(`bet-fixed/DE/${date_from}/${date_to}`).then((data) => {
+    common.getData(`bet-fixed/${date_from}/${date_to}`).then((data) => {
 
       that.props.hide();
-      data.forEach(x => {
-        x.vale = common.formatNumber(x.vale);
-        x.atual = common.formatNumber(x.atual);
-        x.profit_percent = common.formatNumber(x.profit_percent);
-        x.volume = common.formatNumber(x.volume);
-        x.pendente = common.formatNumber(x.pendente);
-        x.parcial = common.formatNumber(x.parcial);
-        x.comissao = common.formatNumber(x.comissao);
-        x.total = common.formatNumber(x.total);
-        x.resultado = common.formatNumber(x.resultado);
-      });
-      this.setState({ descarregos: data })
+      let tables = [data.descarregos, data.afs, data.repasses]
+      tables.forEach(y => {
+        y.data.forEach(x => {
+          x.vale = common.formatNumber(x.vale);
+          x.atual = common.formatNumber(x.atual);
+          x.profit_percent = common.formatNumber(x.profit_percent);
+          x.volume = common.formatNumber(x.volume);
+          x.pendente = common.formatNumber(x.pendente);
+          x.parcial = common.formatNumber(x.parcial);
+          x.comissao = common.formatNumber(x.comissao);
+          x.total = common.formatNumber(x.total);
+          x.resultado = common.formatNumber(x.resultado);
+          x.banco = common.formatNumber(x.banco);
+        });
+      })
+
+      this.setState({ tables })
     });
   }
 
@@ -63,21 +68,19 @@ class BetFixed extends Component {
     common.getData('combo/betlogin').then((data) => { this.setState({ betlogins: data }) })
   }
   state = {
-    itemsAll: [],
-    items: [],
-    details: [],
+
     date_from: this.getLastMonday(),
     date_to: new Date(this.getLastMonday()).addDays(6),
     betlogins: [],
     login_destination: "0",
-    descarregos: [],
+    tables: []
   }
   saveData = () => {
     let data = {
-      user_id : common.getUser().id,
+      user_id: common.getUser().id,
       date_start: formatDate(this.state.date_from, "YYYY-MM-DD"),
       date_end: formatDate(this.state.date_to, "YYYY-MM-DD"),
-      descarregos: this.state.descarregos
+      tables: this.state.tables,
     }
     common.postData('bet-fixed', data).then((data) => {
       if (data === 1) {
@@ -96,10 +99,18 @@ class BetFixed extends Component {
     }
     return date_from;
   }
-  handleChange = (index, e) => {
-    let descarregos = this.state.descarregos;
-    descarregos[index][e.target.name] = e.target.value;
-    this.setState({ descarregos })
+  handleChange = (tableIndex, index, e) => {
+    let tables = this.state.tables;
+    let x = tables[tableIndex].data[index];
+    x[e.target.name] = e.target.value;
+    x.parcial = common.formatNumber((common.num(x.atual) + common.num(x.pendente) - common.num(x.vale)) * common.num(x.um));
+    x.total = common.formatNumber(common.num(x.parcial) + common.num(x.comissao));
+    if (x.conta === "Aposta")
+      x.resultado = common.formatNumber((common.num(x.total) * common.num(x.profit_percent)) * - 1);
+    else
+      x.resultado = common.formatNumber(common.num(x.total) * common.num(x.profit_percent));
+
+    this.setState({ tables })
   }
   handleChangeDetail = (index, e) => {
     let details = this.state.descarrego;
@@ -177,60 +188,67 @@ class BetFixed extends Component {
         <div className="margin-top-filter margin-top-filter-xs" ></div>
         <div id="list">
           <div className="div-table-consolidado" >
-            <table className="table table-dark table-bordered table-striped table-sm table-consolidado table-scroll hidden-xs w-100" >
-              <thead id="table-consolidado-head" >
-                <tr>
-                  <th className="text-center" colSpan="13">DESCARREGO</th>
-                </tr>
-                <tr>
-                  <th onClick={common.tableSort.bind(this, 'conta')} >Conta</th>
-                  <th onClick={common.tableSort.bind(this, 'cliente')} >Cliente</th>
-                  <th onClick={common.tableSortNumber.bind(this, 'qtd')} >Qtd</th>
-                  <th onClick={common.tableSortNumber.bind(this, 'volume')} >Volume</th>
-                  <th onClick={common.tableSortNumber.bind(this, 'vale')} >Vale</th>
-                  <th onClick={common.tableSortNumber.bind(this, 'atual')} >Atual</th>
-                  <th onClick={common.tableSortNumber.bind(this, 'pendente')} >Pend</th>
-                  <th onClick={common.tableSortNumber.bind(this, 'um')} >uM</th>
-                  <th onClick={common.tableSortNumber.bind(this, 'parcial')} >Parcial</th>
-                  <th onClick={common.tableSortNumber.bind(this, 'comissao')} >Com</th>
-                  <th onClick={common.tableSortNumber.bind(this, 'total')} >Total</th>
-                  <th onClick={common.tableSortNumber.bind(this, 'profit_percent')} >%</th>
-                  <th onClick={common.tableSortNumber.bind(this, 'resultado')} >Resultado</th>
-                </tr>
-                <tr className="font-xs totals">
-                  <th></th>
-                  <th></th>
-                  <th>{this.state.descarregos.sumInt('qtd')}</th>
-                  <th>{this.state.descarregos.sumString('volume')}</th>
-                  <th>{this.state.descarregos.sumString('vale')}</th>
-                  <th>{this.state.descarregos.sumString('atual')}</th>
-                  <th>{this.state.descarregos.sumString('pendente', true)}</th>
-                  <th></th>
-                  <th>{this.state.descarregos.sumString('parcial', true)}</th>
-                  <th>{this.state.descarregos.sumString('comissao')}</th>
-                  <th>{this.state.descarregos.sumString('total', true)}</th>
-                  <th></th>
-                  <th>{this.state.descarregos.sumString('resultado', true)}</th>
-                </tr>
-              </thead>
-              <tbody>
-                {this.state.descarregos.map((x, i) => <tr key={i} id={x.conta} >
-                  <td>{x.conta}</td>
-                  <td>{x.cliente}</td>
-                  <td><CurrencyFormat name="qtd" type="tel" value={x.qtd || ""} thousandSeparator={'.'} decimalSeparator="," onChange={this.handleChange.bind(this, i)} /></td>
-                  <td><CurrencyFormat name="volume" value={x.volume || ""} thousandSeparator={'.'} decimalSeparator="," onChange={this.handleChange.bind(this, i)} /></td>
-                  <td><CurrencyFormat name="vale" value={x.vale || ""} thousandSeparator={'.'} decimalSeparator="," onChange={this.handleChange.bind(this, i)} /></td>
-                  <td><CurrencyFormat name="atual" value={x.atual || ""} thousandSeparator={'.'} decimalSeparator="," onChange={this.handleChange.bind(this, i)} /></td>
-                  <td><CurrencyFormat name="pendente" value={x.pendente || ""} thousandSeparator={'.'} decimalSeparator="," onChange={this.handleChange.bind(this, i)} /></td>
-                  <td><CurrencyFormat name="um" type="tel" value={x.um || ""} thousandSeparator={'.'} decimalSeparator="," onChange={this.handleChange.bind(this, i)} /></td>
-                  <td><CurrencyFormat name="parcial" value={x.parcial || ""} thousandSeparator={'.'} decimalSeparator="," onChange={this.handleChange.bind(this, i)} /></td>
-                  <td><CurrencyFormat name="comissao" value={x.comissao || ""} thousandSeparator={'.'} decimalSeparator="," onChange={this.handleChange.bind(this, i)} /></td>
-                  <td><CurrencyFormat name="total" value={x.total || ""} thousandSeparator={'.'} decimalSeparator="," onChange={this.handleChange.bind(this, i)} /></td>
-                  <td><CurrencyFormat name="profit_percent" value={x.profit_percent || ""} thousandSeparator={'.'} decimalSeparator="," onChange={this.handleChange.bind(this, i)} /></td>
-                  <td><CurrencyFormat name="resultado" value={x.resultado || ""} thousandSeparator={'.'} decimalSeparator="," onChange={this.handleChange.bind(this, i)} /></td>
-                </tr>)}
-              </tbody>
-            </table>
+            {this.state.tables.map((t, n) => <div  key={n} >
+            <div className="text-center font-weight-bold font-lg"><div className="" >{t.title}</div></div>
+              <table className="table table-dark table-bordered table-striped table-sm table-bet-fixed w-100 mb-2" >
+                <thead>
+                  <tr>
+                    <th onClick={common.tableSort.bind(this, 'conta')} >Conta</th>
+                    <th onClick={common.tableSort.bind(this, 'cliente')} >Cliente</th>
+                    <th onClick={common.tableSortNumber.bind(this, 'qtd')} >Qtd</th>
+                    <th onClick={common.tableSortNumber.bind(this, 'volume')} >Volume</th>
+                    <th onClick={common.tableSortNumber.bind(this, 'vale')} >Vale</th>
+                    <th onClick={common.tableSortNumber.bind(this, 'atual')} >Atual</th>
+                    <th onClick={common.tableSortNumber.bind(this, 'pendente')} >Pend</th>
+                    <th onClick={common.tableSortNumber.bind(this, 'um')} >uM</th>
+                    <th onClick={common.tableSortNumber.bind(this, 'parcial')} >Parcial</th>
+                    <th onClick={common.tableSortNumber.bind(this, 'comissao')} >Com</th>
+                    <th onClick={common.tableSortNumber.bind(this, 'total')} >Total</th>
+                    <th onClick={common.tableSortNumber.bind(this, 'profit_percent')} >%</th>
+                    <th onClick={common.tableSortNumber.bind(this, 'resultado')} >Resultado</th>
+                    <th onClick={common.tableSortNumber.bind(this, 'banco')} >Banco</th>
+
+                  </tr>
+                  <tr className="font-xs totals">
+                    <th></th>
+                    <th></th>
+                    <th>{t.data.sumInt('qtd')}</th>
+                    <th>{t.data.sumString('volume')}</th>
+                    <th>{t.data.sumString('vale')}</th>
+                    <th>{t.data.sumString('atual')}</th>
+                    <th>{t.data.sumString('pendente', true)}</th>
+                    <th></th>
+                    <th>{t.data.sumString('parcial', true)}</th>
+                    <th>{t.data.sumString('comissao')}</th>
+                    <th>{t.data.sumString('total', true)}</th>
+                    <th></th>
+                    <th>{t.data.sumString('resultado', true)}</th>
+                    <th>{t.data.sumString('banco', true)}</th>
+
+                  </tr>
+                </thead>
+                <tbody>
+                  {t.data.map((x, i) => <tr key={i} id={x.conta} >
+                    <td>{x.conta}</td>
+                    <td>{x.cliente}</td>
+                    <td><CurrencyFormat name="qtd" type="tel" value={x.qtd || ""} thousandSeparator={'.'} decimalSeparator="," onChange={this.handleChange.bind(this, n, i)} /></td>
+                    <td><CurrencyFormat name="volume" value={x.volume || ""} thousandSeparator={'.'} decimalSeparator="," onChange={this.handleChange.bind(this, n, i)} /></td>
+                    <td><CurrencyFormat name="vale" value={x.vale || ""} thousandSeparator={'.'} decimalSeparator="," onChange={this.handleChange.bind(this, n, i)} /></td>
+                    <td><CurrencyFormat name="atual" value={x.atual || ""} thousandSeparator={'.'} decimalSeparator="," onChange={this.handleChange.bind(this, n, i)} /></td>
+                    <td><CurrencyFormat name="pendente" value={x.pendente || ""} thousandSeparator={'.'} decimalSeparator="," onChange={this.handleChange.bind(this, n, i)} /></td>
+                    <td><CurrencyFormat name="um" type="tel" value={x.um || ""} decimalSeparator="," onChange={this.handleChange.bind(this, n, i)} /></td>
+                    <td className="bg-gray" ><CurrencyFormat name="parcial" value={x.parcial || ""} thousandSeparator={'.'} decimalSeparator="," disabled={true} onChange={this.handleChange.bind(this, n, i)} /></td>
+                    <td><CurrencyFormat name="comissao" value={x.comissao || ""} thousandSeparator={'.'} decimalSeparator="," onChange={this.handleChange.bind(this, n, i)} /></td>
+                    <td className="bg-gray" ><CurrencyFormat name="total" value={x.total || ""} thousandSeparator={'.'} decimalSeparator="," disabled={true} onChange={this.handleChange.bind(this, n, i)} /></td>
+                    <td><CurrencyFormat name="profit_percent" value={x.profit_percent || ""} thousandSeparator={'.'} decimalSeparator="," onChange={this.handleChange.bind(this, n, i)} /></td>
+                    <td className="bg-gray" ><CurrencyFormat name="resultado" value={x.resultado || ""} thousandSeparator={'.'} decimalSeparator="," disabled={true} onChange={this.handleChange.bind(this, n, i)} /></td>
+                    <td><CurrencyFormat name="banco" value={x.banco || ""} thousandSeparator={'.'} decimalSeparator="," onChange={this.handleChange.bind(this, n, i)} /></td>
+
+                  </tr>)}
+                </tbody>
+              </table>
+              </div>
+            )}
           </div>
           <div className="text-right p-1">
             <button type="button" className="btn btn-success" onClick={this.saveData}>Salvar</button>

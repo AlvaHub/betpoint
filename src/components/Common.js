@@ -81,6 +81,12 @@ export function formatNumber(x, color) {
 export function closeModal() {
     this.setState({ showModal: false });
 }
+export function num(value) {
+    if (value != null) {
+        return Number(value.toString().replace(/\./g, '').replace(',', '.'));
+    }
+    return 0;
+}
 Array.prototype.sum = function (prop, color) {
     var total = 0;
     for (var i = 0, _len = this.length; i < _len; i++) {
@@ -93,10 +99,8 @@ Array.prototype.sum = function (prop, color) {
 Array.prototype.sumString = function (prop, color) {
     var total = 0;
     for (var i = 0, _len = this.length; i < _len; i++) {
-        if (this[i][prop] != null) {
-            let num = this[i][prop].replace(/\./g, '').replace(',', '.');
-            total += isNaN(num) ? 0 : Number(num);
-        }
+            let value = num(this[i][prop]);
+            total += isNaN(value) ? 0 : Number(value);
     }
     if (color)
         return <span className={total == 0 ? "yellow" : total < 0 ? 'red' : 'green'} >{formatNumber(total)}</span>;

@@ -142,9 +142,7 @@ class Betlogin extends Component {
                 <th onClick={common.tableSort.bind(this, 'login_name')} >Login</th>
                 <th onClick={common.tableSort.bind(this, 'password_name')} >Senha</th>
                 <th onClick={common.tableSort.bind(this, 'bookmaker_name')} >Cliente</th>
-                <th onClick={common.tableSortNumber.bind(this, 'initial_balance')} >Inicial</th>
-                <th onClick={common.tableSortNumber.bind(this, 'current_balance')} >Atual</th>
-                <th onClick={common.tableSortNumber.bind(this, 'bank_balance')} > Banco</th>
+                <th onClick={common.tableSortNumber.bind(this, 'type_name')} >Tipo</th>
                 <th onClick={common.tableSort.bind(this, 'active')} className="td-min" >Ativo</th>
               </tr>
             </thead>
@@ -154,9 +152,7 @@ class Betlogin extends Component {
                 <td>{x.hide_report == 1 ?  <span className="text-secondary">{x.login_name}</span> : x.login_name }</td>
                 <td>{x.password_name}</td>
                 <td>{x.bookmaker_name}</td>
-                <td>{x.initial_balance}</td>
-                <td>{x.current_balance}</td>
-                <td>{x.bank_balance}</td>
+                <td>{x.type_name}</td>
                 <td className="td-min">{x.active === '1' ? 'Sim' : 'Não'}</td>
               </tr>)}
             </tbody>
