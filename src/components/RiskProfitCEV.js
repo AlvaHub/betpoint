@@ -199,21 +199,25 @@ class RiskProfitCEV extends Component {
               <thead>
                 <tr>
                   <th>NR</th>
-                  <th onClick={common.tableSort.bind(this, 'event_name')} >Evento</th>
                   <th onClick={common.tableSort.bind(this, 'selection')} className="hidden-xs" >Seleção</th>
+                  <th onClick={common.tableSort.bind(this, 'event_name')} >Evento</th>
+                  <th onClick={common.tableSort.bind(this, 'login_name')} >Login</th>
                   <th onClick={common.tableSort.bind(this, 'stake')} >Aposta</th>
                   <th onClick={common.tableSort.bind(this, 'odds')} >Cotação</th>
-                  <th onClick={common.tableSort.bind(this, 'result')} className="text-center" >Res</th>
+                  <th onClick={common.tableSort.bind(this, 'total_return_potential')} >Retorno</th>
+                  {/* <th onClick={common.tableSort.bind(this, 'result')} className="text-center" >Res</th> */}
                 </tr>
               </thead>
               <tbody>
                 {this.state.details.map((x, i) => <tr key={x.id}  >
                   <td>{i + 1}</td>
-                  <td>{x.event_name}<div className="show-xs  yellow"><b>{x.selection}</b></div></td>
                   <td className="hidden-xs">{x.selection}</td>
+                  <td>{x.event_name}<div className="show-xs yellow"><b>{x.selection}</b></div></td>
+                  <td>{x.login_name} ({x.profit_percent})</td>
                   <td>{common.formatNumber(x.stake)}</td>
                   <td>{common.formatNumber(x.odds)}</td>
-                  <td className={'text-center ' + x.result.substr(0, 4)}>{x.result}</td>
+                  <td>{common.formatNumber(x.total_return_potential)}</td>
+                  {/* <td className={'text-center ' + x.result.substr(0, 4)}>{x.result}</td> */}
                 </tr>)}
               </tbody>
             </table>

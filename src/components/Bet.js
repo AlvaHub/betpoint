@@ -24,7 +24,7 @@ class Bet extends Component {
   barForm = (title) => {
     this.props.changeTitle({
       left: <div className="btn-back" onClick={() => this.back()}><i className="fas fa-arrow-alt-circle-left"></i> Voltar</div>, center: title,
-      right: <i className="fas fa-exchange-alt mr-2" onClick={() => { this.setState({ showModal: true , login_destination : "0"}); }}></i>
+      right: <i className="fas fa-exchange-alt mr-2" onClick={() => { this.setState({ showModal: true, login_destination: "0" }); }}></i>
     });
   }
   back() {
@@ -52,7 +52,7 @@ class Bet extends Component {
     common.getData('bet/consolidado-by-login/' + item.conta + '/' + date_from + '/' + date_to).then((data) => {
       this.props.hide();
       common.scrollTop();
-      this.setState({ details: data})
+      this.setState({ details: data })
       document.getElementById('list').className = 'hidden';
       document.getElementById('filter').className = 'hidden';
       document.getElementById('detail').className = 'form  pb-0 come';
@@ -66,6 +66,13 @@ class Bet extends Component {
     let date_from = formatDate(this.state.date_from, "YYYY-MM-DD");
     let date_to = formatDate(this.state.date_to, "YYYY-MM-DD");
     common.getData(`bet/consolidado/${date_from}/${date_to}`).then((data) => { that.props.hide(); this.setState({ items: data, itemsAll: data }) });
+
+    common.getData(`bet-fixed/${date_from}/${date_to}`).then((data) => {
+
+      let tables = [data.descarregos, data.afs, data.repasses]
+      this.setState({ tables })
+    });
+
   }
 
   componentDidMount() {
@@ -93,7 +100,8 @@ class Bet extends Component {
     date_from: this.getLastMonday(),
     date_to: new Date(this.getLastMonday()).addDays(6),
     betlogins: [],
-    login_destination: "0"
+    login_destination: "0",
+    tables: []
   }
   getLastMonday() {
     var index = 0;
@@ -183,19 +191,19 @@ class Bet extends Component {
   transferLogin = () => {
     let bets = this.state.details.filter(x => x.selected);
     if (bets.length === 0) return alert('Nenhuma aposta foi selecionada!');
-    if(this.state.login_destination  == "0")return alert('Selecione o login de destino!');
+    if (this.state.login_destination == "0") return alert('Selecione o login de destino!');
     let loginName = this.state.betlogins.filter(x => x.id == this.state.login_destination)[0].name;
     if (window.confirm('Confirma a transferência de ' + bets.length + ' apostas para o login ' + loginName + ' ?')) {
       let ids = [];
       bets.forEach(x => ids.push(x.id));
-      common.postData('bet/transfer-bets', {ids : ids, login_id: this.state.login_destination, user_id : common.getUser().id}).then((data) => {
-        if(data !== 0){
+      common.postData('bet/transfer-bets', { ids: ids, login_id: this.state.login_destination, user_id: common.getUser().id }).then((data) => {
+        if (data !== 0) {
           this.bindList();
           this.back();
           this.setState({ showModal: false });
 
         }
-       })
+      })
     }
   }
 
@@ -290,6 +298,26 @@ class Bet extends Component {
                   <td>{x.profit_percent}</td>
                   <td className={x.resultado == 0 ? "" : x.resultado < 0 ? 'red' : 'green'} >{common.formatNumber(x.resultado)}</td>
                 </tr>)}
+                {this.state.tables.map((t, i) => <React.Fragment key={i}>
+                  <tr>
+                    <td colSpan="12" className={t.title.replace("/","")} >{t.title}</td>
+                  </tr>
+                  {t.data.map((x, i) => <tr key={i}>
+                    <td>{x.conta}</td>
+                    <td>{x.cliente}</td>
+                    <td>{x.qtd}</td>
+                    <td className={x.volume == 0 ? "yellow" : x.volume < 0 ? 'red' : 'green'} >{common.formatNumber(x.volume)}</td>
+                    <td>{x.vale}</td>
+                    <td>{x.atual}</td>
+                    <td>{x.pendente}</td>
+                    <td>{x.um}</td>
+                    <td>{common.formatNumber(x.parcial)}</td>
+                    <td>{x.comissão}</td>
+                    <td className={x.total == 0 ? "yellow" : x.total < 0 ? 'red' : 'green'} >{common.formatNumber(x.total)}</td>
+                    <td>{x.profit_percent}</td>
+                    <td className={x.resultado == 0 ? "" : x.resultado < 0 ? 'red' : 'green'} >{common.formatNumber(x.resultado)}</td>
+                  </tr>)}
+                </React.Fragment>)}
               </tbody>
             </table>
           </div>

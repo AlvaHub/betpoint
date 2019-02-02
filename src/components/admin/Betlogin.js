@@ -88,11 +88,12 @@ class Betlogin extends Component {
   }
   getNewData() {
 
+
     return {
       id: 0,
       active: 1,
-      multiplier_id: this.state.multipliers[0].id,
-      profit_percent_id: this.state.profits[0].id,
+      multiplier_id: this.state.multipliers.find(x => x.equation == "1000").id,
+      profit_percent_id: this.state.profits.find(x => x.equation == "1").id,
       bookmaker_id: this.state.bookmakers[0].id,
       commission_formula_id: this.state.commissions[0].id
     }
@@ -134,7 +135,7 @@ class Betlogin extends Component {
         </div>
         <div className="div-table" ></div>
         <div id="list" className="table-responsive">
-        
+
           <table className="table table-dark table-hover table-bordered table-striped table-sm text-center w-100" >
             <thead>
               <tr>
@@ -149,7 +150,7 @@ class Betlogin extends Component {
             <tbody>
               {this.state.items.map(x => <tr key={x.id} onClick={this.editData.bind(this, x)} >
                 <td>{x.dat_loaded}</td>
-                <td>{x.hide_report == 1 ?  <span className="text-secondary">{x.login_name}</span> : x.login_name }</td>
+                <td>{x.hide_report == 1 ? <span className="text-secondary">{x.login_name}</span> : x.login_name}</td>
                 <td>{x.password_name}</td>
                 <td>{x.bookmaker_name}</td>
                 <td>{x.type_name}</td>
@@ -177,7 +178,7 @@ class Betlogin extends Component {
             <div className="col-sm-6">
               <div className="label">Cliente</div>
               <select className="form-control" name="bookmaker_id" value={this.state.data.bookmaker_id || "0"} onChange={this.handleChange} >
-              <option value="0">Clientes</option>
+                <option value="0">Clientes</option>
                 {this.state.bookmakers.map((x, i) => <option key={x.id} value={x.id} >{x.name}</option>)}
               </select>
             </div>
@@ -217,29 +218,28 @@ class Betlogin extends Component {
               <input type="text" placeholder="Mensagem Alerta..." className="form-control" name="message_alert_id" value={this.state.data.message_alert_id || ""} onChange={this.handleChange}  ></input>
             </div>
             <div className="col-sm-6">
-              <div className="label">Ativo</div>
-              <input type="checkbox"  name="active" checked={this.state.data.active || ""} onChange={this.handleChange}  ></input>
+              <div className="label">Tipo de Conta</div>
+              <select className="form-control" name="type_id" value={this.state.data.type_id || ""} onChange={this.handleChange} >
+                <option value="">BET 365</option>
+                <option value="DE">Descarrego</option>
+                <option value="AF">A/F</option>
+                <option value="RE">Repasse</option>
+              </select>
             </div>
             <div className="col-sm-6">
               <div className="label">Ocultar no Consolidado</div>
               <input type="checkbox" name="hide_report" checked={this.state.data.hide_report || ""} onChange={this.handleChange}  ></input>
             </div>
             <div className="col-sm-6">
-              <div className="label">Tipo</div>
-              <select className="form-control" name="type_id" value={this.state.data.type_id || ""} onChange={this.handleChange} >
-              <option value="">BET 365</option>
-              <option value="DE">Descarrego</option>
-              <option value="AF">A/F</option>
-              <option value="RE">Repasse</option>
-
-              </select>
+              <div className="label">Ativo</div>
+              <input type="checkbox" name="active" checked={this.state.data.active || ""} onChange={this.handleChange}  ></input>
             </div>
             <div className="text-right pt-2 col-12">
               <button className="btn btn-main" onClick={this.save.bind(this)} >Salvar</button>
             </div>
           </div>
         </div>
- 
+
         <div className="page-margin-bottom" ></div>
       </React.Fragment>
     );

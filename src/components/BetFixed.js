@@ -104,7 +104,12 @@ class BetFixed extends Component {
     let x = tables[tableIndex].data[index];
     x[e.target.name] = e.target.value;
     x.parcial = common.formatNumber((common.num(x.atual) + common.num(x.pendente) - common.num(x.vale)) * common.num(x.um));
-    x.total = common.formatNumber(common.num(x.parcial) + common.num(x.comissao));
+    console.log(x.type_id );
+    if (x.type_id == "RE") //Repasse
+      x.total = common.formatNumber((common.num(x.parcial) + common.num(x.comissao)) * - 1);
+    else
+      x.total = common.formatNumber(common.num(x.parcial) + common.num(x.comissao));
+
     if (x.conta === "Aposta")
       x.resultado = common.formatNumber((common.num(x.total) * common.num(x.profit_percent)) * - 1);
     else
@@ -188,8 +193,8 @@ class BetFixed extends Component {
         <div className="margin-top-filter margin-top-filter-xs" ></div>
         <div id="list">
           <div className="div-table-consolidado" >
-            {this.state.tables.map((t, n) => <div  key={n} >
-            <div className="text-center font-weight-bold font-lg"><div className="" >{t.title}</div></div>
+            {this.state.tables.map((t, n) => <div key={n} >
+              <div className="text-center font-weight-bold font-lg"><div className="" >{t.title}</div></div>
               <table className="table table-dark table-bordered table-striped table-sm table-bet-fixed w-100 mb-2" >
                 <thead>
                   <tr>
@@ -247,7 +252,7 @@ class BetFixed extends Component {
                   </tr>)}
                 </tbody>
               </table>
-              </div>
+            </div>
             )}
           </div>
           <div className="text-right p-1">

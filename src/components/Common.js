@@ -96,11 +96,18 @@ Array.prototype.sum = function (prop, color) {
         return <span className={total == 0 ? "yellow" : total < 0 ? 'red' : 'green'} >{formatNumber(total)}</span>;
     return formatNumber(total);
 }
+Array.prototype.sumNoFormat = function (prop, color) {
+    var total = 0;
+    for (var i = 0, _len = this.length; i < _len; i++) {
+        total += isNaN(this[i][prop]) ? 0 : Number(this[i][prop]);
+    }
+    return total
+}
 Array.prototype.sumString = function (prop, color) {
     var total = 0;
     for (var i = 0, _len = this.length; i < _len; i++) {
-            let value = num(this[i][prop]);
-            total += isNaN(value) ? 0 : Number(value);
+        let value = num(this[i][prop]);
+        total += isNaN(value) ? 0 : Number(value);
     }
     if (color)
         return <span className={total == 0 ? "yellow" : total < 0 ? 'red' : 'green'} >{formatNumber(total)}</span>;

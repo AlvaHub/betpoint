@@ -4,6 +4,7 @@ import './App.css';
 import Menu from './components/Menu';
 import Bet from './components/Bet';
 import BetFixed from './components/BetFixed';
+import Closing from './components/Closing';
 import RiskProfit from './components/RiskProfit';
 import Reports from './components/Reports';
 import RiskProfitCEV from './components/RiskProfitCEV';
@@ -85,6 +86,7 @@ class App extends Component {
               <Route path="/login" render={() => <Login changeTitle={this.changeTitleHandler} show={this.loadingShow} hide={this.loadingHide} />} />
               <Route path="/" exact render={() => <Bet changeTitle={this.changeTitleHandler} show={this.loadingShow} hide={this.loadingHide} />} />
               <Route path="/bet-fixed" exact render={() => <BetFixed changeTitle={this.changeTitleHandler} show={this.loadingShow} hide={this.loadingHide} />} />
+              <Route path="/closing" exact render={() => <Closing changeTitle={this.changeTitleHandler} show={this.loadingShow} hide={this.loadingHide} />} />
               <Route path="/risk-profit" render={() => <RiskProfit changeTitle={this.changeTitleHandler} show={this.loadingShow} hide={this.loadingHide} />} />
               <Route path="/risk-profit-cev" render={() => <RiskProfitCEV changeTitle={this.changeTitleHandler} show={this.loadingShow} hide={this.loadingHide} />} />
               <Route path="/reports" render={() => <Reports changeTitle={this.changeTitleHandler} show={this.loadingShow} hide={this.loadingHide} />} />
