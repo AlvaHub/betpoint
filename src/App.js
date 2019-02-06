@@ -33,10 +33,11 @@ class App extends Component {
     if (window.location.pathname !== '/login' && common.getUser() === null)
       return window.location.href = "/login";
 
-      this.handleShow = this.handleShow.bind(this);
-      this.handleClose = this.handleClose.bind(this);
-  
-    
+    this.handleShow = this.handleShow.bind(this);
+    this.handleClose = this.handleClose.bind(this);
+
+   
+
   }
   state = {
     title: { left: '', center: "Natan Sports", right: '' },
@@ -56,6 +57,7 @@ class App extends Component {
   }
   componentDidMount() {
 
+    common.setTheme();
   }
   dateChanged = (e) => {
     this.setState({ year: e.target.value });
@@ -67,6 +69,8 @@ class App extends Component {
   handleShow() {
     this.setState({ show: true });
   }
+ 
+  
   render() {
 
     return (
@@ -75,7 +79,8 @@ class App extends Component {
           <div className="col-12 row no-gutters">
             <div className="col text-left align-self-center" >{this.state.title.left}</div>
             <div className="col-auto text-center align-self-center" >{this.state.title.center}</div>
-            <div className="col text-right align-self-center" >{this.state.title.right}</div>
+            <div className="col text-right align-self-center" >{this.state.title.right}
+            </div>
           </div>
         </div>
 

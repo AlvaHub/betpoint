@@ -20,6 +20,17 @@ class Menu extends Component {
     }
 
   }
+  changeTheme = (theme) => {
+    let user = common.getUser();
+    if (theme === 'light')
+      user.theme = theme;
+    else {
+      user.theme = null;
+      var elements = document.head.removeChild(document.getElementById('theme-light'));
+    }
+    common.setUser(user);
+    common.setTheme();
+  }
   render() {
 
     return (
@@ -36,7 +47,10 @@ class Menu extends Component {
           </div>
           <div className="col-md-8 offset-md-2 menu-item pt-2">
             <div>
-              <div>Bem-Vindo <b>{common.getUser() ? common.getUser().first_name : ""}!</b></div>
+              <div>Bem-Vindo <b>{common.getUser() ? common.getUser().first_name : ""}!</b>
+                {/* <div className="float-right ml-3" onClick={this.changeTheme.bind(this, 'dark')}>Dark</div>
+                <div className="float-right" onClick={this.changeTheme.bind(this, 'light')}>Light</div> */}
+              </div>
             </div>
             <div>
               <div onClick={this.redirect.bind(this, '/')}  ><i className="fas fa-futbol"></i> Consolidado</div>
@@ -48,33 +62,33 @@ class Menu extends Component {
               <div onClick={this.redirect.bind(this, '/closing')}  ><i className="fas fa-book-open"></i> Fechamento</div>
             </div>
             <div>
-                <div  onClick={this.redirect.bind(this, '/risk-profit')}  ><i className="fas fa-chart-line"></i> Risco e Lucro</div>
+              <div onClick={this.redirect.bind(this, '/risk-profit')}  ><i className="fas fa-chart-line"></i> Risco e Lucro</div>
             </div>
             <div>
-                <div onClick={this.redirect.bind(this, '/risk-profit-cev')}  ><i className="fas fa-chart-bar"></i> Risco CEV</div>
+              <div onClick={this.redirect.bind(this, '/risk-profit-cev')}  ><i className="fas fa-chart-bar"></i> Risco CEV</div>
             </div>
             <div>
               <div onClick={this.redirect.bind(this, '/reports')}  ><i className="fas fa-chart-bar"></i> Indicadores</div>
             </div>
-            <div>
+            <div className="admin">
               <div onClick={this.redirect.bind(this, '/admin/bet')}  ><i className="fas fa-dice"></i> Apostas</div>
             </div>
-            <div>
+            <div className="admin">
               <div onClick={this.redirect.bind(this, '/admin/betlogin')}  ><i className="fas fa-key"></i> Contas BET 365</div>
             </div>
-            <div>
+            <div className="admin">
               <div onClick={this.redirect.bind(this, '/admin/bookmaker')}  ><i className="fas fa-users"></i> Clientes</div>
             </div>
-            <div >
+            {/* <div >
               <div onClick={this.redirect.bind(this, '/admin/matrix')}  ><i className="fas fa-users"></i> Matrizes</div>
-            </div>
-            <div >
+            </div> */}
+            <div className="admin" >
               <div onClick={this.redirect.bind(this, '/admin/user')}  ><i className="fas fa-user-circle"></i> Usuários</div>
             </div>
             {/* <div>
               <div onClick={this.redirect.bind(this, '/admin/parameter')}  ><i className="fas fa-cogs"></i> Parâmetros</div>
             </div> */}
-            <div >
+            <div className="exit" >
               <div onClick={() => { common.setUser(null); this.redirect('/login') }}  ><i className="fas fa-sign-out-alt"></i> Sair</div>
             </div>
           </div>

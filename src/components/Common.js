@@ -63,7 +63,7 @@ Date.prototype.addDays = function (days) {
 export function newButton() {
     return <i className="fas fa-edit mr-2"></i>
 }
-export function formatNumber(x, color) {
+export function formatNumber(x, color, colors) {
     if (x == null || isNaN(x)) return "";
     var parts = x.toString().split(".");
     if (parts.length == 1)
@@ -74,8 +74,12 @@ export function formatNumber(x, color) {
         parts[1] += "0";
 
     parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ".");
-    if (color)
-        return <span className={Number(x) == 0 ? "yellow" : Number(x) < 0 ? 'red' : 'green'} >{parts.join(",")}</span>;
+    if (color) {
+        if (!colors)
+            return <span className={Number(x) == 0 ? "yellow" : Number(x) < 0 ? 'red' : 'green'} >{parts.join(",")}</span>;
+        else
+            return <span className={Number(x) == 0 ? colors[1] : Number(x) < 0 ? colors[0] : colors[2]} >{parts.join(",")}</span>;
+    }
     return parts.join(",");
 }
 export function closeModal() {
@@ -87,14 +91,12 @@ export function num(value) {
     }
     return 0;
 }
-Array.prototype.sum = function (prop, color) {
+Array.prototype.sum = function (prop, color, colors) {
     var total = 0;
     for (var i = 0, _len = this.length; i < _len; i++) {
         total += isNaN(this[i][prop]) ? 0 : Number(this[i][prop]);
     }
-    if (color)
-        return <span className={total == 0 ? "yellow" : total < 0 ? 'red' : 'green'} >{formatNumber(total)}</span>;
-    return formatNumber(total);
+    return formatNumber(total, color, colors);
 }
 Array.prototype.sumNoFormat = function (prop, color) {
     var total = 0;
@@ -109,9 +111,7 @@ Array.prototype.sumString = function (prop, color) {
         let value = num(this[i][prop]);
         total += isNaN(value) ? 0 : Number(value);
     }
-    if (color)
-        return <span className={total == 0 ? "yellow" : total < 0 ? 'red' : 'green'} >{formatNumber(total)}</span>;
-    return formatNumber(total);
+    return formatNumber(total, color);
 }
 Array.prototype.sumWithComma = function (prop, color) {
     var total = 0;
@@ -121,9 +121,7 @@ Array.prototype.sumWithComma = function (prop, color) {
             total += isNaN(x) ? 0 : Number(x);
         });
     }
-    if (color)
-        return <span className={total == 0 ? "yellow" : total < 0 ? 'red' : 'green'} >{formatNumber(total)}</span>;
-    return formatNumber(total);
+    return formatNumber(total, color);
 }
 Array.prototype.sumInt = function (prop) {
     var total = 0;
@@ -131,5 +129,15 @@ Array.prototype.sumInt = function (prop) {
         total += isNaN(this[i][prop]) ? 0 : Number(this[i][prop]);
     }
     return total;
+}
+export function setTheme() {
+    if (getUser().theme == null) return;
+    if (document.getElementById('theme-light') != null) return;
+    let link = document.createElement('link');
+    link.type = "text/css";
+    link.rel = "stylesheet";
+    link.href = "/light.css";
+    link.id = "theme-light";
+    document.head.appendChild(link);
 }
 export { scrollTop, scrollLast, getData, postData } 

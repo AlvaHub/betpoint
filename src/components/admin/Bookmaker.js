@@ -141,10 +141,10 @@ class Bookmaker extends Component {
               <div className="label">Parceiro</div>
               <input type="text" placeholder="Nome..." className="form-control" name="partner" value={this.state.data.partner || ""} onChange={this.handleChange}  ></input>
             </div>
-            <div className="label">Matriz</div>
+            {/* <div className="label">Matriz</div>
             <select className="form-control" name="matrix_id" value={this.state.data.matrix_id} onChange={this.handleChange} >
               {this.state.matrix.map((x, i) => <option key={x.id} value={x.id} >{x.name}</option>)}
-            </select>
+            </select> */}
           </div>
           <div>
             <div className="label">Ativo</div>

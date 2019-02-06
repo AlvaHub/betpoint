@@ -145,19 +145,6 @@ class Closing extends Component {
 
     return (
       <React.Fragment>
-        <MyModal handleShow={this.state.showModal} handleClose={() => { this.setState({ showModal: false }) }} title="Trocar Login" >
-          <div className="row" >
-            <div className="col-12" >
-              <select className="form-control" name="login_destination" value={this.state.login_destination || "0"} onChange={this.handleChange} >
-                <option value="0">Logins</option>
-                {this.state.betlogins.map((x, i) => <option key={x.id} value={x.id} >{x.name}</option>)}
-              </select>
-              <div className="col-12 p-0 mt-2 text-right" >
-                <button className="btn btn-danger" onClick={this.transferLogin} >Transferir</button>
-              </div>
-            </div>
-          </div>
-        </MyModal>
         <div className="filter hidden-xs" id="filter">
           <div className="row no-gutters" >
             <div className="col-12 col-sm-3 p-1">
@@ -189,11 +176,11 @@ class Closing extends Component {
         <div id="list">
           <div className="div-table-closing div-table-closing-xs" >
             {this.state.view_type == "G" ?
-              <table className="table table-dark table-bordered  table-sm table-consolidado table-closing-xs table-scroll w-100" >
-                <thead className="hidden-xs">
+              <table className="table table-dark table-bordered  table-sm table-closing-md table-closing-xs" >
+                {/* <thead className="hidden-xs">
                   <tr>
                     <th onClick={common.tableSort.bind(this, 'conta')} >Conta</th>
-                    <th onClick={common.tableSort.bind(this, 'cliente')} className="hidden" >Cliente</th>
+                    <th onClick={common.tableSort.bind(this, 'cliente')} >Cliente</th>
                     <th onClick={common.tableSortNumber.bind(this, 'qtd')} >Qtd</th>
                     <th onClick={common.tableSortNumber.bind(this, 'volume')} >Volume</th>
                     <th onClick={common.tableSortNumber.bind(this, 'vale')} >Vale</th>
@@ -204,7 +191,7 @@ class Closing extends Component {
                   </tr>
                   <tr className="font-xs totals">
                     <th></th>
-                    <th className="hidden"></th>
+                    <th></th>
                     <th>{this.state.items.sumInt('qtd')}</th>
                     <th>{this.state.items.sum('volume')}</th>
                     <th>{this.state.items.sum('vale')}</th>
@@ -213,25 +200,38 @@ class Closing extends Component {
                     <th></th>
                     <th>{this.state.items.sum('parcial', true)}</th>
                   </tr>
-                </thead>
+                </thead> */}
                 <tbody>
                   {this.state.table.map((t, n) => <tr key={n}   >
                     <td colSpan="9" style={{ padding: 0, margin: 0 }}>
                       <div className="bookmaker-title">
                         <b>{t.bookmaker}</b>
                       </div>
-                      <table className="table w-100 table-closing">
+                      <table className="table table-closing">
                         <tbody>
                           <tr>
                             <td colSpan="9" className="td-total">
-                              <b className="ml-2">Parcial:</b> {t.rows.sum('parcial', true)}
-                              <b className="ml-2">Comissão:</b> {t.rows.sum('comissao', true)}
-                              <b className="ml-2">Total:</b> {common.formatNumber(t.rows.sumNoFormat('parcial') + t.rows.sumNoFormat('comissao'), true)}
+                              <b className="ml-2">Parcial:</b> {t.rows.sum('parcial', true, ['red', 'yellow', 'green-dark'])}
+                              <b className="ml-2">Comissão:</b> {t.rows.sum('comissao', true, ['red', 'yellow', 'green-dark'])}
+                              <div className="block-inline no-break" >
+                                <b className="ml-2">Total:</b> {common.formatNumber(t.rows.sumNoFormat('parcial') + t.rows.sumNoFormat('comissao'), true, ['red', 'yellow', 'green-dark'])}
+                              </div>
                             </td>
+                          </tr>
+                          <tr className="hidden-xs">
+                            <th>Conta</th>
+                            <th>Cliente</th>
+                            <th>Qtd</th>
+                            <th>Volume</th>
+                            <th>Vale</th>
+                            <th>Atual</th>
+                            <th >Pend</th>
+                            <th>uM</th>
+                            <th>Parcial</th>
                           </tr>
                           {t.rows.map((x, i) => <tr key={i} >
                             <td className="hidden-xs">{x.conta}</td>
-                            <td className="hidden">{x.cliente}</td>
+                            <td className="hidden-xs">{x.cliente}</td>
                             <td className="hidden-xs">{x.qtd}</td>
                             <td className="hidden-xs" >{common.formatNumber(x.volume, true)}</td>
                             <td className="hidden-xs">{x.vale}</td>
@@ -240,18 +240,16 @@ class Closing extends Component {
                             <td className="hidden-xs">{x.um}</td>
                             <td className="hidden-xs">{common.formatNumber(x.parcial, true)}</td>
                             <td colSpan="9" className="show-xs">
-                            <div className="font-lg" ><u>{x.conta}</u></div>
-                            <div>
-                            <b>Qtd: </b> {x.qtd}
-                            <b className="ml-1">Volume: </b> {common.formatNumber(x.volume, true)}
-                            <b className="ml-1">Vale: </b> {x.vale}
-                            </div>
-                            <div>
-                            <b>Atual: </b> {x.atual}
-                            <b className="ml-1">Pendente: </b> {x.pendente}
-                            <b className="ml-1">uM: </b> {x.um}
-                            <b className="ml-1">Parcial: </b> {common.formatNumber(x.parcial, true)}
-                            </div>
+                              <div className="font-lg font-weight-bold" >{x.conta}</div>
+                              <div className="row no-gutters labels-xs">
+                                <div className="col-6"><b>Qtd: </b> {x.qtd}</div>
+                                <div className="col-6"><b>Volume: </b> {common.formatNumber(x.volume, true)}</div>
+                                <div className="col-6"> <b>Vale: </b> {x.vale}</div>
+                                <div className="col-6"><b>Atual: </b> {x.atual}</div>
+                                <div className="col-6"><b>Pendente: </b> {x.pendente}</div>
+                                <div className="col-6"><b>uM: </b> {x.um}</div>
+                                <div className="col-6"><b>Parcial: </b> {common.formatNumber(x.parcial, true)}</div>
+                              </div>
                             </td>
                           </tr>
                           )}
