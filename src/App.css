@@ -71,6 +71,10 @@ body:before {
   .pr-md-1{padding-right: 0.25rem !important;}
 }
 
+.button-options button:not(.last):not(.first) {border-radius: 0;border-right:none}
+.button-options button.last{border-top-left-radius: 0;border-bottom-left-radius: 0}
+.button-options button.first{border-top-right-radius: 0;border-bottom-right-radius: 0;border-right:none}
+
 input[type=checkbox]{zoom: 1.5 !important;}
 input[type='text'],input[type='number'],select,textarea {  font-size: 16px;}
 .loading{display:none;cursor:pointer;position: fixed;left:0;top:0;font-size:12pt;color:rgb(170, 170, 170);background-color:rgba(0, 0, 0, 0.5);height:100%;width:100%;z-index:20;}
@@ -213,13 +217,30 @@ input[type='text'],input[type='number'],select,textarea {  font-size: 16px;}
 .table-top-win>thead th:nth-child(2), .table-top-win>tbody>tr>td:nth-child(2){width:20%}
 .table-top-win>thead th:nth-child(3), .table-top-win>tbody>tr>td:nth-child(3){width:20%}
 .table-top-win>thead th:nth-child(4), .table-top-win>tbody>tr>td:nth-child(4){width:20%}
-.table-top-win.table-scroll>tbody{max-height: calc(var(--window)  - 130px);}
-.table-month.table-scroll>tbody{max-height: calc(var(--window)  - 130px);}
+.table-top-win.table-scroll>tbody{max-height: calc(var(--window)  - 160px);}
 
-.table-month .month{width:7.5%}
-.table-month>tbody>tr>td:nth-child(1){text-align: center} 
+.table-responsive::-webkit-scrollbar{display: none}
+.table-month.table-scroll>tbody{max-height: calc(var(--window)  - 160px);}
+@media(max-width:576px){.table-month.table-scroll>tbody{max-height: calc(var(--window)  - 80px)}}
+.table-month{font-size: 8.5pt}
+@media(min-width:576px){.table-month{min-width: 1300px;margin-top:28px}}
+.table-month td.month, .table-month th.month{width:6%;}
+.table-month>thead>tr>th:nth-child(1), .table-month>tbody>tr>td:nth-child(1),
+.table-month>thead>tr>th:nth-child(2), .table-month>tbody>tr>td:nth-child(2)
+{text-align: center;width:9%;}  
+.table-month-login>thead>tr>th:nth-child(3), .table-month-login>tbody>tr>td:nth-child(3)
+{text-align: center;width:9%;}  
+
+.table-month div.month{border-bottom:1px solid rgb(66, 66, 66);padding:1px}
+.table-month div.month-10,.table-month div.month-11,.table-month div.month-12{border-bottom:none}
 .table-month th{text-align: center}
 .table-month td.month{text-align:right}
+.table-month .label-login{background-image:linear-gradient(to right, #4e1f1f, #ad4848, #4e1f1f);text-align: center;font-weight: normal;padding: 2px;text-align: center;}
+.table-month tr:nth-child(odd) .label-login{background-image:linear-gradient(to right, rgb(40, 73, 40), rgb(85, 150, 85), rgb(40, 73, 40))}
+.table-month .total{background-image:linear-gradient(to right, rgb(207, 207, 207), rgb(255, 255, 255));text-align: center;color:rgb(59, 59, 59)}
+
+.button-options-report .btn{width:60px;padding:2px}
+
 /* BETS */
 .div-table-bets-responsive{width:100%;overflow: auto}
 .div-table-bets-responsive::-webkit-scrollbar{display: none}
@@ -338,7 +359,9 @@ td.top{vertical-align: top}
 .green{font-weight:bold;color:#00C851 !important}
 .green-dark{font-weight:bold;color:rgb(0, 139, 56) !important}
 .red{font-weight:bold;color:#ff4444 !important}
+.red-dark{font-weight:bold;color:#ce3636 !important}
 .yellow{font-weight:bold;color:#e2a52a !important}
+.yellow-dark{font-weight:bold;color:#bb8821 !important}
 .div-table{border-radius: 0px;overflow: hidden;}
 /* .table-light{background-color: transparent;}
 .table-light td{border:1px solid rgb(33, 59, 94);font-weight: normal}

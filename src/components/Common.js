@@ -23,24 +23,49 @@ function postData(path, dataInput) {
         method: 'post', body: JSON.stringify(dataInput)
     }).then(data => data.json());
 }
-export function tableSort(key) {
+export function tableSort(key, obj) {
 
     let direction = this.state.sortField === key ? 1 : -1;
-
-    let data = this.state.items.sort((a, b) => {
-        if (a[key] < b[key]) return 1 * direction;
-        if (a[key] > b[key]) return -1 * direction;
-        return 0;
-    });
-    this.setState({ items: data, sortField: (key === this.state.sortField ? '' : key) });
+    if (typeof (obj) !== 'string') {
+        let data = this.state.items.sort((a, b) => {
+            if (a[key] < b[key]) return 1 * direction;
+            if (a[key] > b[key]) return -1 * direction;
+            return 0;
+        });
+        this.setState({ items: data, sortField: (key === this.state.sortField ? '' : key) });
+    }
+    else {
+        let data = this.state[obj].sort((a, b) => {
+            if (a[key] < b[key]) return 1 * direction;
+            if (a[key] > b[key]) return -1 * direction;
+            return 0;
+        });
+        this.setState({ [obj]: data, sortField: (key === this.state.sortField ? '' : key) });
+    }
 }
-export function tableSortNumber(key) {
+export function tableSortNumber(key, obj) {
 
-    let data = this.state.sortField === key ?
-        this.state.items.sort((a, b) => b[key] - a[key]) :
-        this.state.items.sort((a, b) => a[key] - b[key]);
+    if (typeof (obj) !== 'string') {
+        let data = this.state.sortField === key ?
+            this.state.items.sort((a, b) => b[key] - a[key]) :
+            this.state.items.sort((a, b) => a[key] - b[key]);
+        this.setState({ items: data, sortField: (key === this.state.sortField ? '' : key) });
+    }
+    else {
+        if (typeof (key) !== 'object') {
+            let data = this.state.sortField === key ?
+                this.state[obj].sort((a, b) => (b[key] || 0) - (a[key] || 0)) :
+                this.state[obj].sort((a, b) => (a[key] || 0) - (b[key] || 0));
+            this.setState({ [obj]: data, sortField: (key === this.state.sortField ? '' : key) });
+        }
+        else {
+            let data = this.state.sortField === key[1] ?
+                this.state[obj].sort((a, b) => (b[key[0]] ? b[key[0]][key[1]] : 0) - (a[key[0]] ? a[key[0]][key[1]] : 0)) :
+                this.state[obj].sort((a, b) => (a[key[0]] ?  a[key[0]][key[1]] : 0) - (b[key[0]] ? b[key[0]][key[1]]  : 0));
+            this.setState({ [obj]: data, sortField: (key[1] === this.state.sortField ? '' : key[1]) });
+        }
+    }
 
-    this.setState({ items: data, sortField: (key === this.state.sortField ? '' : key) });
 }
 export function hideMore() {
 

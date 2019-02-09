@@ -14,7 +14,7 @@ class Reports extends Component {
     this.barList();
   }
   barList() {
-    this.props.changeTitle({ left: null, center: 'Indicadores', right: <div className="" onClick={this.showFilter.bind(this)}><i className="fas fa-filter show-xs"></i></div> });
+    this.props.changeTitle({ left: null, center: <div className="pointer" onClick={this.bindList.bind(this)} >Indicadores</div>, right: <div className="" onClick={this.showFilter.bind(this)}><i className="fas fa-filter show-xs"></i></div> });
   }
   barForm = (title) => {
     this.props.changeTitle({ left: <div className="btn-back" onClick={() => this.back()}><i className="fas fa-arrow-alt-circle-left"></i> Voltar</div>, center: title });
@@ -57,46 +57,144 @@ class Reports extends Component {
     });
   }
   bindList() {
-    this.props.show();
-    var that = this;
+
+    let months = this.state.view_id.indexOf('month') > 0 ? this.getMonths() : this.getWeeks();
+
+    this.setState({
+      itemsAll: [],
+      items: [],
+      itemsTopWinAll: [],
+      itemsTopWin: [],
+      itemsTopLostAll: [],
+      itemsTopLost: [],
+      dataByMonthLogin: [],
+      dataByMonthClient: [],
+      dataByMonthLoginAll: [],
+      dataByMonthClientAll: [],
+      months: months,
+    });
+    if (this.state.view_id === 'total-by-day')
+      this.bindTotalsByDay();
+    if (this.state.view_id === 'top-profit')
+      this.bindTopWinLost();
+    if (this.state.view_id === 'by-month-login' || this.state.view_id === 'by-week-login')
+      this.bindReportByMonthLogin();
+    if (this.state.view_id === 'by-month-client' || this.state.view_id === 'by-week-client')
+      this.bindReportByMonthClient();
+
+  }
+  bindTopWinLost() {
     let date_from = formatDate(this.state.date_from, "YYYY-MM-DD");
     let date_to = formatDate(this.state.date_to, "YYYY-MM-DD");
-    common.getData(`report/totals-by-day/${date_from}/${date_to}`).then((data) => { that.props.hide(); this.setState({ items: data, itemsAll: data }) });
+    this.props.show();
+    var that = this;
     common.getData(`report/bets-top-win/${date_from}/${date_to}`).then((data) => { that.props.hide(); this.setState({ itemsTopWin: data, itemsTopWinAll: data }) });
     common.getData(`report/bets-top-lost/${date_from}/${date_to}`).then((data) => { that.props.hide(); this.setState({ itemsTopLost: data, itemsTopLostAll: data }) });
 
-    common.getData(`report/get-by-month/2019`).then((data) => {
+  }
+  bindTotalsByDay() {
+    let date_from = formatDate(this.state.date_from, "YYYY-MM-DD");
+    let date_to = formatDate(this.state.date_to, "YYYY-MM-DD");
+    this.props.show();
+    var that = this;
+    common.getData(`report/totals-by-day/${date_from}/${date_to}`).then((data) => { that.props.hide(); this.setState({ items: data, itemsAll: data }) });
+  }
+  bindReportByMonthLogin() {
+    this.props.show();
+    var that = this;
+    let period = this.state.view_id.indexOf('month') > 0 ? this.state.year : formatDate(this.state.date_from_one_month_ago, 'YYYY-MM-DD');
+    common.getData(`report/get-by-month/${this.state.view_id}/` + period).then((data) => {
       that.props.hide();
-      let table = [];
+      let tableByLogin = [];
+
       data.forEach(x => {
-        let row = table.find(y => y && y.login_name === x.login_name);
-        if (row == null)
-          table.push({ login_name: x.login_name, [x.placement_date]: x.parcial });
-        else
-          row[x.placement_date] = x.parcial;
+        //By Login
+        let rowByLogin = tableByLogin.find(y => y && y.login_name === x.login_name && x.bookmaker_name == y.bookmaker_name);
+        if (rowByLogin == null)
+          tableByLogin.push({ login_name: x.login_name, bookmaker_name: x.bookmaker_name, [x.placement_date]: { parcial: x.parcial, resultado: x.resultado, volume: x.volume, qtd: x.qtd, comissao: x.comissao }, total: { parcial: isNaN(x.parcial) ? 0 : x.parcial, resultado: x.resultado, volume: x.volume, qtd: x.qtd, comissao: x.comissao } });
+        else {
+          rowByLogin[x.placement_date] = { parcial: x.parcial, resultado: x.resultado, volume: x.volume, qtd: x.qtd, comissao: x.comissao };
+          rowByLogin.total.parcial = Number(rowByLogin.total.parcial) + Number(isNaN(x.parcial) ? 0 : x.parcial);
+          rowByLogin.total.resultado = Number(rowByLogin.total.resultado) + Number(x.resultado);
+          rowByLogin.total.volume = Number(rowByLogin.total.volume) + Number(x.volume);
+          rowByLogin.total.comissao = Number(rowByLogin.total.comissao) + Number(x.comissao);
+          rowByLogin.total.qtd = Number(rowByLogin.total.qtd) + Number(x.qtd);
+        }
+
       });
-      console.log(table);
-      this.setState({ dataByMonth: table, dataByMonthAll: table })
+      console.log(tableByLogin);
+      this.setState({ dataByMonthLogin: tableByLogin, dataByMonthLoginAll: tableByLogin })
+    });
+  }
+  bindReportByMonthClient() {
+    this.props.show();
+    var that = this;
+    let period = this.state.view_id.indexOf('month') > 0 ? this.state.year : formatDate(this.state.date_from_one_month_ago, 'YYYY-MM-DD');
+    common.getData(`report/get-by-month/${this.state.view_id}/` + period).then((data) => {
+      that.props.hide();
+      let tableByClient = [];
+
+      data.forEach(x => {
+        //By Client
+
+        let rowByClient = tableByClient.find(y => y && y.bookmaker_name === x.bookmaker_name);
+        if (rowByClient == null)
+          tableByClient.push({ bookmaker_name: x.bookmaker_name, [x.placement_date]: { parcial: x.parcial, resultado: x.resultado, volume: x.volume, qtd: x.qtd, comissao: x.comissao }, total: { parcial: x.parcial, resultado: x.resultado, volume: x.volume, qtd: x.qtd, comissao: x.comissao } });
+        else {
+          rowByClient[x.placement_date] = { parcial: x.parcial, resultado: x.resultado, volume: x.volume, qtd: x.qtd, comissao: x.comissao };
+          rowByClient.total.parcial = Number(rowByClient.total.parcial) + Number(x.parcial);
+          rowByClient.total.resultado = Number(rowByClient.total.resultado) + Number(x.resultado);
+          rowByClient.total.volume = Number(rowByClient.total.volume) + Number(x.volume);
+          rowByClient.total.comissao = Number(rowByClient.total.comissao) + Number(x.comissao);
+          rowByClient.total.qtd = Number(rowByClient.total.qtd) + Number(x.qtd);
+        }
+      });
+
+      this.setState({ dataByMonthClient: tableByClient, dataByMonthClientAll: tableByClient });
     });
   }
   componentDidMount() {
     this.bindList();
+    let years = [];
+    for (let index = 2016; index <= new Date().getFullYear(); index++)
+      years.push(index);
+    this.setState({ years });
+
+
   }
   state = {
-    itemsAll: [],
     items: [],
-    itemsTopWinAll: [],
     itemsTopWin: [],
-    itemsTopLostAll: [],
     itemsTopLost: [],
-    events: [],
-    details: [],
+    dataByMonthLogin: [],
+    dataByMonthClient: [],
+    itemsAll: [],
+    itemsTopWinAll: [],
+    itemsTopLostAll: [],
     date_from: this.getLastMonday(),
     date_to: new Date(this.getLastMonday()).addDays(6),
-    months: [{id: "01", name: "Jan"}, {id: "02", name: "Fev"},{id: "03", name: "Mar"},{id: "04", name: "Abr"},{id: "05", name: "Mai"},{id: "06", name: "Jun"},
-    {id: "07", name: "Jul"},{id: "08", name: "Ago"},{id: "09", name: "Set"},{id: "10", name: "Out"},{id: "11", name: "Nov"},{id: "12", name: "Dec"}],
-    dataByMonth : [],
-    view_id : 'total-by-day'
+    months: [],
+    view_id: 'total-by-day',
+    years: [],
+    year: new Date().getFullYear(),
+    showParcial: true,
+    date_from_one_month_ago: this.getLastFourthMonday()
+  }
+  getMonths() {
+    let months = [{ id: "01", name: "Jan" }, { id: "02", name: "Fev" }, { id: "03", name: "Mar" }, { id: "04", name: "Abr" }, { id: "05", name: "Mai" }, { id: "06", name: "Jun" },
+    { id: "07", name: "Jul" }, { id: "08", name: "Ago" }, { id: "09", name: "Set" }, { id: "10", name: "Out" }, { id: "11", name: "Nov" }, { id: "12", name: "Dez" }
+    ];
+    return months;
+  }
+  getWeeks() {
+    let months = [];
+    months.push({ id: formatDate(this.state.date_from_one_month_ago, "YYYY-MM-DD"), name: formatDate(this.state.date_from_one_month_ago, "DD/MM") });
+    let dt = this.state.date_from_one_month_ago;
+    for (let index = 0; index < 11; index++) {
+      dt = dt.addDays(7);
+      months.push({ id: formatDate(dt, "YYYY-MM-DD"), name: formatDate(dt, "DD/MM") });
+    }
+    return months;
   }
   getLastMonday() {
     var index = 0;
@@ -108,6 +206,11 @@ class Reports extends Component {
       index--;
     }
     return date_from;
+  }
+  getLastFourthMonday() {
+    let lastMonday = this.getLastMonday();
+    lastMonday = lastMonday.addDays(-21);
+    return lastMonday;
   }
   handleChange = e => {
     let data = this.state.data;
@@ -134,7 +237,8 @@ class Reports extends Component {
   changeWeek = (signal) => {
     let date_from = this.state.date_from.addDays(7 * signal);
     let date_to = this.state.date_to.addDays(7 * signal);
-    this.setState({ date_from, date_to });
+    let date_from_one_month_ago = this.state.date_from_one_month_ago.addDays(7 * signal);
+    this.setState({ date_from, date_to, date_from_one_month_ago });
     setTimeout(() => {
       this.bindList();
     }, 1);
@@ -143,21 +247,40 @@ class Reports extends Component {
   }
   filter(e) {
     let items = [];
-    let table = [];
+    let dataName = 'dataByMonthLogin';
+    let dataNameAll = 'dataByMonthLoginAll';
+    if (this.state.view_id === 'by-month-client') {
+      dataName = 'dataByMonthClient';
+      dataNameAll = 'dataByMonthClientAll';
+    }
     if (e.target.value == '') {
-      items = this.state.itemsAll;
-      table = this.state.tableAll;
+      items = this.state[dataNameAll];
     }
     else {
       let value = e.target.value.toUpperCase();
-      items = this.state.itemsAll.filter(x =>
-        (x.cliente + "").toUpperCase().indexOf(value) >= 0);
-
-      table = this.state.tableAll.filter(x =>
-        (x.bookmaker + "").toUpperCase().indexOf(value) >= 0);
+      items = this.state[dataNameAll].filter(x =>
+        (x.bookmaker_name + "").toUpperCase().indexOf(value) >= 0 ||
+        (x.login_name + "").toUpperCase().indexOf(value) >= 0);
     }
+    this.setState({ [dataName]: items });
+  }
+  handleViewChange = (e) => {
+    this.props.show();
+    this.setState({ view_id: e.target.value });
+    setTimeout(() => { this.bindList(); this.hideFilter() }, 500);
+  }
+  handleYearChange = (e) => {
+    this.props.show();
+    this.setState({ year: e.target.value });
+    setTimeout(() => {
+      this.bindList();
+      this.hideFilter()
+    },
+      500);
+  }
+  handleReportField = (e) => {
 
-    this.setState({ items, table });
+    this.setState({ [e.target.name]: !this.state[e.target.name] });
   }
   render() {
 
@@ -168,27 +291,47 @@ class Reports extends Component {
             <div className="col-12 col-sm-3 p-1">
               <input type="text" className="form-control form-control-sm" placeholder="Buscar..." onChange={this.filter.bind(this)} />
             </div>
-            <div className="col-6 col-sm-2 p-1">
+            <div className="col-12 col-sm-3 p-1" hidden={this.state.view_id !== "by-month-login" && this.state.view_id !== "by-month-client"}>
+              <select name="year" value={this.state.year} className="form-control form-control-sm" onChange={this.handleYearChange} >
+                {this.state.years.map(x => <option key={x} value={x}>{x}</option>)};
+              </select>
+            </div>
+            <div className="col-6 col-sm-2 p-1" hidden={this.state.view_id !== "total-by-day" && this.state.view_id !== "top-profit"}>
               <DayPickerInput name="date_from" dayPickerProps={{ selectedDay: this.state.date_from }}
                 placeholder={formatDate(this.state.date_from, 'DD/MM/YYYY')} onDayChange={this.handleDayChange.bind(this)} parseDate={parseDate} formatDate={formatDate}
                 dayPickerProps={{ locale: 'pt-br', localeUtils: MomentLocaleUtils }} inputProps={{ readOnly: true }} />
             </div>
-            <div className="col-6 col-sm-2 p-1 date-to">
+            <div className="col-6 col-sm-2 p-1 date-to" hidden={this.state.view_id !== "total-by-day" && this.state.view_id !== "top-profit"}>
               <DayPickerInput name="date_to"
                 placeholder={formatDate(this.state.date_to, 'DD/MM/YYYY')} onDayChange={this.handleDayChange.bind(this)} parseDate={parseDate} formatDate={formatDate}
                 dayPickerProps={{ locale: 'pt-br', localeUtils: MomentLocaleUtils }} inputProps={{ readOnly: true }} />
             </div>
-            <div className="col-12 col-sm-2 p-1">
-              <select type="text" className="form-control form-control-sm" name="view_id" onChange={(e) => { this.setState({ view_id: e.target.value }) }} >
+            <div className="col-12 col-sm-4 p-1 date-to" hidden={this.state.view_id !== "by-week-login" && this.state.view_id !== "by-week-client"}>
+              <DayPickerInput name="date_to"
+                placeholder={formatDate(this.state.date_from_one_month_ago, 'DD/MM/YYYY')} onDayChange={this.handleDayChange.bind(this)} parseDate={parseDate} formatDate={formatDate}
+                dayPickerProps={{ locale: 'pt-br', localeUtils: MomentLocaleUtils }} inputProps={{ readOnly: true }} />
+            </div>
+            <div className="col-12 col-sm-3 p-1">
+              <select type="text" className="form-control form-control-sm" name="view_id" onChange={this.handleViewChange} >
                 <option value="total-by-day" >Totais por Dia</option>
                 <option value="top-profit" >Top Lucro e Prejúizo</option>
-                <option value="by-month" >Parcial por Login e Mês</option>
+                <option value="by-week-login" >Totais Semanais por Login</option>
+                <option value="by-week-client" >Totais Semanais por Cliente</option>
+                <option value="by-month-login" >Totais Mensais por Login</option>
+                <option value="by-month-client" >Totais Mensais por Cliente</option>
               </select>
             </div>
             <div className="col-12 col-sm-2 p-1 align-self-center text-center">
               <i className="fas fa-arrow-left mr-4 text-secondary font-icon pointer" onClick={this.changeWeek.bind(this, -1)} ></i>
               <i className="fas fa-arrow-right  text-secondary font-icon pointer" onClick={this.changeWeek.bind(this, 1)} ></i>
             </div>
+            <div className="col-12 text-center button-options button-options-report" hidden={this.state.view_id.indexOf('by-month') < 0 && this.state.view_id.indexOf('by-week') < 0} >
+              <button type="button" className={'btn btn-sm first ' + (this.state.showParcial ? 'btn-secondary' : 'btn-outline-secondary')} name="showParcial" onClick={this.handleReportField} >Parcial</button>
+              <button type="button" className={'btn btn-sm ' + (this.state.showComissao ? 'btn-secondary' : 'btn-outline-secondary')} name="showComissao" onClick={this.handleReportField} >Com</button>
+              <button type="button" className={'btn btn-sm ' + (this.state.showResultado ? 'btn-secondary' : 'btn-outline-secondary')} name="showResultado" onClick={this.handleReportField} >Result</button>
+              <button type="button" className={'btn btn-sm last ' + (this.state.showQtd ? 'btn-secondary' : 'btn-outline-secondary')} name="showQtd" onClick={this.handleReportField} >Qtd</button>
+            </div>
+
           </div>
         </div>
         <div className="margin-top-filter margin-top-filter-xs" ></div>
@@ -291,17 +434,91 @@ class Reports extends Component {
               </table>
             </div>
             <div className="col-12 pl-md-1" >
-              <table className={'table table-dark table-hover table-bordered table-striped table-sm table-month table-scroll ' + (this.state.view_id === 'by-month' ? '' : 'hidden')} >
+              <table className={'table table-dark table-bordered table-striped table-sm table-month table-month-login table-scroll ' + (this.state.view_id === 'by-month-login' || this.state.view_id === 'by-week-login' ? '' : 'hidden')} >
                 <thead>
                   <tr>
-                  <th>Login</th>
-                  {this.state.months.map(x => <th key={x.id} className="month" >{x.name}</th>)}
+                    <th className="hidden-xs" onClick={common.tableSort.bind(this, 'login_name', 'dataByMonthLogin')} >Login</th>
+                    <th className="hidden-xs" onClick={common.tableSort.bind(this, 'bookmaker_name', 'dataByMonthLogin')} >Cliente</th>
+                    <th className="hidden-xs" onClick={common.tableSortNumber.bind(this, ['total', 'parcial'], 'dataByMonthLogin')} >Total</th>
+                    {this.state.months.map(x => <th key={x.id} className="month hidden-xs" onClick={common.tableSortNumber.bind(this, [x.id, 'parcial'], 'dataByMonthLogin')} >{x.name}</th>)}
+                    <th className="show-xs" >Parcial Mensal por Login em {this.state.year}</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {this.state.dataByMonth.map((x, i) => <tr key={i} >
-                  <td>{x.login_name}</td>
-                  {this.state.months.map((y, n) => <td key={n}  className="month" >{common.formatNumber(x[y.id],true)}</td>)}
+                  {this.state.dataByMonthLogin.map((x, i) => <tr key={i} >
+                    <td className="hidden-xs">{x.login_name}</td>
+                    <td className="hidden-xs">{x.bookmaker_name}</td>
+                    <td className="text-right hidden-xs">
+                      <div hidden={!this.state.showParcial}> {common.formatNumber(x.total.parcial, true)}</div>
+                      <div hidden={!this.state.showComissao}> {common.formatNumber(x.total.comissao, true)}</div>
+                      <div hidden={!this.state.showResultado}> {common.formatNumber(x.total.resultado, true)}</div>
+                      <div hidden={!this.state.showQtd}> {x.total.qtd}</div>
+                      <div hidden={!this.state.showVolume}> {common.formatNumber(x.total.volume, true)}</div>
+                    </td>
+                    {this.state.months.map((y, n) => <td key={n} className="month hidden-xs" >
+                      <div hidden={!this.state.showParcial}> {common.formatNumber(x[y.id] ? x[y.id].parcial : null, true)}</div>
+                      <div hidden={!this.state.showComissao}> {common.formatNumber(x[y.id] ? x[y.id].comissao : null, true)}</div>
+                      <div hidden={!this.state.showResultado}> {common.formatNumber(x[y.id] ? x[y.id].resultado : null, true)}</div>
+                      <div hidden={!this.state.showQtd}> {x[y.id] ? x[y.id].qtd : null}</div>
+                      <div hidden={!this.state.showVolume}> {common.formatNumber(x[y.id] ? x[y.id].volume : null, true)}</div>
+                    </td>)}
+                    <td className="show-xs p-0">
+                      <div className="label-login"><b>{x.login_name} - {x.bookmaker_name}</b></div>
+                      <div className="total"><b>Total:</b> {common.formatNumber(x.total, true, ['red-dark', 'yellow-dark', 'green-dark'])}</div>
+                      <div className="row no-gutters mt-1" >
+                        {this.state.months.map((y, n) => <div key={n} className={'month col-4 text-center month-' + y.id} >
+                          <div><b>{y.name}</b></div>
+                          <div hidden={!this.state.showParcial}> {common.formatNumber(x[y.id] ? x[y.id].parcial : null, true)}</div>
+                          <div hidden={!this.state.showComissao}> {common.formatNumber(x[y.id] ? x[y.id].comissao : null, true)}</div>
+                          <div hidden={!this.state.showResultado}> {common.formatNumber(x[y.id] ? x[y.id].resultado : null, true)}</div>
+                          <div hidden={!this.state.showQtd}> {x[y.id] ? x[y.id].qtd : null}</div>
+                          <div hidden={!this.state.showVolume}> {common.formatNumber(x[y.id] ? x[y.id].volume : null, true)}</div>
+                        </div>)}
+                      </div>
+                    </td>
+                  </tr>)}
+                </tbody>
+              </table>
+              <table className={'table table-dark table-bordered table-striped table-sm table-month table-month-client table-scroll ' + (this.state.view_id === 'by-month-client' || this.state.view_id === 'by-week-client' ? '' : 'hidden')} >
+                <thead>
+                  <tr>
+                    <th className="hidden-xs" onClick={common.tableSort.bind(this, 'bookmaker_name', 'dataByMonthClient')} >Cliente</th>
+                    <th className="hidden-xs" onClick={common.tableSortNumber.bind(this, 'total', 'dataByMonthClient')} >Total</th>
+                    {this.state.months.map(x => <th key={x.id} className="month hidden-xs" onClick={common.tableSortNumber.bind(this, x.id, 'dataByMonthClient')} >{x.name}</th>)}
+                    <th className="show-xs" >Parcial Mensal por Cliente em {this.state.year}</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {this.state.dataByMonthClient.map((x, i) => <tr key={i} >
+                    <td className="hidden-xs">{x.bookmaker_name}</td>
+                    <td className="text-right hidden-xs">
+                      <div hidden={!this.state.showParcial}> {common.formatNumber(x.total.parcial, true)}</div>
+                      <div hidden={!this.state.showComissao}> {common.formatNumber(x.total.comissao, true)}</div>
+                      <div hidden={!this.state.showResultado}> {common.formatNumber(x.total.resultado, true)}</div>
+                      <div hidden={!this.state.showQtd}> {x.total.qtd}</div>
+                      <div hidden={!this.state.showVolume}> {common.formatNumber(x.total.volume, true)}</div>
+                    </td>
+                    {this.state.months.map((y, n) => <td key={n} className="month hidden-xs" >
+                      <div hidden={!this.state.showParcial}> {common.formatNumber(x[y.id] ? x[y.id].parcial : null, true)}</div>
+                      <div hidden={!this.state.showComissao}> {common.formatNumber(x[y.id] ? x[y.id].comissao : null, true)}</div>
+                      <div hidden={!this.state.showResultado}> {common.formatNumber(x[y.id] ? x[y.id].resultado : null, true)}</div>
+                      <div hidden={!this.state.showQtd}> {x[y.id] ? x[y.id].qtd : null}</div>
+                      <div hidden={!this.state.showVolume}> {common.formatNumber(x[y.id] ? x[y.id].volume : null, true)}</div>
+                    </td>)}
+                    <td className="show-xs p-0">
+                      <div className="label-login"><b>{x.bookmaker_name}</b></div>
+                      <div className="total"><b>Total:</b> {common.formatNumber(x.total, true, ['red-dark', 'yellow-dark', 'green-dark'])}</div>
+                      <div className="row no-gutters mt-1" >
+                        {this.state.months.map((y, n) => <div key={n} className={'month col-4 text-center month-' + y.id} >
+                          <div><b>{y.name}</b></div>
+                          <div hidden={!this.state.showParcial}> {common.formatNumber(x[y.id] ? x[y.id].parcial : null, true)}</div>
+                          <div hidden={!this.state.showComissao}> {common.formatNumber(x[y.id] ? x[y.id].comissao : null, true)}</div>
+                          <div hidden={!this.state.showResultado}> {common.formatNumber(x[y.id] ? x[y.id].resultado : null, true)}</div>
+                          <div hidden={!this.state.showQtd}> {x[y.id] ? x[y.id].qtd : null}</div>
+                          <div hidden={!this.state.showVolume}> {common.formatNumber(x[y.id] ? x[y.id].volume : null, true)}</div>
+                        </div>)}
+                      </div>
+                    </td>
                   </tr>)}
                 </tbody>
               </table>
