@@ -16,6 +16,7 @@ import Betlogin from './components/admin/Betlogin';
 import Bookmaker from './components/admin/Bookmaker';
 import Parameter from './components/admin/Parameter';
 import AdminBet from './components/admin/Bet';
+import Commission from './components/admin/Commission';
 import * as common from './components/Common';
 import MenuIcon from './components/MenuIcon'
 
@@ -102,6 +103,7 @@ class App extends Component {
               <Route path="/admin/bookmaker" render={() => <Bookmaker changeTitle={this.changeTitleHandler} show={this.loadingShow} hide={this.loadingHide} />} />
               <Route path="/admin/parameter" render={() => <Parameter changeTitle={this.changeTitleHandler} show={this.loadingShow} hide={this.loadingHide} />} />
               <Route path="/admin/bet" render={() => <AdminBet changeTitle={this.changeTitleHandler} show={this.loadingShow} hide={this.loadingHide} />} />
+              <Route path="/admin/commission" render={() => <Commission changeTitle={this.changeTitleHandler} show={this.loadingShow} hide={this.loadingHide} />} />
             </div>
           </React.Fragment>
         </BrowserRouter>

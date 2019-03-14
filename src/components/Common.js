@@ -156,7 +156,8 @@ Array.prototype.sumInt = function (prop) {
     return total;
 }
 export function setTheme() {
-    if (getUser().theme == null) return;
+    let user = getUser();
+    if (user == null || user.theme == null) return;
     if (document.getElementById('theme-light') != null) return;
     let link = document.createElement('link');
     link.type = "text/css";

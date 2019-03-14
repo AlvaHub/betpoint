@@ -8,11 +8,11 @@ class Betlogin extends Component {
 
     this.barList();
     this.bindList();
-
-    common.getData('combo/multiplier').then((data) => { this.setState({ multipliers: data }) })
-    common.getData('combo/profit-percent').then((data) => { this.setState({ profits: data }) })
-    common.getData('combo/commission-formula').then((data) => { this.setState({ commissions: data }) })
-    common.getData('combo/bookmaker').then((data) => { this.setState({ bookmakers: data }) })
+    
+    common.getData('combo/multiplier').then((data) => { this.setState({ multipliers: data, loaded : this.state.loaded + 1 }) })
+    common.getData('combo/profit-percent').then((data) => { this.setState({ profits: data, loaded : this.state.loaded + 1 }) })
+    common.getData('combo/commission-formula').then((data) => { this.setState({ commissions: data, loaded : this.state.loaded + 1 }) })
+    common.getData('combo/bookmaker').then((data) => { this.setState({ bookmakers: data, loaded : this.state.loaded + 1 }) })
 
   }
   state = {
@@ -25,7 +25,8 @@ class Betlogin extends Component {
     multipliers: [],
     profits: [],
     commissions: [],
-    bookmakers: []
+    bookmakers: [],
+    loaded : 0,
 
   }
   barList() {
@@ -40,6 +41,7 @@ class Betlogin extends Component {
     common.getData('betlogin').then((data) => { that.props.hide(); this.setState({ items: data, itemsAll: data }) })
   }
   newData() {
+    if(this.state.loaded < 4)return alert('Carregando, aguarde...');
     common.scrollTop();
     this.setState({ data: this.getNewData() });
     document.getElementById('new').className = 'form come';

@@ -87,7 +87,7 @@ class AdminBet extends Component {
       common.scrollTop();
       data.total_stake = common.formatNumber(data.total_stake);
       data.total_return = common.formatNumber(data.total_return);
-
+  
       data.events.forEach(x => {
         x.event_date = formatDate(x.event_date, "DD/MM/YYYY");
         x.odds = common.formatNumber(x.odds);

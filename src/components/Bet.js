@@ -1,13 +1,15 @@
 import React, { Component } from 'react';
 import { withRouter } from 'react-router-dom';
 import * as common from './Common';
-import ReactTooltip from 'react-tooltip';
-import DayPickerInput from 'react-day-picker/DayPickerInput';
-import 'react-day-picker/lib/style.css';
-import MomentLocaleUtils, { formatDate, parseDate } from 'react-day-picker/moment';
+import WeekSelector from './WeekSelector';
+import { formatDate} from 'react-day-picker/moment';
 import 'moment/locale/pt-br';
 import MyModal from './MyModal';
-
+import { relativeTimeThreshold, parseZone } from 'moment';
+// import DayPickerInput from 'react-day-picker/DayPickerInput';
+// import 'react-day-picker/lib/style.css';
+// import MomentLocaleUtils, { formatDate, parseDate } from 'react-day-picker/moment';
+// import 'moment/locale/pt-br';
 
 class Bet extends Component {
   constructor(props) {
@@ -18,13 +20,17 @@ class Bet extends Component {
   }
   barList() {
     this.props.changeTitle({
-      left: null, center: <div className="pointer" onClick={this.bindList.bind(this)} >Consolidado</div>, right: <div className="" onClick={this.showFilter.bind(this)}><i className="fas fa-filter show-xs"></i></div>
+      left: null, center: <div className="pointer" onClick={this.weekChanged.bind(this, null)} >Consolidado</div>, right: <div className="" onClick={this.showFilter.bind(this)}><i className="fas fa-filter show-xs"></i></div>
     });
   }
   barForm = (title) => {
     this.props.changeTitle({
       left: <div className="btn-back" onClick={() => this.back()}><i className="fas fa-arrow-alt-circle-left"></i> Voltar</div>, center: title,
-      right: <i className="fas fa-exchange-alt mr-2" onClick={() => { this.setState({ showModal: true, login_destination: "0" }); }}></i>
+      right: <div>
+        <i className="fas fa-trash-alt mr-4" onClick={this.deleteBets}></i>
+        <i className="fas fa-exchange-alt mr-2" onClick={() => { this.setState({ showModal: true, login_destination: "0" }); }}></i>
+
+      </div>
     });
   }
   back() {
@@ -46,13 +52,13 @@ class Bet extends Component {
     document.getElementById("table-detail-body").innerHTML = document.getElementById(item.conta).outerHTML;
     document.getElementById("table-detail-body-xs").innerHTML = document.getElementById(item.conta + '-xs').outerHTML;
 
-    let date_from = formatDate(this.state.date_from, "YYYY-MM-DD");
-    let date_to = formatDate(this.state.date_to, "YYYY-MM-DD");
+    let date_from = this.state.week_id.split('|')[0];
+    let date_to = this.state.week_id.split('|')[1];
 
     common.getData('bet/consolidado-by-login/' + item.conta + '/' + date_from + '/' + date_to).then((data) => {
       this.props.hide();
       common.scrollTop();
-      this.setState({ details: data })
+      this.setState({ details: data, itemSelected: item })
       document.getElementById('list').className = 'hidden';
       document.getElementById('filter').className = 'hidden';
       document.getElementById('detail').className = 'form  pb-0 come';
@@ -60,23 +66,9 @@ class Bet extends Component {
       this.barForm(item.conta);
     });
   }
-  bindList() {
-    this.props.show();
-    var that = this;
-    let date_from = formatDate(this.state.date_from, "YYYY-MM-DD");
-    let date_to = formatDate(this.state.date_to, "YYYY-MM-DD");
-    common.getData(`bet/consolidado/${date_from}/${date_to}`).then((data) => { that.props.hide(); this.setState({ items: data, itemsAll: data }) });
-
-    common.getData(`bet-fixed/${date_from}/${date_to}`).then((data) => {
-
-      let tables = [data.descarregos, data.afs, data.repasses]
-      this.setState({ tables })
-    });
-
-  }
 
   componentDidMount() {
-    this.bindList();
+    //Combo Login
     common.getData('combo/betlogin').then((data) => { this.setState({ betlogins: data }) })
   }
   componentDidUpdate() {
@@ -93,15 +85,41 @@ class Bet extends Component {
       divsEvents[index].style.maxWidth = w;
     }
   }
+  weeksLoaded(weeks) {
+
+    this.props.show();
+
+    if (weeks.length === 0) {
+      this.setState({ week_id: null, items: [], itemsAll: [], tables: [] });
+      this.props.hide();
+      return;
+    }
+    this.weekChanged(weeks[0].id)
+  }
+  weekChanged(week_id) {
+    week_id = week_id ? week_id : this.state.week_id;
+    this.props.show();
+    var that = this;
+    let date_from = week_id.split('|')[0];
+    let date_to = week_id.split('|')[1];
+    //Consolidado
+    common.getData(`bet/consolidado/${date_from}/${date_to}`).then((data) => { that.props.hide(); this.setState({ items: data, itemsAll: data, week_id }) });
+    //Bets Fixed
+    common.getData(`bet-fixed/${date_from}/${date_to}`).then((data) => {
+
+      let tables = [data.descarregos, data.afs, data.repasses]
+      this.setState({ tables })
+    });
+  }
+
   state = {
     itemsAll: [],
     items: [],
     details: [],
-    date_from: this.getLastMonday(),
-    date_to: new Date(this.getLastMonday()).addDays(6),
     betlogins: [],
     login_destination: "0",
-    tables: []
+    tables: [],
+
   }
   getLastMonday() {
     var index = 0;
@@ -135,7 +153,6 @@ class Bet extends Component {
     this.setState({ details })
 
   }
-
   showFilter() {
     var css = document.getElementById('filter').className;
     css = css.indexOf('hidden-xs') > 0 ? 'filter' : 'filter hidden-xs';
@@ -156,7 +173,6 @@ class Bet extends Component {
 
     this.setState({ items });
   }
-
   handleDayChange(selectedDay, modifiers, dayPickerInput) {
     this.setState({ [dayPickerInput.props.name]: selectedDay })
 
@@ -164,16 +180,6 @@ class Bet extends Component {
       this.bindList();
     }, 1);
 
-  }
-  changeWeek = (signal) => {
-    let date_from = this.state.date_from.addDays(7 * signal);
-    let date_to = this.state.date_to.addDays(7 * signal);
-    this.setState({ date_from, date_to });
-
-    setTimeout(() => {
-      this.bindList();
-    }, 1);
-    setTimeout(() => { this.hideFilter() }, 1000);
   }
   divClick = (id) => {
 
@@ -198,13 +204,32 @@ class Bet extends Component {
       bets.forEach(x => ids.push(x.id));
       common.postData('bet/transfer-bets', { ids: ids, login_id: this.state.login_destination, user_id: common.getUser().id }).then((data) => {
         if (data !== 0) {
-          this.bindList();
+          this.weekChanged(null);
           this.back();
           this.setState({ showModal: false });
 
         }
       })
     }
+  }
+  deleteBets = () => {
+    if (!window.confirm('Confirma a exclusão das apostas selecionadas?'))
+      return;
+
+    let bets = this.state.details.filter(x => x.selected);
+    if (bets.length === 0) return alert('Nenhuma aposta foi selecionada!');
+    let ids = [];
+    bets.forEach(x => ids.push(x.id));
+    console.log(ids);
+    this.props.show();
+    common.postData('bet/delete-bets', { ids: ids, user_id: common.getUser().id }).then((data) => {
+      if (data !== 0) {
+        this.viewDetail(this.state.itemSelected);
+      }
+      else {
+        this.props.show();
+      }
+    });
   }
 
   render() {
@@ -225,24 +250,11 @@ class Bet extends Component {
           </div>
         </MyModal>
         <div className="filter hidden-xs" id="filter">
-          <div className="row no-gutters" >
+          <div className="row no-gutters offset-sm-1" >
             <div className="col-12 col-sm-4 p-1">
               <input type="text" className="form-control form-control-sm" placeholder="Buscar..." onChange={this.filter.bind(this)} />
             </div>
-            <div className="col-6 col-sm-3 p-1">
-              <DayPickerInput name="date_from" dayPickerProps={{ selectedDay: this.state.date_from }}
-                placeholder={formatDate(this.state.date_from, 'DD/MM/YYYY')} onDayChange={this.handleDayChange.bind(this)} parseDate={parseDate} formatDate={formatDate}
-                dayPickerProps={{ locale: 'pt-br', localeUtils: MomentLocaleUtils }} inputProps={{ readOnly: true }} />
-            </div>
-            <div className="col-6 col-sm-3 p-1 date-to">
-              <DayPickerInput name="date_to"
-                placeholder={formatDate(this.state.date_to, 'DD/MM/YYYY')} onDayChange={this.handleDayChange.bind(this)} parseDate={parseDate} formatDate={formatDate}
-                dayPickerProps={{ locale: 'pt-br', localeUtils: MomentLocaleUtils }} inputProps={{ readOnly: true }} />
-            </div>
-            <div className="col-12 col-sm-2 p-1 align-self-center text-center">
-              <i className="fas fa-arrow-left mr-4 text-secondary font-icon pointer" onClick={this.changeWeek.bind(this, -1)} ></i>
-              <i className="fas fa-arrow-right  text-secondary font-icon pointer" onClick={this.changeWeek.bind(this, 1)} ></i>
-            </div>
+            <WeekSelector weeksLoaded={this.weeksLoaded.bind(this)} weekChanged={this.weekChanged.bind(this)} hideFilter={this.hideFilter.bind(this)} show={this.props.show} />
           </div>
         </div>
         <div className="margin-top-filter margin-top-filter-xs" ></div>
@@ -292,15 +304,18 @@ class Bet extends Component {
                   <td>{x.atual}</td>
                   <td>{x.pendente}</td>
                   <td>{x.um}</td>
-                  <td>{common.formatNumber(x.parcial)}</td>
-                  <td>{x.comissão}</td>
+                  <td>{common.formatNumber(x.parcial)}
+                    <div hidden={x.parcial === x.parcial_check} className={x.parcial === x.parcial_check ? '' : 'bg-red rounded text-white'} >{common.formatNumber(x.parcial_check)}
+                    </div>
+                  </td>
+                  <td>{common.formatNumber(x.comissao)}</td>
                   <td className={x.total == 0 ? "yellow" : x.total < 0 ? 'red' : 'green'} >{common.formatNumber(x.total)}</td>
                   <td>{x.profit_percent}</td>
                   <td className={x.resultado == 0 ? "" : x.resultado < 0 ? 'red' : 'green'} >{common.formatNumber(x.resultado)}</td>
                 </tr>)}
                 {this.state.tables.map((t, i) => <React.Fragment key={i}>
                   <tr>
-                    <td colSpan="12" className={t.title.replace("/","")} >{t.title}</td>
+                    <td colSpan="12" className={t.title.replace("/", "")} >{t.title}</td>
                   </tr>
                   {t.data.map((x, i) => <tr key={i}>
                     <td>{x.conta}</td>
@@ -312,7 +327,7 @@ class Bet extends Component {
                     <td>{x.pendente}</td>
                     <td>{x.um}</td>
                     <td>{common.formatNumber(x.parcial)}</td>
-                    <td>{x.comissão}</td>
+                    <td>{common.formatNumber(x.comissao)}</td>
                     <td className={x.total == 0 ? "yellow" : x.total < 0 ? 'red' : 'green'} >{common.formatNumber(x.total)}</td>
                     <td>{x.profit_percent}</td>
                     <td className={x.resultado == 0 ? "" : x.resultado < 0 ? 'red' : 'green'} >{common.formatNumber(x.resultado)}</td>
@@ -356,7 +371,7 @@ class Bet extends Component {
                     <div className="col-3">{x.pendente}</div>
                     <div className="w-100" ></div>
                     <div className="col-3">{common.formatNumber(x.parcial)}</div>
-                    <div className="col-3">{x.comissão}</div>
+                    <div className="col-3">{common.formatNumber(x.comissao)}</div>
                     <div className={x.total == 0 ? "col-3 yellow" : x.total < 0 ? 'col-3 red' : 'col-3 green'} >{common.formatNumber(x.total)}</div>
                     <div className={x.resultado == 0 ? "col-3" : x.resultado < 0 ? 'col-3 red' : 'col-3 green'} >{common.formatNumber(x.resultado)}</div>
                   </div>
@@ -432,9 +447,12 @@ class Bet extends Component {
                 </tr>
               </thead>
               <tbody>
-                {this.state.details.map((x, i) => <tr key={x.id}  >
+                {this.state.details.map((x, i) => <tr key={x.id} className={x.status_id == "6" ? 'bet-deleted' : ''}  >
                   <td className="font-sm"><input type="checkbox" name="selected" checked={x.selected || ""} onChange={this.handleChangeDetail.bind(this, i)} /></td>
-                  <td className="td-bet">{x.bet_confirmation.split('<br>').map((y, n) => <div title={y} id={'bet-' + x.id + '-' + n} onClick={this.divClick.bind(this, 'bet-' + x.id + '-' + n)} className="no-break font-sm overflow-x" key={n}>{y}</div>)}</td>
+                  <td className="td-bet">
+                    {x.bet_confirmation.split('<br>').map((y, n) => <div title={y} id={'bet-' + x.id + '-' + n} onClick={this.divClick.bind(this, 'bet-' + x.id + '-' + n)} className="no-break font-sm overflow-x" key={n}>{y}</div>)}
+                    <div hidden={x.status_id != "6"} className="rounded bg-red text-center">Excluída</div>
+                  </td>
                   <td className="top td-event">{x.event_names.split(',').map((y, n) => <div title={y} id={'event-' + x.id + '-' + n} onClick={this.divClick.bind(this, 'event-' + x.id + '-' + n)} className="no-break font-sm" key={n}>{y}</div>)}</td>
                   <td className="top">{x.event_dates.split(',').map((x, n) => <div className="no-break font-sm" key={n}>{formatDate(x, 'DD-MM-YY')}</div>)}</td>
                   <td className="top">{x.event_results.split(',').map((x, n) => <div className="font-sm" key={n}><span className={x.substring(0, 4) + '-Text'}>{x.replace("Ainda por Acontecer", "Aberto")}</span></div>)}</td>
@@ -443,13 +461,13 @@ class Bet extends Component {
                   <td className={x.total < 0 ? 'red' : 'green'}>{x.total}</td>
                   <td>{x.odds}</td>
                   <td className="text-center">{x.data_betstatus}</td>
-                  <td>{x.comissao}</td>
+                  <td>{common.formatNumber(x.comissao)}</td>
                 </tr>)}
               </tbody>
             </table>
           </div>
           <div className="div-consolidado-login-xs mt-1 show-xs" >
-            {this.state.details.map(x => <table className="table table-dark table-bordered table-striped table-consolidado-login-xs table-sm  mb-1" key={x.id}  >
+            {this.state.details.filter(x => x.status_id == null).map(x => <table className="table table-dark table-bordered table-striped table-consolidado-login-xs table-sm  mb-1" key={x.id}  >
               <tbody>
                 <tr>
                   <th colSpan="5" >
@@ -491,7 +509,6 @@ class Bet extends Component {
             </table>)}
           </div>
         </div>
-        <ReactTooltip />
       </React.Fragment>
     );
   }

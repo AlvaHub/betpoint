@@ -46,10 +46,11 @@ class Menu extends Component {
             </div> */}
           </div>
           <div className="col-md-8 offset-md-2 menu-item pt-2">
+            <div className="header">
+              Relatórios
+            </div>
             <div>
               <div>Bem-Vindo <b>{common.getUser() ? common.getUser().first_name : ""}!</b>
-                {/* <div className="float-right ml-3" onClick={this.changeTheme.bind(this, 'dark')}>Dark</div>
-                <div className="float-right" onClick={this.changeTheme.bind(this, 'light')}>Light</div> */}
               </div>
             </div>
             <div onClick={this.redirect.bind(this, '/')} >
@@ -70,6 +71,12 @@ class Menu extends Component {
             <div onClick={this.redirect.bind(this, '/reports')}  >
               <div><i className="fas fa-chart-bar"></i> Indicadores</div>
             </div>
+            <div className="header">
+              Administração
+            </div>
+            <div className="admin" onClick={this.redirect.bind(this, '/admin/commission')}  >
+              <div><i className="fas fa-coins"></i> Comissão</div>
+            </div>
             <div className="admin" onClick={this.redirect.bind(this, '/admin/bet')}  >
               <div><i className="fas fa-dice"></i> Apostas</div>
             </div>
@@ -82,7 +89,7 @@ class Menu extends Component {
             {/* <div >
               <div onClick={this.redirect.bind(this, '/admin/matrix')}  ><i className="fas fa-users"></i> Matrizes</div>
             </div> */}
-            <div className="admin"  onClick={this.redirect.bind(this, '/admin/user')}  >
+            <div className="admin" onClick={this.redirect.bind(this, '/admin/user')}  >
               <div><i className="fas fa-user-circle"></i> Usuários</div>
             </div>
             {/* <div>
