@@ -26,7 +26,7 @@ class WeekSelector extends Component {
     }
     state = {
         years: [],
-        weeks: []
+        weeks: [{id: "", name: "Semanas" }]
     }
     filterWeek = (e) => {
         this.setState({ week_id: e.target.value });

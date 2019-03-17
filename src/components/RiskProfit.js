@@ -15,11 +15,16 @@ class RiskProfit extends Component {
 
     window.addEventListener('resize', this.setColumnWitdth);
   }
-  componentWillUnmount(){
+  componentWillUnmount() {
     window.removeEventListener('resize', this.setColumnWitdth);
   }
   barList() {
-    this.props.changeTitle({ left: null, center:  <div className="pointer" onClick={this.bindList.bind(this)} >Risco e Lucro</div>, right: <div className="" onClick={this.showFilter.bind(this)}><i className="fas fa-filter show-xs"></i></div> });
+    this.props.changeTitle({
+      left: null, center: <div className="pointer" onClick={this.bindList.bind(this)} >Risco e Lucro
+    <small className="last-update">{this.state.lastBetTime ? "Atualização: " + formatDate(this.state.lastBetTime.date, "DD/MM H:mm") + "  há " + this.state.lastBetTime.minutes + " min atrás" : ""}</small>
+      </div>,
+      right: <div className="" onClick={this.showFilter.bind(this)}><i className="fas fa-filter show-xs"></i></div>
+    });
   }
   barForm = (title) => {
     this.props.changeTitle({ left: <div className="btn-back" onClick={() => this.back()}><i className="fas fa-arrow-alt-circle-left"></i> Voltar</div>, center: title });
@@ -72,6 +77,8 @@ class RiskProfit extends Component {
 
     //Get list
     this.bindList();
+    //Last Update Date
+    common.getData('bet/data/last-bet-pending-time').then((data) => { this.setState({ lastBetTime: data }); this.barList(); })
   }
   state = {
     itemsAll: [],
@@ -205,7 +212,7 @@ class RiskProfit extends Component {
                 <th className="font-vxs middle-center">{this.state.items.sumWithComma('total_returns')}</th>
                 <th className="red font-xs middle-center"  >{this.state.items.sum('risk')}</th>
                 <th className="green font-xs middle-center" >{this.state.items.sum('profit')}</th>
-                <th></th> 
+                <th></th>
                 <th></th>
               </tr>
             </thead>

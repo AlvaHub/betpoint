@@ -13,7 +13,14 @@ class RiskProfitCEV extends Component {
     this.barList();
   }
   barList() {
-    this.props.changeTitle({ left: null, center: 'Risco CEV', right: <div className="" onClick={this.showFilter.bind(this)}><i className="fas fa-filter show-xs"></i></div> });
+    this.props.changeTitle({
+      left: null,
+      center:
+        <div  className="pointer" onClick={this.bindList.bind(this)}  >Risco CEV
+          <small  className="last-update" >{this.state.lastBetTime ? "Atualização: " + formatDate(this.state.lastBetTime.date, "DD/MM H:mm") + "  há " + this.state.lastBetTime.minutes + " min atrás" : ""}</small>
+        </div>,
+      right: <div className="" onClick={this.showFilter.bind(this)}><i className="fas fa-filter show-xs"></i></div>
+    });
   }
   barForm = (title) => {
     this.props.changeTitle({ left: <div className="btn-back" onClick={() => this.back()}><i className="fas fa-arrow-alt-circle-left"></i> Voltar</div>, center: title });
@@ -61,12 +68,14 @@ class RiskProfitCEV extends Component {
     let date_from = formatDate(this.state.date_from, "YYYY-MM-DD");
     let date_to = formatDate(this.state.date_to, "YYYY-MM-DD");
     common.getData('combo/risk-profit-event').then((events) => { this.setState({ events }); });
-    common.postData(`report/risk-profit-cev`, "").then((data) => { that.props.hide(); this.setState({ items: data, itemsAll: data }) });
+    common.postData(`report/risk-profit-cev`, "").then((data) => { that.props.hide(); this.setState({ items: data, itemsAll: data, sortField: 'valores' }); this.handleSortXS() });
   }
   componentDidMount() {
 
     //Get list
     this.bindList();
+    //Last Update Date
+    common.getData('bet/data/last-bet-pending-time').then((data) => { this.setState({ lastBetTime: data }); this.barList(); })
   }
   state = {
     itemsAll: [],
@@ -142,14 +151,14 @@ class RiskProfitCEV extends Component {
     let values = []
     let key = 'valores';
     let field = '';
-    if(this.state.sortField === key ){
+    if (this.state.sortField === key) {
       values.push({ field: 'home_value', value: items.sort((a, b) => a['home_value'] - b['home_value'])[0]['home_value'] });
       values.push({ field: 'draw_value', value: items.sort((a, b) => a['draw_value'] - b['draw_value'])[0]['draw_value'] });
       values.push({ field: 'visitor_value', value: items.sort((a, b) => a['visitor_value'] - b['visitor_value'])[0]['visitor_value'] });
       field = values.sort((a, b) => a['value'] - b['value'])[0]['value']
       items.sort((a, b) => a[field] - b[field])
     }
-    else{
+    else {
       values.push({ field: 'home_value', value: items.sort((a, b) => b['home_value'] - a['home_value'])[0]['home_value'] });
       values.push({ field: 'draw_value', value: items.sort((a, b) => b['draw_value'] - a['draw_value'])[0]['draw_value'] });
       values.push({ field: 'visitor_value', value: items.sort((a, b) => b['visitor_value'] - a['visitor_value'])[0]['visitor_value'] });

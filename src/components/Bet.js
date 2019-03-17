@@ -20,7 +20,8 @@ class Bet extends Component {
   }
   barList() {
     this.props.changeTitle({
-      left: null, center: <div className="pointer" onClick={this.weekChanged.bind(this, null)} >Consolidado</div>, right: <div className="" onClick={this.showFilter.bind(this)}><i className="fas fa-filter show-xs"></i></div>
+      left: null, center: <div className="pointer" onClick={this.weekChanged.bind(this, null)} >Consolidado
+       <small  className="last-update">{this.state.lastBetTime ? "Atualização: " + formatDate(this.state.lastBetTime.date,"DD/MM H:mm") + "  há " + this.state.lastBetTime.minutes + " min atrás" : "" }</small></div>, right: <div className="" onClick={this.showFilter.bind(this)}><i className="fas fa-filter show-xs"></i></div>
     });
   }
   barForm = (title) => {
@@ -70,6 +71,8 @@ class Bet extends Component {
   componentDidMount() {
     //Combo Login
     common.getData('combo/betlogin').then((data) => { this.setState({ betlogins: data }) })
+    common.getData('bet/data/last-bet-time').then((data) => { this.setState({ lastBetTime: data }); this.barList(); })
+
   }
   componentDidUpdate() {
 
@@ -359,18 +362,16 @@ class Bet extends Component {
                 <td>
                   <div className="row no-gutters" >
                     <div className="col-12 text-left pl-1" ><b>{x.conta} - {x.cliente} - {x.um} - {x.profit_percent}% - {x.qtd}</b></div>
-                    {/* <div className="col-6" >
-                      <b className="ml-1 text-success">Qtd</b> {x.qtd}
-                      <b className="ml-1 text-warning">UM</b> {x.um}
-                      <b className="ml-1 text-info">%</b> {x.profit_percent}
-                     </div> */}
                     <div className="w-100" ></div>
                     <div className={x.volume == 0 ? "col-3 yellow" : x.volume < 0 ? 'col-3 red' : 'col-3 green'} >{common.formatNumber(x.volume)}</div>
                     <div className="col-3" >{x.vale}</div>
                     <div className="col-3">{x.atual}</div>
                     <div className="col-3">{x.pendente}</div>
                     <div className="w-100" ></div>
-                    <div className="col-3">{common.formatNumber(x.parcial)}</div>
+                    <div className="col-3">{common.formatNumber(x.parcial)}
+                    <div hidden={x.parcial === x.parcial_check} className={x.parcial === x.parcial_check ? '' : 'bg-red rounded text-white'} >{common.formatNumber(x.parcial_check)}
+                    </div>
+                    </div>
                     <div className="col-3">{common.formatNumber(x.comissao)}</div>
                     <div className={x.total == 0 ? "col-3 yellow" : x.total < 0 ? 'col-3 red' : 'col-3 green'} >{common.formatNumber(x.total)}</div>
                     <div className={x.resultado == 0 ? "col-3" : x.resultado < 0 ? 'col-3 red' : 'col-3 green'} >{common.formatNumber(x.resultado)}</div>

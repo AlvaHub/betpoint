@@ -60,6 +60,7 @@ body:before {
 .modal-content{color:rgb(43, 43, 43)}
 
 /* GENERAL */
+.last-update{font-weight: 'normal'; font-size:11px; display:block;margin-top:-2px}
 .p-0-5{padding: 2px}
 .no-overflow{overflow: hidden;}
 .no-break{white-space: nowrap}
@@ -266,7 +267,7 @@ input[type='text'],input[type='number'],select,textarea {  font-size: 16px;}
 .div-table-closing{overflow-x: auto;}
 @media(max-width:576px){.div-table-closing-xs{min-width: auto;overflow-x: auto;}}
 
-.table-closing-md{max-width: 800px;left:50%;transform: translateX(-50%);position: relative;text-align: center}
+.table-closing-md{max-width: 900px;left:50%;transform: translateX(-50%);position: relative;text-align: center}
 .table-closing-md{background-color: transparent !important}
 .table-closing-md th{border:none !important;}
 
@@ -279,10 +280,9 @@ input[type='text'],input[type='number'],select,textarea {  font-size: 16px;}
 .bookmaker-title, .bookmaker-title-alternate{background-image:linear-gradient(to right, #4e1f1f, #ad4848, #4e1f1f);text-align: center;font-weight: normal;padding: 2px;color:white}
 .bookmaker-title{background-image:linear-gradient(to right, rgb(40, 73, 40), rgb(85, 150, 85), rgb(40, 73, 40))}
 
-.table-closing .td-total{background-image:linear-gradient(to right, rgb(207, 207, 207), rgb(255, 255, 255));text-align: center;color:rgb(59, 59, 59)}
 .table-closing th, .table-closing td{background-color: rgb(34, 34, 34) !important}
 .table-closing .tr-total td{background-color: transparent !important}
-.table-closing .tr-total td:nth-child(8),.table-closing .tr-total td:nth-child(9){background-color:transparent!important;border-top: 1px solid rgb(66, 66, 66);background-color: rgb(43, 43, 43) !important}
+.table-closing .tr-total td.td-total{background-color:transparent!important;border-top: 1px solid rgb(66, 66, 66);background-color: rgb(43, 43, 43) !important}
 
 @media(max-width:576px){.table-closing .td-total{text-align: center}}
 .table-closing-bookmaker.table-scroll>tbody{max-height: calc(var(--window)  - 133px);}
@@ -296,6 +296,7 @@ input[type='text'],input[type='number'],select,textarea {  font-size: 16px;}
 }
 @media(max-width:576px){.table-closing-bookmaker.table-scroll>tbody{max-height: calc(var(--window)  - 80px);}}
 .labels-xs b{color:rgb(179, 179, 179)}
+
 /* COMMISSION */
 .div-commission{padding: 0}
 .table-commission{min-width: 800px;}

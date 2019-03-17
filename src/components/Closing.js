@@ -118,27 +118,59 @@ class Closing extends Component {
       });
       //For each bookmaker set Total Parcial, Total Comission
       table.forEach(x => {
-        x.rows.push({ um: 'Parcial', parcial: x.rows.sumNoFormat('parcial'), sum_total: true });
-        x.rows.push({ um: 'Comissão', parcial: x.rows.sumNoFormat('comissao'), sum_total: true });
-        //Get All logins where this bookmaker has distribution
-        let rowsWithDistribution = data.filter(y => y.distribution && y.distribution.indexOf(x.bookmaker) >= 0);
-        if(x.bookmaker === "Edelson"){
-          console.log(rowsWithDistribution);
-        }
-        //Bet the distribution amount for each login
-        rowsWithDistribution.forEach(y => {
-          y.distribution.split(',').forEach(r => {
-            let bookmaker = r.split(':')[0].trim();
-            if (bookmaker === x.bookmaker) {
-              let amount = Math.abs(Number(y.parcial) * (parseInt(r.split(':')[1]) / 100));
-              x.rows.push({ um: parseInt(r.split(':')[1]) + "% " + y.conta, parcial: amount, sum_total: true });
-            }
+        if (x.bookmaker === "Edelson") { //EDELSON
+          //Get All logins where this bookmaker has distribution
+          
+          let rowsWithDistribution = data.filter(y => y.distribution && y.distribution.indexOf(x.bookmaker) >= 0);
+          //Get the distribution amount for each login
+          rowsWithDistribution.forEach(y => {
+            y.distribution.split(',').forEach(r => {
+              let bookmaker = r.split(':')[0].trim();
+              if (bookmaker === x.bookmaker) {
+                var newRow = {};
+                Object.assign(newRow, y)
+                newRow.login_percent = parseInt(r.split(':')[1]);
+                newRow.resultado = Math.round(newRow.total * (newRow.login_percent / 100) * -1)
+                x.rows.push(newRow);
+              }
+            });
           });
-        });
-        //Set the Total of Parcial + Commission + Distribution
-        x.rows.push({ um: 'Total', parcial: x.rows.filter(y => y.sum_total).sumNoFormat('parcial'), sum_total: true });
+          //Remove Beta Turbo cause it was added twice
+          let betaTurboIndex = x.rows.find(y => y.conta === "betaturbo321");
+          let betaTurbo = x.rows.find(y => y.conta === "betaturbo321");
+          x.rows.splice(betaTurboIndex,1);
+          //Totals
+          let total = x.rows.sumNoFormat('resultado');
+          x.rows.push({ login_percent: 'Total', resultado: total, sum_total: true });
+          x.rows.push({ login_percent: 'betaturbo', resultado: betaTurbo.total, sum_total: true });
+          x.rows.push({ login_percent: 'Final', resultado: total + parseFloat(betaTurbo.total), sum_total: true });
 
-      })
+        }
+        else { //OTHERS
+          x.rows.push({ um: 'Parcial', parcial: x.rows.sumNoFormat('parcial'), sum_total: true });
+          x.rows.push({ um: 'Comissão', parcial: x.rows.sumNoFormat('comissao'), sum_total: true });
+          //Get All logins where this bookmaker has distribution
+          let rowsWithDistribution = data.filter(y => y.distribution && y.distribution.indexOf(x.bookmaker) >= 0);
+          //Get the distribution amount for each login
+          rowsWithDistribution.forEach(y => {
+            y.distribution.split(',').forEach(r => {
+              let bookmaker = r.split(':')[0].trim();
+              if (bookmaker === x.bookmaker) {
+                let amount = Math.abs(Number(y.parcial) * (parseInt(r.split(':')[1]) / 100));
+                x.rows.push({ um: parseInt(r.split(':')[1]) + "% " + y.conta, parcial: amount, sum_total: true });
+              }
+            });
+          });
+          //Set the Total of Parcial + Commission + Distribution
+          x.rows.push({ um: 'Total', parcial: x.rows.filter(y => y.sum_total).sumNoFormat('parcial'), sum_total: true });
+        }
+      });
+      //Move Edelson to last
+      let edelsonIndex = table.findIndex(x => x.bookmaker === "Edelson");
+      let eldelson = table.find(x => x.bookmaker === "Edelson");
+      table.splice(edelsonIndex, 1);
+      table.push(eldelson);
+
       this.setState({ items: data, itemsAll: data, table: table, tableAll: table })
     });
   }
@@ -177,36 +209,43 @@ class Closing extends Component {
                         <table className="table table-closing">
                           <tbody>
                             <tr>
-                              {/* <td colSpan="9" className="td-total">
-                              <b className="ml-2">Parcial:</b> {t.rows.sum('parcial', true, ['red', 'yellow', 'green-dark'])}
-                              <b className="ml-2">Comissão:</b> {t.rows.sum('comissao', true, ['red', 'yellow', 'green-dark'])}
-                              <div className="block-inline no-break" >
-                                <b className="ml-2">Total:</b> {common.formatNumber(t.rows.sumNoFormat('parcial') + t.rows.sumNoFormat('comissao'), true, ['red', 'yellow', 'green-dark'])}
-                              </div>
-                            </td> */}
-                            </tr>
-                            <tr className="hidden-xs">
                               <th>Conta</th>
                               <th>Cliente</th>
-                              <th>Qtd</th>
-                              <th>Volume</th>
-                              <th>Vale</th>
-                              <th>Atual</th>
-                              <th >Pend</th>
-                              <th>uM</th>
+                              <th className="hidden-xs">Qtd</th>
+                              <th className="hidden-xs">Volume</th>
+                              <th className="hidden-xs">Vale</th>
+                              <th className="hidden-xs">Atual</th>
+                              <th className="hidden-xs">Pend</th>
+                              <th className="text-center">uM</th>
                               <th>Parcial</th>
+                              {t.bookmaker === "Edelson" &&
+                                <React.Fragment>
+                                  <th>Comissão</th>
+                                  <th>Total</th>
+                                  <th >%</th>
+                                  <th>Resultado</th>
+                                </React.Fragment>
+                              }
                             </tr>
                             {t.rows.map((x, i) => <tr key={i} className={(x.sum_total ? 'tr-total' : '')} >
-                              <td className="hidden-xs">{x.conta}</td>
-                              <td className="hidden-xs">{x.cliente}</td>
+                              <td>{x.conta}</td>
+                              <td>{x.cliente}</td>
                               <td className="hidden-xs">{x.qtd}</td>
                               <td className="hidden-xs" >{common.formatNumber(x.volume, true)}</td>
                               <td className="hidden-xs">{x.vale}</td>
                               <td className="hidden-xs">{x.atual}</td>
                               <td className="hidden-xs">{x.pendente}</td>
-                              <td className={'hidden-xs '}>{x.um}</td>
-                              <td className={'hidden-xs '}>{common.formatNumber(x.parcial, true)}</td>
-                              <td colSpan="9" className="show-xs">
+                              <td className={'text-center ' + (x.sum_total && t.bookmaker !== "Edelson" ? 'td-total' : '')}>{x.um}</td>
+                              <td className={'' + (x.sum_total && t.bookmaker !== "Edelson"  ? 'td-total' : '')}>{common.formatNumber(x.parcial, true)}</td>
+                              {t.bookmaker === "Edelson" &&
+                                <React.Fragment>
+                                  <td>{x.comissao}</td>
+                                  <td className="text-right">{common.formatNumber(x.total, true)}</td>
+                                  <td className={'' + (x.sum_total ? 'td-total' : '')}>{x.login_percent}</td>
+                                  <td className={'text-right ' + (x.sum_total ? 'td-total' : '')}>{common.formatNumber(x.resultado, true)}</td>
+                                </React.Fragment>
+                              }
+                              {/* <td colSpan="9" className="show-xs">
                                 <div className="font-lg font-weight-bold" >{x.conta}</div>
                                 <div className="row no-gutters labels-xs">
                                   <div className="col-6"><b>Qtd: </b> {x.qtd}</div>
@@ -217,7 +256,7 @@ class Closing extends Component {
                                   <div className="col-6"><b>uM: </b> {x.um}</div>
                                   <div className="col-6"><b>Parcial: </b> {common.formatNumber(x.parcial, true)}</div>
                                 </div>
-                              </td>
+                              </td> */}
                             </tr>
                             )}
 
