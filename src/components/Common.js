@@ -61,7 +61,7 @@ export function tableSortNumber(key, obj) {
         else {
             let data = this.state.sortField === key[1] ?
                 this.state[obj].sort((a, b) => (b[key[0]] ? b[key[0]][key[1]] : 0) - (a[key[0]] ? a[key[0]][key[1]] : 0)) :
-                this.state[obj].sort((a, b) => (a[key[0]] ?  a[key[0]][key[1]] : 0) - (b[key[0]] ? b[key[0]][key[1]]  : 0));
+                this.state[obj].sort((a, b) => (a[key[0]] ? a[key[0]][key[1]] : 0) - (b[key[0]] ? b[key[0]][key[1]] : 0));
             this.setState({ [obj]: data, sortField: (key[1] === this.state.sortField ? '' : key[1]) });
         }
     }
@@ -154,6 +154,15 @@ Array.prototype.sumInt = function (prop) {
         total += isNaN(this[i][prop]) ? 0 : Number(this[i][prop]);
     }
     return total;
+}
+export function formatMinutes(minutes) {
+    minutes = parseInt(minutes);
+    if (minutes < 60)
+        return " há " + minutes + " min atrás";
+    let hours = parseInt(minutes / 60);
+    let mins = minutes % 60;
+    let time = hours
+    return " há " + time + (time === 1 ? " hora" : " horas") + " atrás";
 }
 export function setTheme() {
     let user = getUser();

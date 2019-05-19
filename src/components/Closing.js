@@ -45,7 +45,9 @@ class Closing extends Component {
     login_destination: "0",
     tableAll: [],
     table: [],
-    view_type: "G"
+    view_type: "G",
+    date_from: "",
+    date_to: "",
   }
   handleChange = e => {
     let data = this.state.data;
@@ -120,7 +122,7 @@ class Closing extends Component {
       table.forEach(x => {
         if (x.bookmaker === "Edelson") { //EDELSON
           //Get All logins where this bookmaker has distribution
-          
+
           let rowsWithDistribution = data.filter(y => y.distribution && y.distribution.indexOf(x.bookmaker) >= 0);
           //Get the distribution amount for each login
           rowsWithDistribution.forEach(y => {
@@ -138,16 +140,16 @@ class Closing extends Component {
           //Remove Beta Turbo cause it was added twice
           let betaTurboIndex = x.rows.find(y => y.conta === "betaturbo321");
           let betaTurbo = x.rows.find(y => y.conta === "betaturbo321");
-          x.rows.splice(betaTurboIndex,1);
+          x.rows.splice(betaTurboIndex, 1);
           //Totals
           let total = x.rows.sumNoFormat('resultado');
-          x.rows.push({ login_percent: 'Total', resultado: total, sum_total: true });
+          x.rows.push({ login_percent: 'Total', resultado: total, sum_total: true, sum_total_start: true });
           x.rows.push({ login_percent: 'betaturbo', resultado: betaTurbo.total, sum_total: true });
           x.rows.push({ login_percent: 'Final', resultado: total + parseFloat(betaTurbo.total), sum_total: true });
 
         }
         else { //OTHERS
-          x.rows.push({ um: 'Parcial', parcial: x.rows.sumNoFormat('parcial'), sum_total: true });
+          x.rows.push({ um: 'Parcial', parcial: x.rows.sumNoFormat('parcial'), sum_total: true, sum_total_start: true });
           x.rows.push({ um: 'Comissão', parcial: x.rows.sumNoFormat('comissao'), sum_total: true });
           //Get All logins where this bookmaker has distribution
           let rowsWithDistribution = data.filter(y => y.distribution && y.distribution.indexOf(x.bookmaker) >= 0);
@@ -171,7 +173,7 @@ class Closing extends Component {
       table.splice(edelsonIndex, 1);
       table.push(eldelson);
 
-      this.setState({ items: data, itemsAll: data, table: table, tableAll: table })
+      this.setState({ items: data, itemsAll: data, table: table, tableAll: table, date_from: formatDate(week_id.split('|')[0], "DD/MM/YYYY"), date_to: formatDate(week_id.split('|')[1], "DD/MM/YYYY") })
     });
   }
 
@@ -196,16 +198,20 @@ class Closing extends Component {
         </div>
         <div className="margin-top-filter margin-top-filter-xs" ></div>
         <div id="list">
-          <div className="div-table-closing div-table-closing-xs" >
+          <div className="div-table-closing" >
             {this.state.view_type == "G" ?
               <React.Fragment>
-                {this.state.table.map((t, n) => <table key={n} className="table table-sm table-closing-md table-closing-xs mb-1" >
+                {this.state.table.map((t, n) => <table key={n} className="table table-sm table-closing-container mb-1" >
+                  <thead>
+                    <th style={{ padding: 0, margin: 0 }}>
+                      <div className={n % 2 === 0 ? 'bookmaker-title' : 'bookmaker-title-alternate'}>
+                        <b>{t.bookmaker}</b>
+                      </div>
+                    </th>
+                  </thead>
                   <tbody>
                     <tr>
-                      <td colSpan="9" style={{ padding: 0, margin: 0 }}>
-                        <div className={n % 2 === 0 ? 'bookmaker-title' : 'bookmaker-title-alternate'}>
-                          <b>{t.bookmaker}</b>
-                        </div>
+                      <td style={{ padding: 0, margin: 0 }}>
                         <table className="table table-closing">
                           <tbody>
                             <tr>
@@ -228,19 +234,43 @@ class Closing extends Component {
                               }
                             </tr>
                             {t.rows.map((x, i) => <tr key={i} className={(x.sum_total ? 'tr-total' : '')} >
-                              <td>{x.conta}</td>
-                              <td>{x.cliente}</td>
-                              <td className="hidden-xs">{x.qtd}</td>
-                              <td className="hidden-xs" >{common.formatNumber(x.volume, true)}</td>
-                              <td className="hidden-xs">{x.vale}</td>
-                              <td className="hidden-xs">{x.atual}</td>
-                              <td className="hidden-xs">{x.pendente}</td>
-                              <td className={'text-center ' + (x.sum_total && t.bookmaker !== "Edelson" ? 'td-total' : '')}>{x.um}</td>
-                              <td className={'' + (x.sum_total && t.bookmaker !== "Edelson"  ? 'td-total' : '')}>{common.formatNumber(x.parcial, true)}</td>
+                              {x.sum_total_start ?
+                                <React.Fragment>
+                                  <td className="hidden-xs" colSpan={t.bookmaker !== "Edelson" ? 7 : 11} rowSpan={t.rows.filter(y => y.sum_total).length} style={{ verticalAlign: 'middle', textAlign: 'center' }}>
+                                    <div className="date-range">{this.state.date_from} a {this.state.date_to}</div>
+                                  </td>
+                                  <td className="show-xs" colSpan={t.bookmaker !== "Edelson" ? 2 : 6} rowSpan={t.rows.filter(y => y.sum_total).length} style={{ verticalAlign: 'middle', textAlign: 'center' }}>
+                                    <div className="date-range-xs">{this.state.date_from} a {this.state.date_to}</div>
+                                  </td>
+                                </React.Fragment>
+                                :
+                                <React.Fragment>
+                                  {!x.sum_total &&
+                                    <React.Fragment>
+                                      <td>{x.conta}</td>
+                                      <td>{x.cliente}</td>
+                                      <td className="hidden-xs">{x.qtd}</td>
+                                      <td className="hidden-xs" >{common.formatNumber(x.volume, true)}</td>
+                                      <td className="hidden-xs">{x.vale}</td>
+                                      <td className="hidden-xs">{x.atual}</td>
+                                      <td className="hidden-xs">{x.pendente}</td>
+                                    </React.Fragment>
+                                  }
+                                  {t.bookmaker !== "Edelson" &&
+                                    <React.Fragment>
+                                      <td className={'text-center ' + (x.sum_total ? 'td-total' : '')}>{x.um}</td>
+                                      <td className={'' + (x.sum_total ? 'td-total' : '')}>{common.formatNumber(x.parcial, true)}</td>
+                                    </React.Fragment>}
+                                </React.Fragment>}
                               {t.bookmaker === "Edelson" &&
                                 <React.Fragment>
-                                  <td>{x.comissao}</td>
-                                  <td className="text-right">{common.formatNumber(x.total, true)}</td>
+                                  {!x.sum_total &&
+                                    <React.Fragment>
+                                      <td>{x.um}</td>
+                                      <td>{common.formatNumber(x.parcial, true)}</td>
+                                      <td>{x.comissao}</td>
+                                      <td className="text-right">{common.formatNumber(x.total, true)}</td>
+                                    </React.Fragment>}
                                   <td className={'' + (x.sum_total ? 'td-total' : '')}>{x.login_percent}</td>
                                   <td className={'text-right ' + (x.sum_total ? 'td-total' : '')}>{common.formatNumber(x.resultado, true)}</td>
                                 </React.Fragment>
@@ -265,7 +295,8 @@ class Closing extends Component {
                       </td>
                     </tr>
                   </tbody>
-                </table>)}
+                </table>
+                )}
               </React.Fragment>
               : null}
           </div>

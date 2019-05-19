@@ -36,9 +36,6 @@ class App extends Component {
 
     this.handleShow = this.handleShow.bind(this);
     this.handleClose = this.handleClose.bind(this);
-
-   
-
   }
   state = {
     title: { left: '', center: "Natan Sports", right: '' },
@@ -70,23 +67,20 @@ class App extends Component {
   handleShow() {
     this.setState({ show: true });
   }
- 
-  
   render() {
 
     return (
       <React.Fragment>
-        <div className="navigation-bar row no-gutters" >
-          <div className="col-12 row no-gutters">
-            <div className="col text-left align-self-center" >{this.state.title.left}</div>
-            <div className="col-auto text-center align-self-center" >{this.state.title.center}</div>
-            <div className="col text-right align-self-center" >{this.state.title.right}
-            </div>
-          </div>
-        </div>
-
         <BrowserRouter>
           <React.Fragment>
+            <div className="navigation-bar row no-gutters" >
+              <div className="col-12 row no-gutters">
+                <div className="col text-left align-self-center" >{this.state.title.left}</div>
+                <div className="col-auto text-center align-self-center" >{this.state.title.center}</div>
+                <div className="col text-right align-self-center" >{this.state.title.right}
+                </div>
+              </div>
+            </div>
             {window.location.pathname === '/login' || <Menu show={this.loadingShow} hide={this.loadingHide} />}
             <div id="master" className="page p-1">
               <Route path="/login" render={() => <Login changeTitle={this.changeTitleHandler} show={this.loadingShow} hide={this.loadingHide} />} />

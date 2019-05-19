@@ -21,7 +21,7 @@ class Bet extends Component {
   barList() {
     this.props.changeTitle({
       left: null, center: <div className="pointer" onClick={this.weekChanged.bind(this, null)} >Consolidado
-       <small  className="last-update">{this.state.lastBetTime ? "Atualização: " + formatDate(this.state.lastBetTime.date,"DD/MM H:mm") + "  há " + this.state.lastBetTime.minutes + " min atrás" : "" }</small></div>, right: <div className="" onClick={this.showFilter.bind(this)}><i className="fas fa-filter show-xs"></i></div>
+       <small  className="last-update">{this.state.lastBetTime ? "Atualização: " + formatDate(this.state.lastBetTime.date,"DD/MM H:mm") + common.formatMinutes(this.state.lastBetTime.minutes) : "" }</small></div>, right: <div className="" onClick={this.showFilter.bind(this)}><i className="fas fa-filter show-xs"></i></div>
     });
   }
   barForm = (title) => {
