@@ -67,6 +67,7 @@ export function tableSortNumber(key, obj) {
     }
 
 }
+
 export function hideMore() {
 
     document.body.className = "";
@@ -88,7 +89,7 @@ Date.prototype.addDays = function (days) {
 export function newButton() {
     return <i className="fas fa-edit mr-2"></i>
 }
-export function formatNumber(x, color, colors) {
+export function formatNumber(x, color, colors, noDecimal) {
     if (x == null || isNaN(x)) return "";
     var parts = x.toString().split(".");
     if (parts.length == 1)
@@ -99,13 +100,20 @@ export function formatNumber(x, color, colors) {
         parts[1] += "0";
 
     parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+    let finalValue = noDecimal ?  parts[0] : parts.join(',');
     if (color) {
         if (!colors)
-            return <span className={Number(x) == 0 ? "yellow" : Number(x) < 0 ? 'red' : 'green'} >{parts.join(",")}</span>;
+            return <span className={Number(x) == 0 ? "yellow" : Number(x) < 0 ? 'red' : 'green'} >{finalValue}</span>;
         else
-            return <span className={Number(x) == 0 ? colors[1] : Number(x) < 0 ? colors[0] : colors[2]} >{parts.join(",")}</span>;
+            return <span className={Number(x) == 0 ? colors[1] : Number(x) < 0 ? colors[0] : colors[2]} >{finalValue}</span>;
     }
-    return parts.join(",");
+    return  finalValue;
+}
+export function formatNumberNoDec(x, color, colors) {
+    return formatNumber(round(x), color, colors, true);
+}
+export function round(value) {
+    return Math.round(value)
 }
 export function closeModal() {
     this.setState({ showModal: false });
@@ -164,6 +172,7 @@ export function formatMinutes(minutes) {
     let time = hours
     return " há " + time + (time === 1 ? " hora" : " horas") + " atrás";
 }
+
 export function setTheme() {
     let user = getUser();
     if (user == null || user.theme == null) return;

@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { withRouter } from 'react-router-dom';
 import * as common from './Common';
 import WeekSelector from './WeekSelector';
-import { formatDate} from 'react-day-picker/moment';
+import { formatDate } from 'react-day-picker/moment';
 import 'moment/locale/pt-br';
 import MyModal from './MyModal';
 import { relativeTimeThreshold, parseZone } from 'moment';
@@ -21,7 +21,7 @@ class Bet extends Component {
   barList() {
     this.props.changeTitle({
       left: null, center: <div className="pointer" onClick={this.weekChanged.bind(this, null)} >Consolidado
-       <small  className="last-update">{this.state.lastBetTime ? "Atualização: " + formatDate(this.state.lastBetTime.date,"DD/MM H:mm") + common.formatMinutes(this.state.lastBetTime.minutes) : "" }</small></div>, right: <div className="" onClick={this.showFilter.bind(this)}><i className="fas fa-filter show-xs"></i></div>
+       <small className="last-update">{this.state.lastBetTime ? "Atualização: " + formatDate(this.state.lastBetTime.date, "DD/MM H:mm") + common.formatMinutes(this.state.lastBetTime.minutes) : ""}</small></div>, right: <div className="" onClick={this.showFilter.bind(this)}><i className="fas fa-filter show-xs"></i></div>
     });
   }
   barForm = (title) => {
@@ -106,13 +106,21 @@ class Bet extends Component {
     let date_from = week_id.split('|')[0];
     let date_to = week_id.split('|')[1];
     //Consolidado
-    common.getData(`bet/consolidado/${date_from}/${date_to}`).then((data) => { that.props.hide(); this.setState({ items: data, itemsAll: data, week_id }) });
-    //Bets Fixed
-    common.getData(`bet-fixed/${date_from}/${date_to}`).then((data) => {
+    common.getData(`bet/consolidado/${date_from}/${date_to}`).then((data) => {
+      that.props.hide();
+      //Exception for Farias111
+      let farias = data.filter(x => x.conta === 'farias111');
+      let tables = [{ title: 'DESCARREGO', data: farias }];
+      data = data.filter(x => x.conta !== 'farias111');
 
-      let tables = [data.descarregos, data.afs, data.repasses]
-      this.setState({ tables })
+      this.setState({ items: data, itemsAll: data, week_id, tables, fariasResult : farias.length > 0 ?  farias[0].resultado : 0 })
     });
+    //Bets Fixed
+    // common.getData(`bet-fixed/${date_from}/${date_to}`).then((data) => {
+
+    //   let tables = [data.descarregos, data.afs, data.repasses]
+    //   this.setState({ tables })
+    // });
   }
 
   state = {
@@ -122,6 +130,7 @@ class Bet extends Component {
     betlogins: [],
     login_destination: "0",
     tables: [],
+    fariasResult : 0
 
   }
   getLastMonday() {
@@ -235,6 +244,8 @@ class Bet extends Component {
     });
   }
 
+
+
   render() {
 
     return (
@@ -294,7 +305,7 @@ class Bet extends Component {
                   <th>{this.state.items.sum('comissao')}</th>
                   <th>{this.state.items.sum('total', true)}</th>
                   <th></th>
-                  <th>{this.state.items.sum('resultado', true)}</th>
+                  <th>{common.formatNumber(this.state.items.sumNoFormat('resultado') + Number(this.state.fariasResult), true)}</th>
                 </tr>
               </thead>
               <tbody>
@@ -307,21 +318,21 @@ class Bet extends Component {
                   <td>{x.atual}</td>
                   <td>{x.pendente}</td>
                   <td>{x.um}</td>
-                  <td>{common.formatNumber(x.parcial)}
-                    <div hidden={x.parcial === x.parcial_check} className={x.parcial === x.parcial_check ? '' : 'bg-red rounded text-white'} >{common.formatNumber(x.parcial_check)}
+                  <td>{common.formatNumberNoDec(x.parcial)}
+                    <div hidden={x.parcial === x.parcial_check} className={x.parcial === x.parcial_check ? '' : 'bg-red rounded text-white'} >{common.formatNumberNoDec(x.parcial_check)}
                     </div>
                   </td>
-                  <td>{common.formatNumber(x.comissao)}</td>
-                  <td className={x.total == 0 ? "yellow" : x.total < 0 ? 'red' : 'green'} >{common.formatNumber(x.total)}</td>
+                  <td>{common.formatNumberNoDec(x.comissao)}</td>
+                  <td className={x.total == 0 ? "yellow" : x.total < 0 ? 'red' : 'green'} >{common.formatNumberNoDec(x.total)}</td>
                   <td>{x.profit_percent}</td>
-                  <td className={x.resultado == 0 ? "" : x.resultado < 0 ? 'red' : 'green'} >{common.formatNumber(x.resultado)}</td>
+                  <td className={x.resultado == 0 ? "" : x.resultado < 0 ? 'red' : 'green'} >{common.formatNumberNoDec(x.resultado)}</td>
                 </tr>)}
                 {this.state.tables.map((t, i) => <React.Fragment key={i}>
                   <tr>
                     <td colSpan="12" className={t.title.replace("/", "")} >{t.title}</td>
                   </tr>
                   {t.data.map((x, i) => <tr key={i}>
-                    <td>{x.conta}</td>
+                    <td >{x.conta}</td>
                     <td>{x.cliente}</td>
                     <td>{x.qtd}</td>
                     <td className={x.volume == 0 ? "yellow" : x.volume < 0 ? 'red' : 'green'} >{common.formatNumber(x.volume)}</td>
@@ -329,11 +340,11 @@ class Bet extends Component {
                     <td>{x.atual}</td>
                     <td>{x.pendente}</td>
                     <td>{x.um}</td>
-                    <td>{common.formatNumber(x.parcial)}</td>
-                    <td>{common.formatNumber(x.comissao)}</td>
-                    <td className={x.total == 0 ? "yellow" : x.total < 0 ? 'red' : 'green'} >{common.formatNumber(x.total)}</td>
+                    <td>{common.formatNumberNoDec(x.parcial)}</td>
+                    <td>{common.formatNumberNoDec(x.comissao)}</td>
+                    <td className={x.total == 0 ? "yellow" : x.total < 0 ? 'red' : 'green'} >{common.formatNumberNoDec(x.total)}</td>
                     <td>{x.profit_percent}</td>
-                    <td className={x.resultado == 0 ? "" : x.resultado < 0 ? 'red' : 'green'} >{common.formatNumber(x.resultado)}</td>
+                    <td className={x.resultado == 0 ? "" : x.resultado < 0 ? 'red' : 'green'} >{common.formatNumberNoDec(x.resultado)}</td>
                   </tr>)}
                 </React.Fragment>)}
               </tbody>
@@ -352,7 +363,7 @@ class Bet extends Component {
                     <div className="col-3" onClick={common.tableSortNumber.bind(this, 'parcial')} >Parc<small>{this.state.items.sum('parcial', true)}</small></div>
                     <div className="col-3" onClick={common.tableSortNumber.bind(this, 'comissao')} >Com<small>{this.state.items.sum('comissao')}</small></div>
                     <div className="col-3" onClick={common.tableSortNumber.bind(this, 'total')} >Tot<small>{this.state.items.sum('total', true)}</small></div>
-                    <div className="col-3" onClick={common.tableSortNumber.bind(this, 'resultado')} >Res<small>{this.state.items.sum('resultado', true)}</small></div>
+                    <div className="col-3" onClick={common.tableSortNumber.bind(this, 'resultado')} >Res<small>{common.formatNumber(this.state.items.sumNoFormat('resultado') + Number(this.state.fariasResult), true)}</small></div>
                   </div>
                 </th>
               </tr>
@@ -363,18 +374,18 @@ class Bet extends Component {
                   <div className="row no-gutters" >
                     <div className="col-12 text-left pl-1" ><b>{x.conta} - {x.cliente} - {x.um} - {x.profit_percent}% - {x.qtd}</b></div>
                     <div className="w-100" ></div>
-                    <div className={x.volume == 0 ? "col-3 yellow" : x.volume < 0 ? 'col-3 red' : 'col-3 green'} >{common.formatNumber(x.volume)}</div>
+                    <div className={x.volume == 0 ? "col-3 yellow" : x.volume < 0 ? 'col-3 red' : 'col-3 green'} >{common.formatNumberNoDec(x.volume)}</div>
                     <div className="col-3" >{x.vale}</div>
                     <div className="col-3">{x.atual}</div>
                     <div className="col-3">{x.pendente}</div>
                     <div className="w-100" ></div>
-                    <div className="col-3">{common.formatNumber(x.parcial)}
-                    <div hidden={x.parcial === x.parcial_check} className={x.parcial === x.parcial_check ? '' : 'bg-red rounded text-white'} >{common.formatNumber(x.parcial_check)}
+                    <div className="col-3">{common.formatNumberNoDec(x.parcial)}
+                      <div hidden={x.parcial === x.parcial_check} className={x.parcial === x.parcial_check ? '' : 'bg-red rounded text-white'} >{common.formatNumberNoDec(x.parcial_check)}
+                      </div>
                     </div>
-                    </div>
-                    <div className="col-3">{common.formatNumber(x.comissao)}</div>
-                    <div className={x.total == 0 ? "col-3 yellow" : x.total < 0 ? 'col-3 red' : 'col-3 green'} >{common.formatNumber(x.total)}</div>
-                    <div className={x.resultado == 0 ? "col-3" : x.resultado < 0 ? 'col-3 red' : 'col-3 green'} >{common.formatNumber(x.resultado)}</div>
+                    <div className="col-3">{common.formatNumberNoDec(x.comissao)}</div>
+                    <div className={x.total == 0 ? "col-3 yellow" : x.total < 0 ? 'col-3 red' : 'col-3 green'} >{common.formatNumberNoDec(x.total)}</div>
+                    <div className={x.resultado == 0 ? "col-3" : x.resultado < 0 ? 'col-3 red' : 'col-3 green'} >{common.formatNumberNoDec(x.resultado)}</div>
                   </div>
                 </td>
               </tr>)}
