@@ -192,7 +192,11 @@ input[type='text'],input[type='number'],select,textarea {  font-size: 16px;}
 .table-bet-fixed input{width:100%;height:100%;font-size:10pt;background-color: transparent;border:none;color:white;text-align: center}
 .table-bet-fixed td, .table-bet-fixed th{white-space:nowrap;text-align: center}
 /* RISK PROFIT */
-.div-table-risk-profit{overflow-x: auto;}
+.div-table-risk-profit{  display: block;
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  -ms-overflow-style: -ms-autohiding-scrollbar;}
 .div-table-risk-profit::-webkit-scrollbar{display: none}
 
 .table-risk-profit.table-scroll>tbody{max-height: calc(var(--window) - 107px);min-width: 1300px;}
