@@ -115,6 +115,9 @@ export function formatNumberNoDec(x, color, colors) {
 export function round(value) {
     return Math.round(value)
 }
+export function removeZero(value) {
+    return value.replace('.00','');
+}
 export function closeModal() {
     this.setState({ showModal: false });
 }

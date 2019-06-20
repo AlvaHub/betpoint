@@ -113,7 +113,7 @@ class Bet extends Component {
       let tables = [{ title: 'DESCARREGO', data: farias }];
       data = data.filter(x => x.conta !== 'farias111');
 
-      this.setState({ items: data, itemsAll: data, week_id, tables, fariasResult : farias.length > 0 ?  farias[0].resultado : 0 })
+      this.setState({ items: data, itemsAll: data, week_id, tables, fariasResult: farias.length > 0 ? farias[0].resultado : 0 })
     });
     //Bets Fixed
     // common.getData(`bet-fixed/${date_from}/${date_to}`).then((data) => {
@@ -130,7 +130,7 @@ class Bet extends Component {
     betlogins: [],
     login_destination: "0",
     tables: [],
-    fariasResult : 0
+    fariasResult: 0
 
   }
   getLastMonday() {
@@ -447,14 +447,15 @@ class Bet extends Component {
                   <th ><input type="checkbox" id="bet_selected_all" name="bet_selected_all" onChange={this.handleChange} /></th>
                   <th id="th-bet" >Bet Details</th>
                   <th id="th-event">Event</th>
-                  <th>EventDate</th>
-                  <th>Status</th>
+                  {/* <th>EventDate</th>
+                  <th>Status</th> */}
                   <th onClick={common.tableSort.bind(this, 'placement_date')} >Date</th>
+                  <th onClick={common.tableSortNumber.bind(this, 'total_stake')} >Stake</th>
                   <th onClick={common.tableSort.bind(this, 'total_return')} >Return</th>
                   <th onClick={common.tableSort.bind(this, 'total')} >Total</th>
                   <th onClick={common.tableSort.bind(this, 'odds')} >Odds</th>
-                  <th onClick={common.tableSort.bind(this, 'data_betstatus')} >Enc</th>
                   <th onClick={common.tableSort.bind(this, 'comissao')} >Com</th>
+                  <th onClick={common.tableSort.bind(this, 'data_betstatus')} >Status</th>
 
                 </tr>
               </thead>
@@ -466,14 +467,15 @@ class Bet extends Component {
                     <div hidden={x.status_id != "6"} className="rounded bg-red text-center">Excluída</div>
                   </td>
                   <td className="top td-event">{x.event_names.split(',').map((y, n) => <div title={y} id={'event-' + x.id + '-' + n} onClick={this.divClick.bind(this, 'event-' + x.id + '-' + n)} className="no-break font-sm" key={n}>{y}</div>)}</td>
-                  <td className="top">{x.event_dates.split(',').map((x, n) => <div className="no-break font-sm" key={n}>{formatDate(x, 'DD-MM-YY')}</div>)}</td>
-                  <td className="top">{x.event_results.split(',').map((x, n) => <div className="font-sm" key={n}><span className={x.substring(0, 4) + '-Text'}>{x.replace("Ainda por Acontecer", "Aberto")}</span></div>)}</td>
-                  <td>{formatDate(x.placement_date, 'DD-MM-YY HH:mm:ss')}</td>
-                  <td className="font-sm">{x.total_return}</td>
-                  <td className={x.total < 0 ? 'red' : 'green'}>{x.total}</td>
-                  <td>{x.odds}</td>
+                  {/* <td className="top">{x.event_dates.split(',').map((x, n) => <div className="no-break font-sm" key={n}>{formatDate(x, 'DD-MM-YY')}</div>)}</td> */}
+                  {/* <td className="top">{x.event_results.split(',').map((x, n) => <div className="font-sm" key={n}><span className={x.substring(0, 4) + '-Text'}>{x.replace("Ainda por Acontecer", "Aberto")}</span></div>)}</td> */}
+                  <td className="text-center">{formatDate(x.placement_date, 'DD/MM/YY HH:mm')}</td>
+                  <td className="font-sm text-center">{common.removeZero(x.total_stake)}</td>
+                  <td className="font-sm text-center">{common.removeZero(x.total_return)}</td>
+                  <td className={'text-center ' + (parseFloat(x.total) === 0 ? 'Aind' : (parseFloat(x.total) > 0 ? 'Ganh' : 'Perd'))}>{common.removeZero(x.total)}</td>
+                  <td className="text-center">{x.odds}</td>
+                  <td className="text-center">{common.formatNumber(x.comissao)}</td>
                   <td className="text-center">{x.data_betstatus}</td>
-                  <td>{common.formatNumber(x.comissao)}</td>
                 </tr>)}
               </tbody>
             </table>
