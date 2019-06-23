@@ -163,14 +163,15 @@ input[type='text'],input[type='number'],select,textarea {  font-size: 16px;}
 .table-consolidado-login.table-scroll>tbody{max-height: calc(var(--window)  - 158px);}
 .table-consolidado-login>thead th:nth-child(1), .table-consolidado-login>tbody>tr>td:nth-child(1){width:2%} 
 .table-consolidado-login>thead th:nth-child(2), .table-consolidado-login>tbody>tr>td:nth-child(2){width:25%} 
-.table-consolidado-login>thead th:nth-child(3), .table-consolidado-login>tbody>tr>td:nth-child(3){width:33%}
-.table-consolidado-login>thead th:nth-child(4), .table-consolidado-login>tbody>tr>td:nth-child(4){width:10%}
+.table-consolidado-login>thead th:nth-child(3), .table-consolidado-login>tbody>tr>td:nth-child(3){width:28%}
+.table-consolidado-login>thead th:nth-child(4), .table-consolidado-login>tbody>tr>td:nth-child(4){width:5%}
 .table-consolidado-login>thead th:nth-child(5), .table-consolidado-login>tbody>tr>td:nth-child(5){width:5%}
-.table-consolidado-login>thead th:nth-child(6), .table-consolidado-login>tbody>tr>td:nth-child(6){width:5%}
+.table-consolidado-login>thead th:nth-child(6), .table-consolidado-login>tbody>tr>td:nth-child(6){width:10%}
 .table-consolidado-login>thead th:nth-child(7), .table-consolidado-login>tbody>tr>td:nth-child(7){width:5%}
 .table-consolidado-login>thead th:nth-child(8), .table-consolidado-login>tbody>tr>td:nth-child(8){width:5%}
 .table-consolidado-login>thead th:nth-child(9), .table-consolidado-login>tbody>tr>td:nth-child(9){width:5%; }
 .table-consolidado-login>thead th:nth-child(10), .table-consolidado-login>tbody>tr>td:nth-child(10){width:5%; }
+.table-consolidado-login>thead th:nth-child(11), .table-consolidado-login>tbody>tr>td:nth-child(11){width:5%; }
 .table-consolidado-login>tbody>tr>td:nth-child(2) div{overflow-x: hidden;width:100%} 
 .table-consolidado-login>tbody>tr>td:nth-child(3) div{overflow-x: hidden;width:100%} 
 .table-consolidado-login input[type=checkbox]{zoom: 1.1 !important;}

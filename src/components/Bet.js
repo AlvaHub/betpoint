@@ -447,14 +447,13 @@ class Bet extends Component {
                   <th ><input type="checkbox" id="bet_selected_all" name="bet_selected_all" onChange={this.handleChange} /></th>
                   <th id="th-bet" >Bet Details</th>
                   <th id="th-event">Event</th>
-                  {/* <th>EventDate</th>
-                  <th>Status</th> */}
-                  <th onClick={common.tableSort.bind(this, 'placement_date')} >Date</th>
+                  <th>Date</th>
+                  <th>Status</th>
+                  <th onClick={common.tableSort.bind(this, 'placement_date')} >Bet Date</th>
                   <th onClick={common.tableSortNumber.bind(this, 'total_stake')} >Stake</th>
                   <th onClick={common.tableSort.bind(this, 'total_return')} >Return</th>
                   <th onClick={common.tableSort.bind(this, 'total')} >Total</th>
                   <th onClick={common.tableSort.bind(this, 'odds')} >Odds</th>
-                  <th onClick={common.tableSort.bind(this, 'comissao')} >Com</th>
                   <th onClick={common.tableSort.bind(this, 'data_betstatus')} >Status</th>
 
                 </tr>
@@ -467,14 +466,13 @@ class Bet extends Component {
                     <div hidden={x.status_id != "6"} className="rounded bg-red text-center">Excluída</div>
                   </td>
                   <td className="top td-event">{x.event_names.split(',').map((y, n) => <div title={y} id={'event-' + x.id + '-' + n} onClick={this.divClick.bind(this, 'event-' + x.id + '-' + n)} className="no-break font-sm" key={n}>{y}</div>)}</td>
-                  {/* <td className="top">{x.event_dates.split(',').map((x, n) => <div className="no-break font-sm" key={n}>{formatDate(x, 'DD-MM-YY')}</div>)}</td> */}
-                  {/* <td className="top">{x.event_results.split(',').map((x, n) => <div className="font-sm" key={n}><span className={x.substring(0, 4) + '-Text'}>{x.replace("Ainda por Acontecer", "Aberto")}</span></div>)}</td> */}
+                  <td className="top">{x.event_dates.split(',').map((x, n) => <div className="no-break font-sm" key={n}>{formatDate(x, 'DD-MM-YY')}</div>)}</td>
+                  <td className="top">{x.event_results.split(',').map((x, n) => <div className="font-sm" key={n}><span className={x.substring(0, 4) + '-Text'}>{x.replace("Ainda por Acontecer", "Aberto").replace('Reembolso','Reemb')}</span></div>)}</td>
                   <td className="text-center">{formatDate(x.placement_date, 'DD/MM/YY HH:mm')}</td>
-                  <td className="font-sm text-center">{common.removeZero(x.total_stake)}</td>
-                  <td className="font-sm text-center">{common.removeZero(x.total_return)}</td>
-                  <td className={'text-center ' + (parseFloat(x.total) === 0 ? 'Aind' : (parseFloat(x.total) > 0 ? 'Ganh' : 'Perd'))}>{common.removeZero(x.total)}</td>
+                  <td className="font-sm text-center">{common.formatNumberNoDec(x.total_stake)}</td>
+                  <td className="font-sm text-center">{common.formatNumberNoDec(x.total_return)}</td>
+                  <td className={'text-center ' + (parseFloat(x.total) === 0 ? 'Aind' : (parseFloat(x.total) > 0 ? 'Ganh' : 'Perd'))}>{common.formatNumberNoDec(x.total)}</td>
                   <td className="text-center">{x.odds}</td>
-                  <td className="text-center">{common.formatNumber(x.comissao)}</td>
                   <td className="text-center">{x.data_betstatus}</td>
                 </tr>)}
               </tbody>
@@ -500,9 +498,9 @@ class Bet extends Component {
                   <th onClick={common.tableSort.bind(this, 'comissao')} >Com</th>
                 </tr>
                 <tr className="row-consolidado-login-xs">
-                  <td>{x.total_stake}</td>
-                  <td>{x.total_return}</td>
-                  <td className={x.total == 0 ? 'yellow' : x.total > 0 ? 'green' : 'red'}>{x.total}</td>
+                  <td>{common.formatNumberNoDec(x.total_stake)}</td>
+                  <td>{common.formatNumberNoDec(x.total_return)}</td>
+                  <td className={x.total == 0 ? 'yellow' : x.total > 0 ? 'green' : 'red'}>{common.formatNumberNoDec(x.total)}</td>
                   <td>{x.odds}</td>
                   <td>{x.comissao}</td>
                 </tr>
