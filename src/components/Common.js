@@ -134,7 +134,7 @@ Array.prototype.sum = function (prop, color, colors) {
     }
     return formatNumber(total, color, colors);
 }
-Array.prototype.sumNoFormat = function (prop, color) {
+Array.prototype.sumNoFormat = function (prop) {
     var total = 0;
     for (var i = 0, _len = this.length; i < _len; i++) {
         total += isNaN(this[i][prop]) ? 0 : Number(this[i][prop]);

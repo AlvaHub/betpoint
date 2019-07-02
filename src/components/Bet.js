@@ -108,12 +108,12 @@ class Bet extends Component {
     //Consolidado
     common.getData(`bet/consolidado/${date_from}/${date_to}`).then((data) => {
       that.props.hide();
-      //Exception for Farias111
-      let farias = data.filter(x => x.conta === 'farias111');
-      let tables = [{ title: 'DESCARREGO', data: farias }];
-      data = data.filter(x => x.conta !== 'farias111');
+      //Exception for logins that are Descarrego and come from config.json
+      let descarregoLogins = data.filter(x => x.type_id === 'DC');
+      let tables = [{ title: 'DESCARREGO', data: descarregoLogins }];
+      data = data.filter(x => x.type_id !== 'DC');
 
-      this.setState({ items: data, itemsAll: data, week_id, tables, fariasResult: farias.length > 0 ? farias[0].resultado : 0 })
+      this.setState({ items: data, itemsAll: data, week_id, tables, descarregoResult: descarregoLogins.length > 0 ? descarregoLogins.sumNoFormat('resultado') : 0 })
     });
     //Bets Fixed
     // common.getData(`bet-fixed/${date_from}/${date_to}`).then((data) => {
@@ -130,7 +130,7 @@ class Bet extends Component {
     betlogins: [],
     login_destination: "0",
     tables: [],
-    fariasResult: 0
+    descarregoResult: 0
 
   }
   getLastMonday() {
@@ -305,7 +305,7 @@ class Bet extends Component {
                   <th>{this.state.items.sum('comissao')}</th>
                   <th>{this.state.items.sum('total', true)}</th>
                   <th></th>
-                  <th>{common.formatNumber(this.state.items.sumNoFormat('resultado') + Number(this.state.fariasResult), true)}</th>
+                  <th>{common.formatNumber(this.state.items.sumNoFormat('resultado') + Number(this.state.descarregoResult), true)}</th>
                 </tr>
               </thead>
               <tbody>
@@ -331,7 +331,7 @@ class Bet extends Component {
                   <tr>
                     <td colSpan="12" className={t.title.replace("/", "")} >{t.title}</td>
                   </tr>
-                  {t.data.map((x, i) => <tr key={i}>
+                  {t.data.map((x, i) => <tr key={i} id={x.conta} onClick={this.viewDetail.bind(this, x)} >
                     <td >{x.conta}</td>
                     <td>{x.cliente}</td>
                     <td>{x.qtd}</td>
@@ -363,7 +363,7 @@ class Bet extends Component {
                     <div className="col-3" onClick={common.tableSortNumber.bind(this, 'parcial')} >Parc<small>{this.state.items.sum('parcial', true)}</small></div>
                     <div className="col-3" onClick={common.tableSortNumber.bind(this, 'comissao')} >Com<small>{this.state.items.sum('comissao')}</small></div>
                     <div className="col-3" onClick={common.tableSortNumber.bind(this, 'total')} >Tot<small>{this.state.items.sum('total', true)}</small></div>
-                    <div className="col-3" onClick={common.tableSortNumber.bind(this, 'resultado')} >Res<small>{common.formatNumber(this.state.items.sumNoFormat('resultado') + Number(this.state.fariasResult), true)}</small></div>
+                    <div className="col-3" onClick={common.tableSortNumber.bind(this, 'resultado')} >Res<small>{common.formatNumber(this.state.items.sumNoFormat('resultado') + Number(this.state.descarregoResult), true)}</small></div>
                   </div>
                 </th>
               </tr>
@@ -389,6 +389,31 @@ class Bet extends Component {
                   </div>
                 </td>
               </tr>)}
+              {this.state.tables.map((t, i) => <React.Fragment key={i}>
+                <tr>
+                  <td colSpan="1" className={t.title.replace("/", "")} >{t.title}</td>
+                </tr>
+                {t.data.map((x, i) => <tr key={i}  id={x.conta + '-xs'} onClick={this.viewDetail.bind(this, x)} >
+                  <td>
+                    <div className="row no-gutters" >
+                      <div className="col-12 text-left pl-1" ><b>{x.conta} - {x.cliente} - {x.um} - {x.profit_percent}% - {x.qtd}</b></div>
+                      <div className="w-100" ></div>
+                      <div className={x.volume == 0 ? "col-3 yellow" : x.volume < 0 ? 'col-3 red' : 'col-3 green'} >{common.formatNumberNoDec(x.volume)}</div>
+                      <div className="col-3" >{x.vale}</div>
+                      <div className="col-3">{x.atual}</div>
+                      <div className="col-3">{x.pendente}</div>
+                      <div className="w-100" ></div>
+                      <div className="col-3">{common.formatNumberNoDec(x.parcial)}
+                        <div hidden={x.parcial === x.parcial_check} className={x.parcial === x.parcial_check ? '' : 'bg-red rounded text-white'} >{common.formatNumberNoDec(x.parcial_check)}
+                        </div>
+                      </div>
+                      <div className="col-3">{common.formatNumberNoDec(x.comissao)}</div>
+                      <div className={x.total == 0 ? "col-3 yellow" : x.total < 0 ? 'col-3 red' : 'col-3 green'} >{common.formatNumberNoDec(x.total)}</div>
+                      <div className={x.resultado == 0 ? "col-3" : x.resultado < 0 ? 'col-3 red' : 'col-3 green'} >{common.formatNumberNoDec(x.resultado)}</div>
+                    </div>
+                  </td>
+                </tr>)}
+              </React.Fragment>)}
             </tbody>
           </table>
         </div>
@@ -467,7 +492,7 @@ class Bet extends Component {
                   </td>
                   <td className="top td-event">{x.event_names.split(',').map((y, n) => <div title={y} id={'event-' + x.id + '-' + n} onClick={this.divClick.bind(this, 'event-' + x.id + '-' + n)} className="no-break font-sm" key={n}>{y}</div>)}</td>
                   <td className="top">{x.event_dates.split(',').map((x, n) => <div className="no-break font-sm" key={n}>{formatDate(x, 'DD-MM-YY')}</div>)}</td>
-                  <td className="top">{x.event_results.split(',').map((x, n) => <div className="font-sm" key={n}><span className={x.substring(0, 4) + '-Text'}>{x.replace("Ainda por Acontecer", "Aberto").replace('Reembolso','Reemb')}</span></div>)}</td>
+                  <td className="top">{x.event_results.split(',').map((x, n) => <div className="font-sm" key={n}><span className={x.substring(0, 4) + '-Text'}>{x.replace("Ainda por Acontecer", "Aberto").replace('Reembolso', 'Reemb')}</span></div>)}</td>
                   <td className="text-center">{formatDate(x.placement_date, 'DD/MM/YY HH:mm')}</td>
                   <td className="font-sm text-center">{common.formatNumberNoDec(x.total_stake)}</td>
                   <td className="font-sm text-center">{common.formatNumberNoDec(x.total_return)}</td>
