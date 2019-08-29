@@ -43,6 +43,12 @@ export function tableSort(key, obj) {
         this.setState({ [obj]: data, sortField: (key === this.state.sortField ? '' : key) });
     }
 }
+export function sortNumber(that, key) {
+    let data = that.state.sortField === key ?
+        that.state.items.sort((a, b) => b[key] - a[key]) :
+        that.state.items.sort((a, b) => a[key] - b[key]);
+    that.setState({ items: data, sortField: (key === that.state.sortField ? '' : key) });
+}
 export function tableSortNumber(key, obj) {
 
     if (typeof (obj) !== 'string') {
@@ -100,14 +106,14 @@ export function formatNumber(x, color, colors, noDecimal) {
         parts[1] += "0";
 
     parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ".");
-    let finalValue = noDecimal ?  parts[0] : parts.join(',');
+    let finalValue = noDecimal ? parts[0] : parts.join(',');
     if (color) {
         if (!colors)
             return <span className={Number(x) == 0 ? "yellow" : Number(x) < 0 ? 'red' : 'green'} >{finalValue}</span>;
         else
             return <span className={Number(x) == 0 ? colors[1] : Number(x) < 0 ? colors[0] : colors[2]} >{finalValue}</span>;
     }
-    return  finalValue;
+    return finalValue;
 }
 export function formatNumberNoDec(x, color, colors) {
     return formatNumber(round(x), color, colors, true);
@@ -116,7 +122,7 @@ export function round(value) {
     return Math.round(value)
 }
 export function removeZero(value) {
-    return value.replace('.00','');
+    return value.replace('.00', '');
 }
 export function closeModal() {
     this.setState({ showModal: false });

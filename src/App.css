@@ -64,8 +64,10 @@ body:before {
 .p-0-5{padding: 2px}
 .no-overflow{overflow: hidden;}
 .no-break{white-space: nowrap}
+
 @media(max-width:576px){
   .logo-left{display: none}
+  .text-right-xs{text-align: right}
 }
 @media(min-width:768px){
   .pl-md-1{padding-left: 0.25rem !important;}

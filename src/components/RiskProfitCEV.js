@@ -12,12 +12,13 @@ class RiskProfitCEV extends Component {
     this.handleChange = this.handleChange.bind(this);
     this.barList();
   }
+
   barList() {
     this.props.changeTitle({
       left: null,
       center:
-        <div  className="pointer" onClick={this.bindList.bind(this)}  >Risco CEV
-          <small  className="last-update" >{this.state.lastBetTime ? "Atualização: " + formatDate(this.state.lastBetTime.date, "DD/MM H:mm") + "  há " + this.state.lastBetTime.minutes + " min atrás" : ""}</small>
+        <div className="pointer" onClick={this.bindList.bind(this)}  >Risco CEV
+          <small className="last-update" >{this.state.lastBetTime ? "Atualização: " + formatDate(this.state.lastBetTime.date, "DD/MM H:mm") + "  há " + this.state.lastBetTime.minutes + " min atrás" : ""}</small>
         </div>,
       right: <div className="" onClick={this.showFilter.bind(this)}><i className="fas fa-filter show-xs"></i></div>
     });
@@ -44,6 +45,8 @@ class RiskProfitCEV extends Component {
 
   }
   viewDetail(item) {
+    if (this.hideFilter())
+      return;
     this.props.show();
 
     //Copy Header of selected item to show on detail screen
@@ -67,8 +70,14 @@ class RiskProfitCEV extends Component {
     var that = this;
     let date_from = formatDate(this.state.date_from, "YYYY-MM-DD");
     let date_to = formatDate(this.state.date_to, "YYYY-MM-DD");
-    common.getData('combo/risk-profit-event').then((events) => { this.setState({ events }); });
-    common.postData(`report/risk-profit-cev`, "").then((data) => { that.props.hide(); this.setState({ items: data, itemsAll: data, sortField: 'valores' }); this.handleSortXS() });
+    common.getData('combo/risk-profit-event').then((events) => {
+      this.setState({ events });
+    });
+    common.postData(`report/risk-profit-cev`, "").then((data) => {
+      that.props.hide();
+      data.sort((a, b) => a['risk_value'] - b['risk_value'])
+      this.setState({ items: data, itemsAll: data, sortField: 'risk_value' });
+    });
   }
   componentDidMount() {
 
@@ -105,12 +114,18 @@ class RiskProfitCEV extends Component {
   handleChange = e => {
     let data = this.state.data;
     data[e.target.name] = e.target.value;
-    this.setState({ data })
+    this.setState({ data });
 
   }
   showFilter() {
     var css = document.getElementById('filter').className;
-    css = css.indexOf('hidden-xs') > 0 ? 'filter' : 'filter hidden-xs';
+    if (css.indexOf('hidden-xs') > 0) {
+      css = 'filter';
+      this.setState({ filterOpen: true });
+    } else {
+      css = 'filter hidden-xs';
+      this.setState({ filterOpen: false });
+    }
     document.getElementById('filter').className = css;
   }
   filter(e) {
@@ -167,25 +182,45 @@ class RiskProfitCEV extends Component {
     }
     this.setState({ items: items, sortField: (key === this.state.sortField ? '' : key) });
   }
+  sortByRisk = () => {
+    common.sortNumber(this, 'risk_value');
+  }
+  sortByProfit = () => {
+    common.sortNumber(this, 'profit_value');
+  }
+  hideFilter = (e) => {
+
+    if (this.state.filterOpen) {
+      document.getElementById('filter').className = 'filter hidden-xs';
+      this.setState({ filterOpen: false });
+      return true;
+    }
+    return false;
+
+  }
   render() {
     return (
       <React.Fragment>
         <div className="filter hidden-xs" id="filter" >
           <div className="row no-gutters" >
-            <div className="col-12 col-sm-6 p-1">
+            <div className="col-12 col-sm-4 p-1">
               <select className="form-control form-control-sm" name="event_name" value={this.state.event_name} onChange={this.filterEvent.bind(this)} >
                 <option value="" >Eventos</option>
                 {this.state.events.map((x, i) => <option key={i} value={x.event_date + ' - ' + x.event_key} >{x.event_date + ' - ' + x.event_key}</option>)}
               </select>
             </div>
-            <div className="col-12 col-sm-6 p-1">
+            <div className="col-12 col-sm-4 p-1">
               <input type="text" className="form-control form-control-sm" placeholder="Buscar..." onChange={this.filter.bind(this)} />
+            </div>
+            <div className="col-12 col-sm-4 p-1 text-right-xs">
+              <button className="btn btn-sm btn-danger mr-1" onClick={this.sortByRisk.bind(this)} >Risco <i className="fas fa-arrows-alt-v ml-1"></i></button>
+              <button className="btn btn-sm btn-success mr-1" onClick={this.sortByProfit.bind(this)} >Lucro <i className="fas fa-arrows-alt-v ml-1"></i></button>
             </div>
           </div>
         </div>
         <div className="margin-top-filter margin-top-filter-xs" ></div>
         <div id="list">
-          <table className="table table-dark table-hover table-bordered table-striped table-sm" >
+          <table className="table table-dark table-hover table-bordered table-striped table-sm"  >
             <thead id="table-risk-profit-head" >
               <tr>
                 <th className="center">NR</th>
