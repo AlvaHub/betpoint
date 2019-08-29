@@ -490,7 +490,7 @@ class Bet extends Component {
                     {x.bet_confirmation.split('<br>').map((y, n) => <div title={y} id={'bet-' + x.id + '-' + n} onClick={this.divClick.bind(this, 'bet-' + x.id + '-' + n)} className="no-break font-sm overflow-x" key={n}>{y}</div>)}
                     <div hidden={x.status_id != "6"} className="rounded bg-red text-center">Excluída</div>
                   </td>
-                  <td className="top td-event">{x.event_names.split(',').map((y, n) => <div title={y} id={'event-' + x.id + '-' + n} onClick={this.divClick.bind(this, 'event-' + x.id + '-' + n)} className="no-break font-sm" key={n}>{y}</div>)}</td>
+                  <td className="top td-event">{x.event_names.split(',').map((y, n) => <div title={y} id={'event-' + x.id + '-' + n} onClick={this.divClick.bind(this, 'event-' + x.id + '-' + n)} className="no-break font-sm" key={n}>{y.split('<br>').map((a, b) => <div key={b}>{a}</div>)}</div>)}</td>
                   <td className="top">{x.event_dates.split(',').map((x, n) => <div className="no-break font-sm" key={n}>{formatDate(x, 'DD-MM-YY')}</div>)}</td>
                   <td className="top">{x.event_results.split(',').map((x, n) => <div className="font-sm" key={n}><span className={x.substring(0, 4) + '-Text'}>{x.replace("Ainda por Acontecer", "Aberto").replace('Reembolso', 'Reemb')}</span></div>)}</td>
                   <td className="text-center">{formatDate(x.placement_date, 'DD/MM/YY HH:mm')}</td>
