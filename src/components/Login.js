@@ -35,6 +35,11 @@ class Login extends Component {
                 alert('Login Inválido!')
         });
     }
+    _handleKeyDown = (e) => {
+        if (e.key === 'Enter') {
+          this.login();
+        }
+      }
     componentDidMount() {
 
         setTimeout(() => {
@@ -62,8 +67,8 @@ class Login extends Component {
                 </div>
                 <div className="col-8 col-md-4 offset-md-4 offset-2">
 
-                    <input type="email" id="user" className="form-control mb-2 user" value={this.state.data.user} placeholder="Login" onChange={this.handleChange.bind(this)} />
-                    <input type="password" id="password" className="form-control mb-2 pass" placeholder="Senha" value={this.state.data.password} onChange={this.handleChange.bind(this)} />
+                    <input type="email" id="user" className="form-control mb-2 user" onKeyDown={this._handleKeyDown}  value={this.state.data.user} placeholder="Login" onChange={this.handleChange.bind(this)} />
+                    <input type="password" id="password" className="form-control mb-2 pass" onKeyDown={this._handleKeyDown}  placeholder="Senha" value={this.state.data.password} onChange={this.handleChange.bind(this)} />
                     <div id="div-btn" className="text-right div-btn">
                         <button onClick={this.login.bind(this)} type="button" className="btn btn-main" >Login</button>
                     </div>
