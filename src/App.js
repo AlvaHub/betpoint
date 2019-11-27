@@ -54,7 +54,6 @@ class App extends Component {
     this.setState({ loading: '' });
   }
   componentDidMount() {
-
     common.setTheme();
   }
   dateChanged = (e) => {
@@ -84,20 +83,24 @@ class App extends Component {
             {window.location.pathname === '/login' || <Menu show={this.loadingShow} hide={this.loadingHide} />}
             <div id="master" className="page p-1">
               <Route path="/login" render={() => <Login changeTitle={this.changeTitleHandler} show={this.loadingShow} hide={this.loadingHide} />} />
-              <Route path="/" exact render={() => <Bet changeTitle={this.changeTitleHandler} show={this.loadingShow} hide={this.loadingHide} />} />
-              <Route path="/bet-fixed" exact render={() => <BetFixed changeTitle={this.changeTitleHandler} show={this.loadingShow} hide={this.loadingHide} />} />
-              <Route path="/closing" exact render={() => <Closing changeTitle={this.changeTitleHandler} show={this.loadingShow} hide={this.loadingHide} />} />
-              <Route path="/risk-profit" render={() => <RiskProfit changeTitle={this.changeTitleHandler} show={this.loadingShow} hide={this.loadingHide} />} />
-              <Route path="/risk-profit-cev" render={() => <RiskProfitCEV changeTitle={this.changeTitleHandler} show={this.loadingShow} hide={this.loadingHide} />} />
-              <Route path="/reports" render={() => <Reports changeTitle={this.changeTitleHandler} show={this.loadingShow} hide={this.loadingHide} />} />
-              <Route path="/default" />
-              <Route path="/admin/user" render={() => <User changeTitle={this.changeTitleHandler} show={this.loadingShow} hide={this.loadingHide} />} />
-              <Route path="/admin/matrix" render={() => <Matrix changeTitle={this.changeTitleHandler} show={this.loadingShow} hide={this.loadingHide} />} />
-              <Route path="/admin/betlogin" render={() => <Betlogin changeTitle={this.changeTitleHandler} show={this.loadingShow} hide={this.loadingHide} />} />
-              <Route path="/admin/bookmaker" render={() => <Bookmaker changeTitle={this.changeTitleHandler} show={this.loadingShow} hide={this.loadingHide} />} />
-              <Route path="/admin/parameter" render={() => <Parameter changeTitle={this.changeTitleHandler} show={this.loadingShow} hide={this.loadingHide} />} />
-              <Route path="/admin/bet" render={() => <AdminBet changeTitle={this.changeTitleHandler} show={this.loadingShow} hide={this.loadingHide} />} />
-              <Route path="/admin/commission" render={() => <Commission changeTitle={this.changeTitleHandler} show={this.loadingShow} hide={this.loadingHide} />} />
+              {common.getUser() &&
+                <React.Fragment>
+                  <Route path="/" exact render={() => <Bet changeTitle={this.changeTitleHandler} show={this.loadingShow} hide={this.loadingHide} />} />
+                  <Route path="/bet-fixed" exact render={() => <BetFixed changeTitle={this.changeTitleHandler} show={this.loadingShow} hide={this.loadingHide} />} />
+                  <Route path="/closing" exact render={() => <Closing changeTitle={this.changeTitleHandler} show={this.loadingShow} hide={this.loadingHide} />} />
+                  <Route path="/risk-profit" render={() => <RiskProfit changeTitle={this.changeTitleHandler} show={this.loadingShow} hide={this.loadingHide} />} />
+                  <Route path="/risk-profit-cev" render={() => <RiskProfitCEV changeTitle={this.changeTitleHandler} show={this.loadingShow} hide={this.loadingHide} />} />
+                  <Route path="/reports" render={() => <Reports changeTitle={this.changeTitleHandler} show={this.loadingShow} hide={this.loadingHide} />} />
+                  <Route path="/default" />
+                  <Route path="/admin/user" render={() => <User changeTitle={this.changeTitleHandler} show={this.loadingShow} hide={this.loadingHide} />} />
+                  <Route path="/admin/matrix" render={() => <Matrix changeTitle={this.changeTitleHandler} show={this.loadingShow} hide={this.loadingHide} />} />
+                  <Route path="/admin/betlogin" render={() => <Betlogin changeTitle={this.changeTitleHandler} show={this.loadingShow} hide={this.loadingHide} />} />
+                  <Route path="/admin/bookmaker" render={() => <Bookmaker changeTitle={this.changeTitleHandler} show={this.loadingShow} hide={this.loadingHide} />} />
+                  <Route path="/admin/parameter" render={() => <Parameter changeTitle={this.changeTitleHandler} show={this.loadingShow} hide={this.loadingHide} />} />
+                  <Route path="/admin/bet" render={() => <AdminBet changeTitle={this.changeTitleHandler} show={this.loadingShow} hide={this.loadingHide} />} />
+                  <Route path="/admin/commission" render={() => <Commission changeTitle={this.changeTitleHandler} show={this.loadingShow} hide={this.loadingHide} />} />
+                </React.Fragment>
+              }
             </div>
           </React.Fragment>
         </BrowserRouter>

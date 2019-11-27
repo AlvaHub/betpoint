@@ -302,11 +302,11 @@ input[type='text'],input[type='number'],select,textarea {  font-size: 16px;}
 
 .table-commission.table-scroll>tbody{max-height: calc(var(--window)  - 126px);}
 .table-commission.table-scroll>tbody tr{display: table-row}
-.table-commission td:nth-child(1), .table-commission th:nth-child(1){width:15%;white-space: nowrap}
+.table-commission td:nth-child(1), .table-commission th:nth-child(1){width:20%;white-space: nowrap}
 .table-commission td:nth-child(2), .table-commission th:nth-child(2){width:15%;white-space: nowrap}
 .table-commission td:nth-child(3), .table-commission th:nth-child(3){width:10%;white-space: nowrap}
 .table-commission td:nth-child(4), .table-commission th:nth-child(4){width:10%;white-space: nowrap}
-.table-commission td:nth-child(5), .table-commission th:nth-child(5){width:30%;white-space: nowrap}
+.table-commission td:nth-child(5), .table-commission th:nth-child(5){width:25%;white-space: nowrap}
 .table-commission td:nth-child(6) .table-commission th:nth-child(6){width:20%;white-space: nowrap}
 .table-commission tr.normal td:nth-child(1),.table-commission tr.normal td:nth-child(2){background-color: rgb(94, 94, 94);border-color: rgb(82, 82, 82)}
 .table-commission tr.alternate td:nth-child(1), .table-commission tr.alternate td:nth-child(2){background-color: rgb(71, 71, 71);border-color: rgb(82, 82, 82)}

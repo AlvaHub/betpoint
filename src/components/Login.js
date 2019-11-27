@@ -29,7 +29,7 @@ class Login extends Component {
             that.props.hide();
             if (data !== 0) {
                 common.setUser(data);
-                that.props.history.push('/');
+                window.location.href = '/';
             }
             else
                 alert('Login Inválido!')
@@ -42,6 +42,7 @@ class Login extends Component {
       }
     componentDidMount() {
 
+       
         setTimeout(() => {
             document.getElementById('user').className += " come-reverse-100";
             document.getElementById('password').className += " come-100";
