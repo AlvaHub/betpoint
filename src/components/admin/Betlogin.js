@@ -141,31 +141,29 @@ class Betlogin extends Component {
           <table className="table table-dark table-hover table-bordered table-striped table-sm text-center w-100" >
             <thead>
               <tr>
-                <th onClick={common.tableSort.bind(this, 'dat_loaded')} >Atualização</th>
+                <th onClick={common.tableSort.bind(this, 'bookmaker_name')} >Cliente</th>
                 <th onClick={common.tableSort.bind(this, 'login_name')} >Login</th>
                 <th onClick={common.tableSort.bind(this, 'password_name')} >Senha</th>
-                <th onClick={common.tableSort.bind(this, 'bookmaker_name')} >Cliente</th>
-                <th onClick={common.tableSortNumber.bind(this, 'type_name')} >Tipo</th>
-                <th onClick={common.tableSort.bind(this, 'active')} className="td-min" >Ativo</th>
+                <th onClick={common.tableSort.bind(this, 'initial_balance')} >Saldo Inicial</th>
+                <th onClick={common.tableSort.bind(this, 'current_balance')} >Saldo Atual</th>
+                <th onClick={common.tableSort.bind(this, 'bank_balance')} >Saldo Banco</th>
+                <th onClick={common.tableSort.bind(this, 'multiplier')} >UM</th>
+                <th onClick={common.tableSort.bind(this, 'profit_percent')} >% Lucro</th>
               </tr>
             </thead>
             <tbody>
-              {this.state.items.map(x => <tr key={x.id} onClick={this.editData.bind(this, x)} >
-                <td>{x.dat_loaded}</td>
+              {this.state.items.map(x => <tr key={x.id}>
+                <td>{x.bookmaker_name}</td>
                 <td>{x.hide_report == 1 ? <span className="text-secondary">{x.login_name}</span> : x.login_name}</td>
                 <td>{x.password_name}</td>
-                <td>{x.bookmaker_name}</td>
-                <td>{x.type_name}</td>
-                <td className="td-min">{x.active === '1' ? 'Sim' : 'Não'}</td>
+                <td>{x.initial_balance}</td>
+                <td>{x.current_balance}</td>
+                <td>{x.bank_balance}</td>
+                <td>{x.multiplier}</td>
+                <td>{x.profit_percent}</td>
               </tr>)}
             </tbody>
           </table>
-          <div className={'row no-gutters mb-1 p-1 ' + (this.state.items.length == 0 ? 'hidden' : '')}>
-            <textarea name="login_order" placeholder="Insira os logins um abaixo do outro..." className="form-control col-md-4 p-1 mr-1 mt-1" rows="1" onChange={this.handleChange} ></textarea>
-            <div className="col-md-2 mt-1">
-              <button type="button" className="btn btn-success" onClick={this.updateOrder} >Atualizar Ordem</button>
-            </div>
-          </div>
         </div>
         <div id="new" className="form" >
           <div className="row m-0 p-0" >

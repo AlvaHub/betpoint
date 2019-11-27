@@ -81,10 +81,10 @@ export function hideMore() {
     document.body.removeEventListener('click', hideMore);
 }
 export function setUser(user) {
-    localStorage.setItem("user", JSON.stringify(user))
+    localStorage.setItem("user1", JSON.stringify(user))
 }
 export function getUser() {
-    var user = localStorage.getItem("user");
+    var user = localStorage.getItem("user1");
     return user ? JSON.parse(user) : null;
 }
 Date.prototype.addDays = function (days) {
