@@ -251,6 +251,9 @@ input[type='text'],input[type='number'],select,textarea {  font-size: 16px;}
 
 .button-options-report .btn{width:60px;padding:2px}
 
+/* USER */
+.table-user-login input[type=text]{font-size:10pt;background-color: transparent;border:none;color:white;text-align: center;}
+
 /* BETS */
 .div-table-bets-responsive{width:100%;overflow: auto}
 .div-table-bets-responsive::-webkit-scrollbar{display: none}
