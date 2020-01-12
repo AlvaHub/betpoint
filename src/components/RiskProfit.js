@@ -71,7 +71,9 @@ class RiskProfit extends Component {
     var that = this;
     let date_from = formatDate(this.state.date_from, "YYYY-MM-DD");
     let date_to = formatDate(this.state.date_to, "YYYY-MM-DD");
-    common.getData(`report/risk-profit`).then((data) => { that.props.hide(); this.setState({ items: data, itemsAll: data }) });
+    let userId = common.getUser().id;
+
+    common.getData(`report/risk-profit/${userId}`).then((data) => { that.props.hide(); this.setState({ items: data, itemsAll: data }) });
   }
   componentDidMount() {
 

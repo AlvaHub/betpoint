@@ -105,8 +105,10 @@ class Bet extends Component {
     var that = this;
     let date_from = week_id.split('|')[0];
     let date_to = week_id.split('|')[1];
+    let userId = common.getUser().id;
+
     //Consolidado
-    common.getData(`bet/consolidado/${date_from}/${date_to}`).then((data) => {
+    common.getData(`bet/consolidado/${date_from}/${date_to}/${userId}`).then((data) => {
       that.props.hide();
       //Exception for logins that are Descarrego and come from config.json
       let descarregoLogins = data.filter(x => x.type_id === 'DC');
@@ -328,7 +330,7 @@ class Bet extends Component {
                   <td className={x.resultado == 0 ? "" : x.resultado < 0 ? 'red' : 'green'} >{common.formatNumberNoDec(x.resultado)}</td>
                 </tr>)}
                 {this.state.tables.map((t, i) => <React.Fragment key={i}>
-                  <tr>
+                  <tr hidden={t.data.length == 0}>
                     <td colSpan="12" className={t.title.replace("/", "")} >{t.title}</td>
                   </tr>
                   {t.data.map((x, i) => <tr key={i} id={x.conta} onClick={this.viewDetail.bind(this, x)} >
