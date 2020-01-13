@@ -27,13 +27,17 @@ class MenuIcon extends Component {
     }
     render() {
         return (
+
             <div>
-                <div><i onClick={this.showMore} className="fas fa-bars ml-2"></i>
-                    <i onClick={() => { this.redirect('/') }} className="fas fa-futbol ml-3 pointer hidden-xs" title="Consolidado"></i>
-                    <i onClick={() => { this.redirect('/risk-profit') }} className="fas fa-chart-line ml-3 pointer hidden-xs" title="Risco e Lucro"></i>
-                    <i onClick={() => { this.redirect('/risk-profit-cev') }} className="fas fa-chart-bar ml-3 pointer hidden-xs" title="Risco CEV"></i>
-                </div>
+                {common.getUser() &&
+                    <div><i onClick={this.showMore} className="fas fa-bars ml-2"></i>
+                        <i onClick={() => { this.redirect('/') }} className="fas fa-futbol ml-3 pointer hidden-xs" title="Consolidado"></i>
+                        <i onClick={() => { this.redirect('/risk-profit') }} className="fas fa-chart-line ml-3 pointer hidden-xs" title="Risco e Lucro"></i>
+                        <i hidden={common.getUser().permission_id == 3}  onClick={() => { this.redirect('/risk-profit-cev') }} className="fas fa-chart-bar ml-3 pointer hidden-xs" title="Risco CEV"></i>
+                    </div>
+                }
             </div>
+
         )
     }
 }

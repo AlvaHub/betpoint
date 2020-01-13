@@ -392,7 +392,7 @@ class Bet extends Component {
                 </td>
               </tr>)}
               {this.state.tables.map((t, i) => <React.Fragment key={i}>
-                <tr>
+                <tr hidden={t.data.length == 0}>
                   <td colSpan="1" className={t.title.replace("/", "")} >{t.title}</td>
                 </tr>
                 {t.data.map((x, i) => <tr key={i}  id={x.conta + '-xs'} onClick={this.viewDetail.bind(this, x)} >
