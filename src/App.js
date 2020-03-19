@@ -13,6 +13,7 @@ import loadingImage from './images/loading-spinner.svg';
 import User from './components/admin/User';
 import Matrix from './components/admin/Matrix';
 import Betlogin from './components/admin/Betlogin';
+import BetloginControl from './components/admin/BetloginControl';
 import Bookmaker from './components/admin/Bookmaker';
 import Parameter from './components/admin/Parameter';
 import AdminBet from './components/admin/Bet';
@@ -99,6 +100,7 @@ class App extends Component {
                       <Route path="/admin/user" render={() => <User changeTitle={this.changeTitleHandler} show={this.loadingShow} hide={this.loadingHide} />} />
                       <Route path="/admin/matrix" render={() => <Matrix changeTitle={this.changeTitleHandler} show={this.loadingShow} hide={this.loadingHide} />} />
                       <Route path="/admin/betlogin" render={() => <Betlogin changeTitle={this.changeTitleHandler} show={this.loadingShow} hide={this.loadingHide} />} />
+                      <Route path="/admin/betlogin-control" render={() => <BetloginControl changeTitle={this.changeTitleHandler} show={this.loadingShow} hide={this.loadingHide} />} />
                       <Route path="/admin/bookmaker" render={() => <Bookmaker changeTitle={this.changeTitleHandler} show={this.loadingShow} hide={this.loadingHide} />} />
                       <Route path="/admin/parameter" render={() => <Parameter changeTitle={this.changeTitleHandler} show={this.loadingShow} hide={this.loadingHide} />} />
                       <Route path="/admin/bet" render={() => <AdminBet changeTitle={this.changeTitleHandler} show={this.loadingShow} hide={this.loadingHide} />} />

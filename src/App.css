@@ -79,6 +79,7 @@ body:before {
 .button-options button.first{border-top-right-radius: 0;border-bottom-right-radius: 0;border-right:none}
 
 input[type=checkbox]{zoom: 1.5 !important;}
+input[type=checkbox].normal {zoom: 1.2 !important;}
 input[type='text'],input[type='number'],select,textarea {  font-size: 16px;}
 .loading{display:none;cursor:pointer;position: fixed;left:0;top:0;font-size:12pt;color:rgb(170, 170, 170);background-color:rgba(0, 0, 0, 0.5);height:100%;width:100%;z-index:20;}
 .loading img{position:absolute;top:50%;left:50%;transform: translate(-50%,-50%);display: block;width:100px;height: 100px}
@@ -411,8 +412,8 @@ td.top{vertical-align: top}
 @media(max-width: 577px){
   .table-scroll>tbody::-webkit-scrollbar{display: none}
 }
-
-
+table tr.selected td{background-color: orange;}
+table tr.v-middle td{vertical-align: middle !important;padding:0.2rem}
 
 /* BGs */
 .btn-main{background-color: rgb(185, 55, 55);color:white;}
