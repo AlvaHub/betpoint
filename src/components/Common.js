@@ -3,6 +3,8 @@ import React from 'react'
 var lastScroll = 0;
 
 export var api_url = (window.location.hostname === 'localhost' ? 'http://betpoint:8001/api/' : 'https://natansports.websiteseguro.com/api/');
+export var api_balance_url = (window.location.hostname === 'localhost' ? 'http://api.betpoint:8001/bet365_transfer.php' : 'http://api.betpoint:8001/bet365_transfer.php');
+
 
 function scrollTop() {
     lastScroll = window.scrollY;

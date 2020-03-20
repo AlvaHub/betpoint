@@ -71,9 +71,13 @@ class BetloginControl extends Component {
   }
   handleChangeItem = (item, e) => {
 
-    item.selected = e.target.checked;
+    if (e.target.type === 'checkbox') {
+      item.selected = e.target.checked;
+    }
+    else {
+      item[e.target.name] = e.target.value;
+    }
     this.setState({ items: this.state.items });
-
   }
   filter(e) {
     let items = [];
@@ -88,7 +92,7 @@ class BetloginControl extends Component {
   updateAllAccounts = () => {
 
     this.state.items.forEach(x => {
-      x.loading = x.success = x.error = x.processed = null;
+      x.loading = x.success = x.error = x.warning = x.processed = null;
     });
     this.setState({ items: this.state.items });
     this.updateAllAccountsAction();
@@ -96,12 +100,11 @@ class BetloginControl extends Component {
   updateAllAccountsAction = () => {
 
     let selectedItems = [];
-    let api_url = 'http://api.betpoint:8001/bet365_transfer.php?';
     this.state.items.filter(x => x.selected && !x.processed).forEach(x => {
       if (selectedItems.length < 3) {
         x.processed = true;
         x.loading = true;
-        selectedItems.push(fetch(api_url + 'login=' + x.login_name + '&pass=' + x.password_name).then(data => data.json()).catch(_ => { x.error = x.login_name + ": Erro Interno"; x.loading = null; }));
+        selectedItems.push(fetch(common.api_balance_url + '?auto=1&login=' + x.login_name + '&pass=' + x.password_name + '&balance=' + x.initial_balance).then(data => data.json()).catch(_ => { x.error = x.login_name + ": Erro Interno"; x.loading = null; }));
       }
     });
     this.setState({ items: this.state.items });
@@ -113,11 +116,20 @@ class BetloginControl extends Component {
           if (x) {
             let item = this.state.items.find(y => y.login_name == x.login);
             item.loading = false;
-            if (x.success)
-              item.success = x.success;
+            if (x.success) {
+              item.success = true;
+              item.summary = x.summary;
+              item.bank_balance_update = x.bank_balance;
+              item.current_balance_update = x.current_balance;
+              this.updateBalanceDB(item);
+            }
             else if (x.error) {
               item.error = true;
-              item.errorMessage = x.error;
+              item.summary = x.summary;
+            }
+            else if (x.warning) {
+              item.warning = true;
+              item.summary = x.summary;
             }
           }
         });
@@ -134,6 +146,7 @@ class BetloginControl extends Component {
   updateOneAccount = () => {
 
     let data = this.state.data;
+
     if (!this.state.accountSelected)
       return alert('Selecione o login!');
     if (!data.balanceOrigin || data.balanceOrigin == '0' || !data.balanceDestiny || data.balanceDestiny == '0')
@@ -141,16 +154,27 @@ class BetloginControl extends Component {
     if (data.balanceOrigin == data.balanceDestiny)
       return alert('Origem e Destino devem ser diferentes!');
 
-    let balance = parseFloat(data.balance.replace(/\./g, '').replace(',', '.'));
-    console.log(balance);
-    if (!data.balance || balance < 1)
+    let amount = parseFloat(data.balance.replace(/\./g, '').replace(',', '.'));
+    if (!data.balance || amount < 1)
       return alert('Valor mínimo é de 1');
 
-    //this.props.show();
-    // common.postData('betlogin/update-order', this.state.data.login_order).then(function (data) {
-    //   that.props.hide();
-    //   if (data == 1) alert('Ordem atualizada com sucesso!')
-    // });
+    let x = this.state.accountSelected;
+
+    this.props.show();
+    fetch(common.api_balance_url + '?login=' + x.login_name + '&pass=' + x.password_name + '&from=' + data.balanceOrigin + '&to=' + data.balanceDestiny + '&amount=' + amount)
+      .then(data => data.json())
+      .catch(_ => { this.props.hide(); alert('Erro Interno'); })
+      .then(data => {
+        this.props.hide();
+        x.bank_balance_update = data.bank_balance;
+        x.current_balance_update = data.current_balance;
+        this.setState({ items: this.state.items });
+        this.updateBalanceDB(x);
+        alert(data.summary);
+      });
+  }
+  updateBalanceDB(item) {
+    common.postData('betlogin/update-balance', item).then();
   }
   selectAccount = (x) => {
     if (x == this.state.accountSelected)
@@ -215,14 +239,17 @@ class BetloginControl extends Component {
                 <td>{x.bookmaker_name}</td>
                 <td>{x.hide_report == 1 ? <span className="text-secondary">{x.login_name}</span> : x.login_name}</td>
                 <td>{x.password_name}</td>
-                <td>{x.initial_balance}</td>
-                <td>{x.current_balance}</td>
-                <td>{x.bank_balance}</td>
+                <td onClick={e => { e.stopPropagation(); }} >
+                  <CurrencyFormat type="tel" name="initial_balance" value={x.initial_balance || ""} onChange={this.handleChangeItem.bind(this, x)} ></CurrencyFormat>
+                </td>
+                <td>{x.current_balance_update ? x.current_balance_update : x.current_balance}</td>
+                <td>{x.bank_balance_update ? x.bank_balance_update : x.bank_balance}</td>
                 <td onClick={e => { e.stopPropagation(); }}><input type="checkbox" className="normal" name="selected" checked={x.selected || ""} onChange={this.handleChangeItem.bind(this, x)} ></input></td>
                 <td>
                   {x.loading && <img src={loadingImage} style={{ width: '25px' }} />}
-                  {x.success && <i className="fas fa-check-circle text-info" title={x.success} />}
-                  {x.error && <i className="fas fa-times-circle text-danger" title={x.error} />}
+                  {x.success && <i className="fas fa-check-circle text-info" title={x.summary} />}
+                  {x.error && <i className="fas fa-times-circle text-danger" title={x.summary} />}
+                  {x.warning && <i className="fas fa-exclamation-triangle text-warning" title={x.summary} />}
                 </td>
               </tr>)}
             </tbody>
