@@ -32,8 +32,9 @@ class App extends Component {
     window.addEventListener('resize', () => {
       document.documentElement.style.setProperty('--window', `${window.innerHeight}px`);
     });
-    if (window.location.pathname !== '/login' && common.getUser() === null)
-      return window.location.href = "/login";
+    if (window.location.pathname.indexOf('betlogin-balance') < 0)
+      if (window.location.pathname !== '/login' && common.getUser() === null)
+        return window.location.href = "/login";
 
     this.handleShow = this.handleShow.bind(this);
     this.handleClose = this.handleClose.bind(this);
@@ -86,6 +87,7 @@ class App extends Component {
             {window.location.pathname === '/login' || <Menu show={this.loadingShow} hide={this.loadingHide} />}
             <div id="master" className="page p-1">
               <Route path="/login" render={() => <Login changeTitle={this.changeTitleHandler} show={this.loadingShow} hide={this.loadingHide} />} />
+              <Route path="/natansports/betlogin-balance" render={() => <BetloginControl changeTitle={this.changeTitleHandler} show={this.loadingShow} hide={this.loadingHide} />} />
               {common.getUser() &&
                 <React.Fragment>
                   <Route path="/" exact render={() => <Bet changeTitle={this.changeTitleHandler} show={this.loadingShow} hide={this.loadingHide} />} />
@@ -100,7 +102,6 @@ class App extends Component {
                       <Route path="/admin/user" render={() => <User changeTitle={this.changeTitleHandler} show={this.loadingShow} hide={this.loadingHide} />} />
                       <Route path="/admin/matrix" render={() => <Matrix changeTitle={this.changeTitleHandler} show={this.loadingShow} hide={this.loadingHide} />} />
                       <Route path="/admin/betlogin" render={() => <Betlogin changeTitle={this.changeTitleHandler} show={this.loadingShow} hide={this.loadingHide} />} />
-                      <Route path="/admin/betlogin-control" render={() => <BetloginControl changeTitle={this.changeTitleHandler} show={this.loadingShow} hide={this.loadingHide} />} />
                       <Route path="/admin/bookmaker" render={() => <Bookmaker changeTitle={this.changeTitleHandler} show={this.loadingShow} hide={this.loadingHide} />} />
                       <Route path="/admin/parameter" render={() => <Parameter changeTitle={this.changeTitleHandler} show={this.loadingShow} hide={this.loadingHide} />} />
                       <Route path="/admin/bet" render={() => <AdminBet changeTitle={this.changeTitleHandler} show={this.loadingShow} hide={this.loadingHide} />} />
