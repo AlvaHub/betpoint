@@ -123,6 +123,9 @@ class BetloginControl extends Component {
     if (updateTotal === 0)
       return alert('Selecione as contas!');
 
+    if (this.state.cards.length == 0 || this.state.cards.find(x => x.active == 1) == null) {
+      return alert('Nenhum Cartão de Depósito ativo foi encontrado');
+    }
     this.setState({ items: this.state.items, loadingAll: true, updateTotal, updateCurrent: 0 });
     this.updateAllAccountsAction();
   }
@@ -134,12 +137,16 @@ class BetloginControl extends Component {
       return;
     }
     let selectedItems = [];
+    let cardString = '';
+    let card = this.state.cards.length > 0 && this.state.cards.find(x => x.active == 1) != null ? this.state.cards.find(x => x.active == 1) : null;
+    if (card)
+      cardString = `&card_n=${card.card_number}&card_y=${card.expire_year}&card_m=${card.expire_month}&card_c=${card.cvv}`;
     this.state.items.filter(x => x.selected && !x.processed).forEach(x => {
       if (selectedItems.length < 5) {
         x.processed = true;
         x.loading = true;
         let balance = x.initial_balance;
-        selectedItems.push(fetch(common.api_balance_url + 'bet365_transfer.php?auto=1&login=' + x.login_name + '&pass=' + x.password_name + '&balance=' + balance).then(data => data.json()).catch(_ => { x.error = x.login_name + ": Erro Interno"; x.loading = null; }));
+        selectedItems.push(fetch(common.api_balance_url + 'bet365_transfer.php?auto=1&login=' + x.login_name + '&pass=' + x.password_name + '&balance=' + balance + cardString).then(data => data.json()).catch(_ => { x.error = x.login_name + ": Erro Interno"; x.loading = null; }));
       }
     });
     this.setState({ items: this.state.items });
@@ -156,6 +163,10 @@ class BetloginControl extends Component {
               item.summary = x.summary;
               item.bank_balance = x.bank_balance;
               item.current_balance = x.current_balance;
+              item.deposit = x.deposit;
+              if (this.state.cards.length > 0 && this.state.cards.find(x => x.active == 1) != null) {
+                item.card_id = this.state.cards.find(x => x.active == 1).id;
+              }
               console.log(item);
               this.updateBalanceDB(item);
             }
@@ -211,7 +222,7 @@ class BetloginControl extends Component {
       });
   }
   updateBalanceDB(item) {
-    common.postData('betlogin/update-balance', item).then();
+    common.postData('balance/update-balance', item).then();
   }
   selectAccount = (x) => {
     if (x == this.state.accountSelected)
@@ -225,7 +236,7 @@ class BetloginControl extends Component {
     card = card ? card : { id: 0, active: 1 };
     this.setState({ showModal: true, cardMessageError: null, cardMessageSuccess: null, card, card_selected: card.id });
     common.getData('balance/transactions/' + card.id).then(data => {
-      this.setState({ cardTransactions: data, cardTransactionTotal: data.length > 0 && data.map(x => x.amount).reduce((x, i) => x + i) });
+      this.setState({ cardTransactions: data, cardTransactionTotal: data.length > 0 && data.map(x => Number(x.amount)).reduce((x, i) => x + i) });
     });
 
   }
@@ -259,7 +270,7 @@ class BetloginControl extends Component {
     let card = e.target.value == 0 ? { id: 0, active: 1 } : { ...this.state.cards.find(x => x.id == e.target.value) };
     this.setState({ card, card_selected: e.target.value, cardMessageError: null, cardMessageSuccess: null, cardTransactions: [] });
     common.getData('balance/transactions/' + card.id).then(data => {
-      this.setState({ cardTransactions: data, cardTransactionTotal: data.length > 0 && data.map(x => x.amount).reduce((x, i) => x + i) });
+      this.setState({ cardTransactions: data, cardTransactionTotal: data.length > 0 && data.map(x => Number(x.amount)).reduce((x, i) => x + i) });
     });
 
   }
