@@ -34,7 +34,8 @@ body:before {
 .extra-margin-bottom{padding-bottom: 135px}
 :root{
   --bg-main: rgb(20, 40, 59);
-  --day:linear-gradient(to bottom, rgb(4, 95, 53), rgb(2, 53, 29));
+  --day:rgb(3, 77, 42);
+  --day2:linear-gradient(to bottom, rgb(4, 95, 53), rgb(2, 53, 29));
   --day2:linear-gradient(to bottom, rgb(25, 84, 133), rgb(214, 214, 214));
   --day2:linear-gradient(to bottom, rgb(4, 22, 34), rgb(25, 84, 133));
   --day2-body-bg:rgb(214, 214, 214);

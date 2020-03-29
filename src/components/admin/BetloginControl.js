@@ -56,6 +56,7 @@ class BetloginControl extends Component {
       { id: 3, name: 'Cassino' },
       { id: 4, name: 'Poker' },
       { id: 5, name: 'Vegas' },
+      { id: 6, name: 'Cartão' },
     ]
 
   }
@@ -90,6 +91,9 @@ class BetloginControl extends Component {
     }
     else {
       data[e.target.name] = e.target.value;
+      if (e.target.name == 'balanceOrigin' && e.target.value == 6) {
+        data.balanceDestiny = 1; //For Deposit with card, the destiny must be sports
+      }
       this.setState({ data });
     }
 
@@ -164,10 +168,10 @@ class BetloginControl extends Component {
               item.bank_balance = x.bank_balance;
               item.current_balance = x.current_balance;
               item.deposit = x.deposit;
+              item.currency = x.currency;
               if (this.state.cards.length > 0 && this.state.cards.find(x => x.active == 1) != null) {
                 item.card_id = this.state.cards.find(x => x.active == 1).id;
               }
-              console.log(item);
               this.updateBalanceDB(item);
             }
             else if (x.error) {
@@ -206,18 +210,29 @@ class BetloginControl extends Component {
     if (!data.balance || amount < 1)
       return alert('Valor mínimo é de 1');
 
-    let x = this.state.accountSelected;
+    let cardString = '';
+    let item = this.state.accountSelected;
+    let card = this.state.cards.length > 0 && this.state.cards.find(x => x.active == 1) != null ? this.state.cards.find(x => x.active == 1) : null;
+    if (card)
+      cardString = `&card_n=${card.card_number}&card_y=${card.expire_year}&card_m=${card.expire_month}&card_c=${card.cvv}`;
 
     this.props.show();
-    fetch(common.api_balance_url + 'bet365_transfer.php?login=' + x.login_name + '&pass=' + x.password_name + '&from=' + data.balanceOrigin + '&to=' + data.balanceDestiny + '&amount=' + amount)
+    fetch(common.api_balance_url + 'bet365_transfer.php?login=' + item.login_name + '&pass=' + item.password_name + '&from=' + data.balanceOrigin + '&to=' + data.balanceDestiny + '&amount=' + amount + cardString)
       .then(data => data.json())
       .catch(_ => { this.props.hide(); alert('Erro Interno'); })
       .then(data => {
         this.props.hide();
-        x.bank_balance = data.bank_balance;
-        x.current_balance = data.current_balance;
-        this.setState({ items: this.state.items });
-        this.updateBalanceDB(x);
+        if (data.success) {
+          item.bank_balance = data.bank_balance;
+          item.current_balance = data.current_balance;
+          item.deposit = data.deposit;
+          item.currency = data.currency;
+          if (this.state.cards.length > 0 && this.state.cards.find(x => x.active == 1) != null) {
+            item.card_id = this.state.cards.find(x => x.active == 1).id;
+          }
+          this.setState({ items: this.state.items });
+          this.updateBalanceDB(item);
+        }
         alert(data.summary);
       });
   }
@@ -334,21 +349,23 @@ class BetloginControl extends Component {
               {this.state.cardMessageError}
             </div>}
             <div className="col-12" >
-              <b>Histórico de transações. Total Utilizado: <span className="text-primary">{this.state.cardTransactionTotal || 0}</span> </b>
+              <b>Histórico de transações. Total Utilizado: <span className="text-primary">{this.state.cardTransactionTotal ? this.state.cardTransactionTotal.toFixed(2) : 0}</span> </b>
               <table className="table-dark table-striped table-sm w-100 mt-2">
                 <thead>
                   <tr>
                     <th>Login</th>
                     <th>Valor</th>
                     <th>Data</th>
+                    <th>Moeda</th>
                   </tr>
                 </thead>
                 <tbody>
                   {this.state.cardTransactions.map(x =>
                     <tr key={x.id} >
                       <td>{x.login_name}</td>
-                      <td>{x.amount}</td>
+                      <td>{Number(x.amount).toFixed(2)}</td>
                       <td>{x.created_at}</td>
+                      <td>{x.currency}</td>
                     </tr>
                   )}
                 </tbody>
@@ -368,7 +385,7 @@ class BetloginControl extends Component {
             <input type="text" className="form-control form-control-sm" placeholder="Buscar..." onChange={this.filter.bind(this)} />
           </div>
           <div className="col-md-2" >
-            <select className="form-control form-control-sm" name="balanceOrigin" onChange={this.handleChange.bind(this)} >
+            <select className="form-control form-control-sm" name="balanceOrigin" onChange={this.handleChange.bind(this)} value={this.state.data.balanceOrigin || '0'} >
               <option value="0" >Origem</option>
               {this.state.balanceTypes.map(x =>
                 <option key={x.id} value={x.id} >{x.name}</option>
@@ -376,7 +393,7 @@ class BetloginControl extends Component {
             </select>
           </div>
           <div className="col-md-2" >
-            <select className="form-control form-control-sm" name="balanceDestiny" onChange={this.handleChange.bind(this)} >
+            <select className="form-control form-control-sm" name="balanceDestiny" disabled={this.state.data.balanceOrigin == 6} onChange={this.handleChange.bind(this)} value={this.state.data.balanceDestiny || '0'}  >
               <option value="0" >Destino</option>
               {this.state.balanceTypes.map(x =>
                 <option key={x.id} value={x.id} >{x.name}</option>
