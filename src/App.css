@@ -70,8 +70,10 @@ body:before {
 .no-overflow{overflow: hidden;}
 .no-break{white-space: nowrap}
 .flex{display: flex;}
-.flex>div{align-self: center;flex-grow: 1}
-.flex>div.no-grow{flex-grow: 0}
+.flex>div{align-self: center}
+.flex>div.grow{flex-grow: 1;}
+.flex-grow{display: flex;}
+.flex-grow>div{align-self: center;flex-grow: 1}
 @media(max-width:576px){
   .logo-left{display: none}
   .text-right-xs{text-align: right}

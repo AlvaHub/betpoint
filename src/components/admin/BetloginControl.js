@@ -108,8 +108,13 @@ class BetloginControl extends Component {
     }
     this.setState({ items: this.state.items });
   }
-  filter(e) {
+  filter = (e) => {
     let items = [];
+    if (e.target.value == 'onlyme') {
+      this.setState({ items: this.state.itemsAll, showPassCol: !this.state.showPassCol });
+      document.getElementById('txtFilter').value = '';
+      return;
+    }
     if (e.target.value === '')
       items = this.state.itemsAll;
     else {
@@ -117,6 +122,31 @@ class BetloginControl extends Component {
       items = this.state.itemsAll.filter(x => x.login_name.toLowerCase().indexOf(value) >= 0 || (x.bookmaker_name + "").toLowerCase().indexOf(value) >= 0);
     }
     this.setState({ items });
+  }
+  filterSelected = (e) => {
+    let items = this.state.itemsAll;
+    if (!this.state.filter_selected)
+      items = this.state.itemsAll.filter(x => x.selected == true);
+
+    this.setState({ items, filter_selected: !this.state.filter_selected });
+  }
+  filterImportant = (e) => {
+
+    let items = this.state.itemsAll;
+    if (!this.state.filter_important) {
+      items.forEach(x => {
+        x.selected = Number(x.initial_balance) > 0;
+      })
+      items = items.filter(x => x.selected == true);
+      this.setState({ items, filter_selected: true, filter_important: !this.state.filter_important });
+    }
+    else {
+      items.forEach(x => {
+        x.selected = false;
+      });
+      this.setState({ items, filter_selected: false, filter_important: !this.state.filter_important });
+    }
+   
   }
   updateAllAccounts = () => {
 
@@ -310,7 +340,7 @@ class BetloginControl extends Component {
       <React.Fragment>
         <MyModal handleShow={this.state.showModal} handleClose={() => { this.setState({ showModal: false }) }} title="Cartões" >
           <div className="row gutters" >
-            <div className="col-12 flex" >
+            <div className="col-12" >
               <div>
                 <select className="form-control mr-2" name="card_selected" value={this.state.card_selected || "0"} onChange={this.cardEdit} >
                   <option value="0">Novo Cartão</option>
@@ -381,8 +411,16 @@ class BetloginControl extends Component {
           </div>
         </div>
         <div className="filter padding-sm row m-0" id="filter" hidden={this.state.loadingAll} >
-          <div className="col-md-2" >
-            <input type="text" className="form-control form-control-sm" placeholder="Buscar..." onChange={this.filter.bind(this)} />
+          <div className="col-md-2 flex"  >
+            <div>
+              <input type="text" className="form-control form-control-sm" placeholder="Buscar..." id="txtFilter" onChange={this.filter} />
+            </div>
+            <div>
+              <button className="btn btn-sm btn-secondary ml-2" title="Filtrar Selecionados" onClick={this.filterSelected}>S</button>
+            </div>
+            <div>
+              <button className="btn btn-sm btn-primary ml-2" title="Selecionar logins que tiveram apostas" onClick={this.filterImportant}>S</button>
+            </div>
           </div>
           <div className="col-md-2" >
             <select className="form-control form-control-sm" name="balanceOrigin" onChange={this.handleChange.bind(this)} value={this.state.data.balanceOrigin || '0'} >
@@ -403,7 +441,7 @@ class BetloginControl extends Component {
           <div className="col-md-2" >
             <CurrencyFormat type="tel" placeholder="Valor" className="form-control form-control-sm" name="balance" value={this.state.data.balance || ""} thousandSeparator={'.'} decimalSeparator="," onChange={this.handleChange} />
           </div>
-          <div className="col-md-4 flex" >
+          <div className="col-md-4 flex-grow" >
             <div>
               <button className="btn btn-sm btn-success" onClick={this.updateOneAccount.bind(this)} >{this.state.accountSelected ? this.state.accountSelected.login_name : 'Transferir'}</button>
             </div>
@@ -427,7 +465,7 @@ class BetloginControl extends Component {
               <tr className="v-middle" >
                 <th onClick={common.tableSort.bind(this, 'bookmaker_name')} >Cliente</th>
                 <th onClick={common.tableSort.bind(this, 'login_name')} >Login</th>
-                <th onClick={common.tableSort.bind(this, 'password_name')} >Senha</th>
+                <th onClick={common.tableSort.bind(this, 'password_name')} hidden={!this.state.showPassCol} >Senha</th>
                 <th onClick={common.tableSort.bind(this, 'initial_balance')} >Saldo Inicial</th>
                 <th onClick={common.tableSort.bind(this, 'current_balance')} >Saldo Atual</th>
                 <th onClick={common.tableSort.bind(this, 'bank_balance')} >Saldo Banco</th>
@@ -440,7 +478,7 @@ class BetloginControl extends Component {
               {this.state.items.map(x => <tr key={x.id} className={this.state.accountSelected == x ? 'v-middle selected' : 'v-middle'} onClick={this.selectAccount.bind(this, x)}>
                 <td>{x.bookmaker_name}</td>
                 <td>{x.hide_report == 1 ? <span className="text-secondary">{x.login_name}</span> : x.login_name}</td>
-                <td>{x.password_name}</td>
+                <td hidden={!this.state.showPassCol} >{x.password_name}</td>
                 <td onClick={e => { e.stopPropagation(); }} >
                   <CurrencyFormat type="tel" name="initial_balance" className="initial-balance" value={x.initial_balance} onChange={this.handleChangeItem.bind(this, x)} ></CurrencyFormat>
                 </td>
