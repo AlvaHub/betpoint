@@ -135,7 +135,7 @@ class BetloginControl extends Component {
     let items = this.state.itemsAll;
     if (!this.state.filter_important) {
       items.forEach(x => {
-        x.selected = Number(x.initial_balance) > 0;
+        x.selected = x.bet_count && Number(x.bet_count) > 0 && x.default_balance && Number(x.initial_balance) > 0 && Number(x.current_balance) != Number(x.default_balance);
       })
       items = items.filter(x => x.selected == true);
       this.setState({ items, filter_selected: true, filter_important: !this.state.filter_important });
@@ -179,7 +179,7 @@ class BetloginControl extends Component {
       if (selectedItems.length < 5) {
         x.processed = true;
         x.loading = true;
-        let balance = x.initial_balance;
+        let balance = x.default_balance;
         selectedItems.push(fetch(common.api_balance_url + 'bet365_transfer.php?auto=1&login=' + x.login_name + '&pass=' + x.password_name + '&balance=' + balance + cardString).then(data => data.json()).catch(_ => { x.error = x.login_name + ": Erro Interno"; x.loading = null; }));
       }
     });
@@ -465,7 +465,9 @@ class BetloginControl extends Component {
               <tr className="v-middle" >
                 <th onClick={common.tableSort.bind(this, 'bookmaker_name')} >Cliente</th>
                 <th onClick={common.tableSort.bind(this, 'login_name')} >Login</th>
+                <th onClick={common.tableSort.bind(this, 'bet_count')} >Apostas</th>
                 <th onClick={common.tableSort.bind(this, 'password_name')} hidden={!this.state.showPassCol} >Senha</th>
+                <th onClick={common.tableSort.bind(this, 'default_balance')} >Vale</th>
                 <th onClick={common.tableSort.bind(this, 'initial_balance')} >Saldo Inicial</th>
                 <th onClick={common.tableSort.bind(this, 'current_balance')} >Saldo Atual</th>
                 <th onClick={common.tableSort.bind(this, 'bank_balance')} >Saldo Banco</th>
@@ -479,9 +481,11 @@ class BetloginControl extends Component {
                 <td>{x.bookmaker_name}</td>
                 <td>{x.hide_report == 1 ? <span className="text-secondary">{x.login_name}</span> : x.login_name}</td>
                 <td hidden={!this.state.showPassCol} >{x.password_name}</td>
+                <td>{x.bet_count}</td>
                 <td onClick={e => { e.stopPropagation(); }} >
-                  <CurrencyFormat type="tel" name="initial_balance" className="initial-balance" value={x.initial_balance} onChange={this.handleChangeItem.bind(this, x)} ></CurrencyFormat>
+                  <CurrencyFormat type="tel" name="default_balance" className="initial-balance" value={x.default_balance || 0} onChange={this.handleChangeItem.bind(this, x)} ></CurrencyFormat>
                 </td>
+                <td>{x.initial_balance}</td>
                 <td>{x.current_balance}</td>
                 <td>{x.bank_balance}</td>
                 <td onClick={e => { e.stopPropagation(); }}><input type="checkbox" className="normal" name="selected" checked={x.selected || ""} onChange={this.handleChangeItem.bind(this, x)} ></input></td>
