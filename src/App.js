@@ -13,7 +13,7 @@ import loadingImage from './images/loading-spinner.svg';
 import User from './components/admin/User';
 import Matrix from './components/admin/Matrix';
 import Betlogin from './components/admin/Betlogin';
-import BetloginControl from './components/admin/BetloginControl';
+import BetloginBalance from './components/admin/BetloginBalance';
 import Bookmaker from './components/admin/Bookmaker';
 import Parameter from './components/admin/Parameter';
 import AdminBet from './components/admin/Bet';
@@ -87,7 +87,7 @@ class App extends Component {
             {window.location.pathname === '/login' || <Menu show={this.loadingShow} hide={this.loadingHide} />}
             <div id="master" className="page p-1">
               <Route path="/login" render={() => <Login changeTitle={this.changeTitleHandler} show={this.loadingShow} hide={this.loadingHide} />} />
-              <Route path="/natansports/betlogin-balance" render={() => <BetloginControl changeTitle={this.changeTitleHandler} show={this.loadingShow} hide={this.loadingHide} />} />
+              <Route path="/natansports/betlogin-balance" render={() => <BetloginBalance changeTitle={this.changeTitleHandler} show={this.loadingShow} hide={this.loadingHide} />} />
               {common.getUser() &&
                 <React.Fragment>
                   <Route path="/" exact render={() => <Bet changeTitle={this.changeTitleHandler} show={this.loadingShow} hide={this.loadingHide} />} />

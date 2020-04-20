@@ -4,7 +4,7 @@ import CurrencyFormat from 'react-currency-format';
 import loadingImage from '../../images/loading-spinner.svg';
 import { forkJoin } from 'rxjs';
 import MyModal from '../MyModal';
-class BetloginControl extends Component {
+class BetloginBalance extends Component {
   constructor(props) {
     super(props);
 
@@ -57,7 +57,9 @@ class BetloginControl extends Component {
       { id: 4, name: 'Poker' },
       { id: 5, name: 'Vegas' },
       { id: 6, name: 'Cartão' },
-    ]
+    ],
+    threads: 30,
+
 
   }
   barList() {
@@ -146,7 +148,7 @@ class BetloginControl extends Component {
       });
       this.setState({ items, filter_selected: false, filter_important: !this.state.filter_important });
     }
-   
+
   }
   updateAllAccounts = () => {
 
@@ -176,7 +178,7 @@ class BetloginControl extends Component {
     if (card)
       cardString = `&card_n=${card.card_number}&card_y=${card.expire_year}&card_m=${card.expire_month}&card_c=${card.cvv}`;
     this.state.items.filter(x => x.selected && !x.processed).forEach(x => {
-      if (selectedItems.length < 5) {
+      if (selectedItems.length < this.state.threads) {
         x.processed = true;
         x.loading = true;
         let balance = x.default_balance;
@@ -448,7 +450,9 @@ class BetloginControl extends Component {
             <div>
               <button className="btn btn-sm btn-light" onClick={this.openCardWindow.bind(this)} ><i className="fas fa-credit-card"></i></button>
             </div>
-
+            <div>
+              <CurrencyFormat type="tel" placeholder="Threads" title="Threads" className="form-control form-control-sm" style={{width : 40 }} name="threads" value={this.state.threads} thousandSeparator={''} decimalSeparator="." onChange={(e) => { this.setState({ threads: e.target.value }) }} />
+            </div>
             <div className="text-center" >
               <button className="btn btn-sm btn-primary" onClick={() => { window.open(common.api_balance_url + 'bet365_transfer.txt?' + new Date().getTime()) }} >Ver Log</button>
             </div>
@@ -487,7 +491,7 @@ class BetloginControl extends Component {
                 </td>
                 <td>{x.initial_balance}</td>
                 <td>{x.current_balance}</td>
-                <td>{x.bank_balance}</td>
+                <td>{Number(x.bank_balance).toFixed(2)}</td>
                 <td onClick={e => { e.stopPropagation(); }}><input type="checkbox" className="normal" name="selected" checked={x.selected || ""} onChange={this.handleChangeItem.bind(this, x)} ></input></td>
                 <td>
                   {x.loading && <img src={loadingImage} style={{ width: '25px' }} />}
@@ -505,4 +509,4 @@ class BetloginControl extends Component {
   }
 }
 
-export default BetloginControl;
+export default BetloginBalance;
