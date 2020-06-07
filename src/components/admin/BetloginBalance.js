@@ -58,7 +58,7 @@ class BetloginBalance extends Component {
       { id: 5, name: 'Vegas' },
       { id: 6, name: 'Cartão' },
     ],
-    threads: 30,
+    threads: 4,
 
 
   }
