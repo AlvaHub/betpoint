@@ -110,6 +110,9 @@ class BetloginBalance extends Component {
     }
     this.setState({ items: this.state.items });
   }
+  updateDefaultBalance = (item, e) => {
+    common.postData('balance/update-default-balance', { id: item.login_id, default_balance: e.target.value })
+  }
   filter = (e) => {
     let items = [];
     if (e.target.value == 'onlyme') {
@@ -451,7 +454,7 @@ class BetloginBalance extends Component {
               <button className="btn btn-sm btn-light" onClick={this.openCardWindow.bind(this)} ><i className="fas fa-credit-card"></i></button>
             </div>
             <div>
-              <CurrencyFormat type="tel" placeholder="Threads" title="Threads" className="form-control form-control-sm" style={{width : 40 }} name="threads" value={this.state.threads} thousandSeparator={''} decimalSeparator="." onChange={(e) => { this.setState({ threads: e.target.value }) }} />
+              <CurrencyFormat type="tel" placeholder="Threads" title="Threads" className="form-control form-control-sm" style={{ width: 40 }} name="threads" value={this.state.threads} thousandSeparator={''} decimalSeparator="." onChange={(e) => { this.setState({ threads: e.target.value }) }} />
             </div>
             <div className="text-center" >
               <button className="btn btn-sm btn-primary" onClick={() => { window.open(common.api_balance_url + 'bet365_transfer.txt?' + new Date().getTime()) }} >Ver Log</button>
@@ -487,7 +490,7 @@ class BetloginBalance extends Component {
                 <td hidden={!this.state.showPassCol} >{x.password_name}</td>
                 <td>{x.bet_count}</td>
                 <td onClick={e => { e.stopPropagation(); }} >
-                  <CurrencyFormat type="tel" name="default_balance" className="initial-balance" value={x.default_balance || 0} onChange={this.handleChangeItem.bind(this, x)} ></CurrencyFormat>
+                  <CurrencyFormat type="tel" name="default_balance" className="initial-balance" value={x.default_balance || 0} onChange={this.handleChangeItem.bind(this, x)} onBlur={this.updateDefaultBalance.bind(this, x)} ></CurrencyFormat>
                 </td>
                 <td>{x.initial_balance}</td>
                 <td>{x.current_balance}</td>
