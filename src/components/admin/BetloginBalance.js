@@ -140,7 +140,7 @@ class BetloginBalance extends Component {
     let items = this.state.itemsAll;
     if (!this.state.filter_important) {
       items.forEach(x => {
-        x.selected = x.bet_count && Number(x.bet_count) > 0 && x.default_balance && Number(x.initial_balance) > 0 && Number(x.current_balance) != Number(x.default_balance);
+        x.selected = x.bet_count && Number(x.bet_count) > 0  && Number(x.initial_balance) > 0 && Number(x.current_balance) != Number(x.default_balance);
       })
       items = items.filter(x => x.selected == true);
       this.setState({ items, filter_selected: true, filter_important: !this.state.filter_important });
