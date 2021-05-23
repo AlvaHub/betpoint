@@ -471,7 +471,7 @@ table tr.v-middle td{vertical-align: middle !important;padding:0.2rem}
 .menu-more .menu-item>div:hover{color:rgb(201, 80, 0);animation: a_menu_effect 1s forwards } 
 .menu-more .menu-item div.admin{background-color: #ececf6;}
 .menu-more .menu-item div.exit{background-color: #ececf6;}
-.menu-come{animation: a_menu_come 0.6s forwards;visibility: visible}
+.menu-come{animation: a_menu_come 0.6s forwards;visibility: visible;background: #045f35;}
 .menu-more .menu-item>div.header{background-color: transparent;color:#ececf6;font-weight: bold;font-size: 14pt}
 @keyframes a_menu_come{
   from{transform:translateY(100%)}

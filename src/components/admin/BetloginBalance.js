@@ -53,8 +53,8 @@ class BetloginBalance extends Component {
     updateCurrent: 0,
     balanceTypes: [
       { id: 1, name: 'Esportes' },
-      { id: 3, name: 'Cassino' },
-      { id: 4, name: 'Poker' },
+      // { id: 3, name: 'Cassino' },
+      // { id: 4, name: 'Poker' },
       { id: 5, name: 'Vegas' },
       { id: 6, name: 'Cartão' },
     ],

@@ -87,7 +87,7 @@ class App extends Component {
             {window.location.pathname === '/login' || <Menu show={this.loadingShow} hide={this.loadingHide} />}
             <div id="master" className="page p-1">
               <Route path="/login" render={() => <Login changeTitle={this.changeTitleHandler} show={this.loadingShow} hide={this.loadingHide} />} />
-              <Route path="/natansports/betlogin-balance" render={() => <BetloginBalance changeTitle={this.changeTitleHandler} show={this.loadingShow} hide={this.loadingHide} />} />
+              <Route path="/betlogin-balance" render={() => <BetloginBalance changeTitle={this.changeTitleHandler} show={this.loadingShow} hide={this.loadingHide} />} />
               {common.getUser() &&
                 <React.Fragment>
                   <Route path="/" exact render={() => <Bet changeTitle={this.changeTitleHandler} show={this.loadingShow} hide={this.loadingHide} />} />
